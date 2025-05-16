@@ -101,6 +101,12 @@ export default function VisionBoard() {
     }
   };
 
+  const handleOpenDetails = (goal: Goal) => {
+    setNote(goal.notes || '');
+    setChecklist(goal.checklist || []);
+    setSelectedGoal(goal);
+  };
+
   const handleSaveDetails = () => {
     if (!selectedGoal) return;
     const updated = items.map(item =>
@@ -161,11 +167,7 @@ export default function VisionBoard() {
                   item={item}
                   index={index}
                   onRemove={handleRemove}
-                  onOpen={(goal) => {
-                    setSelectedGoal(goal);
-                    setNote(goal.notes || '');
-                    setChecklist(goal.checklist || []);
-                  }}
+                  onOpen={handleOpenDetails}
                 />
               ))}
             </div>
@@ -211,17 +213,4 @@ export default function VisionBoard() {
               />
             </div>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setSelectedGoal(null)} className="text-sm text-gray-500">Cancel</button>
-              <button
-                onClick={handleSaveDetails}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+              <button onClick={() => setSelectedGoal(null
