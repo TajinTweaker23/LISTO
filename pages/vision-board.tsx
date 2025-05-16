@@ -179,6 +179,7 @@ export default function VisionBoard() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg space-y-4">
             <h2 className="text-xl font-semibold">Details</h2>
+
             <div>
               <label className="font-medium">Checklist</label>
               {checklist.map(item => (
@@ -203,6 +204,7 @@ export default function VisionBoard() {
                 + Add checklist item
               </button>
             </div>
+
             <div>
               <label className="font-medium">Notes</label>
               <textarea
@@ -212,5 +214,19 @@ export default function VisionBoard() {
                 rows={4}
               />
             </div>
+
             <div className="flex justify-end gap-2">
-              <button onClick={() => setSelectedGoal(null
+              <button onClick={() => setSelectedGoal(null)} className="text-sm text-gray-500">Cancel</button>
+              <button
+                onClick={handleSaveDetails}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
