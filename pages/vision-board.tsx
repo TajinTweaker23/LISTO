@@ -27,81 +27,77 @@ export default function VisionBoard() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">🎨 Vision Board</h1>
-      <div className="flex gap-2 mb-4">
-        <input
-          placeholder="Paste image URL"
-          value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
-          className="border px-3 py-2 rounded w-full"
-        />
-        <button
-          onClick={addImage}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Add Image
-        </button>
-      </div>
-
-      {images.length === 0 ? (
-        <p className="text-gray-500 italic">
-          Start building your vision by adding images above!
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {images.map((src, index) => (
-            <div
-              key={index}
-              className={`relative border rounded overflow-hidden shadow hover:shadow-xl transition-all ${
-                selectedIndex === index ? 'ring-4 ring-blue-500' : ''
-              }`}
-              onClick={() => setSelectedIndex(index)}
-            >
-              <Image
-                src={src}
-                alt={`Vision ${index}`}
-                width={300}
-                height={200}
-                className="object-cover w-full h-48"
-              />
-              <div className="absolute top-2 right-2 flex gap-1">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeImage(index);
-                  }}
-                  className="text-white bg-red-500 px-2 py-1 rounded"
-                >
-                  ✖
-                </button>
-                {index > 0 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      moveImage(index, index - 1);
-                    }}
-                    className="bg-gray-200 px-2 py-1 rounded"
-                  >
-                    ⬆
-                  </button>
-                )}
-                {index < images.length - 1 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      moveImage(index, index + 1);
-                    }}
-                    className="bg-gray-200 px-2 py-1 rounded"
-                  >
-                    ⬇
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8 drop-shadow-sm">
+          ✨ Vision Board
+        </h1>
+        <div className="flex flex-col sm:flex-row items-center gap-2 mb-8">
+          <input
+            placeholder="Paste image URL..."
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            className="flex-1 px-4 py-2 rounded-lg border shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            onClick={addImage}
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-lg shadow hover:scale-105 transition"
+          >
+            Add Image
+          </button>
         </div>
-      )}
+
+        {images.length === 0 ? (
+          <p className="text-center text-gray-500 italic">Start building your vision by adding images above!</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {images.map((src, index) => (
+              <div
+                key={index}
+                className={`relative rounded-xl overflow-hidden backdrop-blur-md bg-white/70 shadow-lg hover:shadow-2xl transition-all ${
+                  selectedIndex === index ? 'ring-4 ring-blue-500' : ''
+                }`}
+                onClick={() => setSelectedIndex(index)}
+              >
+                <Image
+                  src={src}
+                  alt={`Vision ${index}`}
+                  width={400}
+                  height={250}
+                  className="object-cover w-full h-56 rounded-t-xl"
+                />
+                <div className="absolute top-3 right-3 flex gap-1 z-10">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(index);
+                    }}
+                    className="bg-red-500 text-white px-2 py-1 rounded-full text-sm hover:bg-red-600"
+                  >✖</button>
+                  {index > 0 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveImage(index, index - 1);
+                      }}
+                      className="bg-gray-200 px-2 py-1 rounded-full text-sm"
+                    >⬆</button>
+                  )}
+                  {index < images.length - 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveImage(index, index + 1);
+                      }}
+                      className="bg-gray-200 px-2 py-1 rounded-full text-sm"
+                    >⬇</button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
