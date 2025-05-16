@@ -1,140 +1,140 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import useAuth from '../hooks/useAuth';
 
-export default function VisionBoard() {
-  const [images, setImages] = useState<string[]>([]);
-  const [urlInput, setUrlInput] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const { user } = useAuth();
+type ItemProps = {
+  id: string;
+  url: string;
+  index: number;
+  onRemove: (id: string) => void;
+};
+
+function SortableImage({ id, url, index, onRemove }: ItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="rounded-xl overflow-hidden bg-white shadow hover:shadow-lg relative"
+    >
+      <img src={url} alt={`Vision ${index}`} className="w-full h-56 object-cover" />
+      <button
+        onClick={() => onRemove(id)}
+        className="absolute top-2 right-2 bg-red-600 text-white rounded-full px-2 py-1 text-xs"
+      >
+        ✖
+      </button>
+    </div>
+  );
+}
+
+export default function DragDropVisionBoard() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [items, setItems] = useState<{ id: string; url: string }[]>([]);
+  const [input, setInput] = useState('');
+
+  const userId = user?.uid;
 
   useEffect(() => {
+    if (!userId) return;
     const loadImages = async () => {
-      if (!user) return;
-      const docRef = doc(db, 'visionBoards', user.uid);
+      const docRef = doc(db, 'visionBoards', userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setImages(docSnap.data().images || []);
+        setItems(docSnap.data().images || []);
       }
     };
     loadImages();
-  }, [user]);
+  }, [userId]);
 
   useEffect(() => {
-    const saveImages = async () => {
-      if (!user) return;
-      await setDoc(doc(db, 'visionBoards', user.uid), { images });
-    };
-    if (user) saveImages();
-  }, [images, user]);
+    if (!userId) return;
+    setDoc(doc(db, 'visionBoards', userId), { images: items });
+  }, [items, userId]);
 
-  const addImage = () => {
-    if (urlInput.trim()) {
-      setImages([...images, urlInput.trim()]);
-      setUrlInput('');
+  const handleAdd = () => {
+    if (!input.trim()) return;
+    const newItem = {
+      id: `${Date.now()}`,
+      url: input.trim(),
+    };
+    setItems((prev) => [...prev, newItem]);
+    setInput('');
+  };
+
+  const handleRemove = (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over?.id);
+      setItems((items) => arrayMove(items, oldIndex, newIndex));
     }
   };
 
-  const removeImage = (index: number) => {
-    const updated = images.filter((_, i) => i !== index);
-    setImages(updated);
-    setSelectedIndex(null);
-  };
-
-  const moveImage = (from: number, to: number) => {
-    const updated = [...images];
-    const moved = updated.splice(from, 1)[0];
-    updated.splice(to, 0, moved);
-    setImages(updated);
-  };
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (!user) {
+    router.push('/login');
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100 p-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8 drop-shadow-sm">
-          ✨ Vision Board
-        </h1>
-        {user ? (
-          <>
-            <div className="flex flex-col sm:flex-row items-center gap-2 mb-8">
-              <input
-                placeholder="Paste image URL..."
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                className="flex-1 px-4 py-2 rounded-lg border shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <button
-                onClick={addImage}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-lg shadow hover:scale-105 transition"
-              >
-                Add Image
-              </button>
-            </div>
+        <h1 className="text-4xl font-extrabold text-center mb-8 text-gray-800">✨ Vision Board</h1>
 
-            {images.length === 0 ? (
-              <p className="text-center text-gray-500 italic">
-                Start building your vision by adding images above!
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {images.map((src, index) => (
-                  <div
-                    key={index}
-                    className={`relative rounded-xl overflow-hidden backdrop-blur-md bg-white/70 shadow-lg hover:shadow-2xl transition-all ${
-                      selectedIndex === index ? 'ring-4 ring-blue-500' : ''
-                    }`}
-                    onClick={() => setSelectedIndex(index)}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Vision ${index}`}
-                      width={400}
-                      height={250}
-                      className="object-cover w-full h-56 rounded-t-xl"
-                    />
-                    <div className="absolute top-3 right-3 flex gap-1 z-10">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeImage(index);
-                        }}
-                        className="bg-red-500 text-white px-2 py-1 rounded-full text-sm hover:bg-red-600"
-                      >
-                        ✖
-                      </button>
-                      {index > 0 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveImage(index, index - 1);
-                          }}
-                          className="bg-gray-200 px-2 py-1 rounded-full text-sm"
-                        >
-                          ⬆
-                        </button>
-                      )}
-                      {index < images.length - 1 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveImage(index, index + 1);
-                          }}
-                          className="bg-gray-200 px-2 py-1 rounded-full text-sm"
-                        >
-                          ⬇
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="text-center text-gray-600 text-lg mt-10">Please log in to use your vision board.</p>
-        )}
+        <div className="flex flex-col sm:flex-row gap-2 mb-6">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Paste image URL..."
+            className="flex-1 px-4 py-2 border rounded shadow-sm"
+          />
+          <button
+            onClick={handleAdd}
+            className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700"
+          >
+            Add Image
+          </button>
+        </div>
+
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {items.map((item, index) => (
+                <SortableImage
+                  key={item.id}
+                  id={item.id}
+                  url={item.url}
+                  index={index}
+                  onRemove={handleRemove}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
   );
