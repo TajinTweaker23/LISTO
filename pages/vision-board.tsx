@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 export default function VisionBoard() {
   const [images, setImages] = useState<string[]>([]);
@@ -32,17 +30,24 @@ export default function VisionBoard() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">🎨 Vision Board</h1>
       <div className="flex gap-2 mb-4">
-        <Input
+        <input
           placeholder="Paste image URL"
           value={urlInput}
           onChange={(e) => setUrlInput(e.target.value)}
-          className="flex-1"
+          className="border px-3 py-2 rounded w-full"
         />
-        <Button onClick={addImage}>Add Image</Button>
+        <button
+          onClick={addImage}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Add Image
+        </button>
       </div>
 
       {images.length === 0 ? (
-        <p className="text-gray-500 italic">Start building your vision by adding images above!</p>
+        <p className="text-gray-500 italic">
+          Start building your vision by adding images above!
+        </p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {images.map((src, index) => (
@@ -61,28 +66,36 @@ export default function VisionBoard() {
                 className="object-cover w-full h-48"
               />
               <div className="absolute top-2 right-2 flex gap-1">
-                <Button size="sm" variant="outline" onClick={() => removeImage(index)}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage(index);
+                  }}
+                  className="text-white bg-red-500 px-2 py-1 rounded"
+                >
                   ✖
-                </Button>
+                </button>
                 {index > 0 && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       moveImage(index, index - 1);
                     }}
-                  >⬆</Button>
+                    className="bg-gray-200 px-2 py-1 rounded"
+                  >
+                    ⬆
+                  </button>
                 )}
                 {index < images.length - 1 && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       moveImage(index, index + 1);
                     }}
-                  >⬇</Button>
+                    className="bg-gray-200 px-2 py-1 rounded"
+                  >
+                    ⬇
+                  </button>
                 )}
               </div>
             </div>
