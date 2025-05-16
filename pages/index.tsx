@@ -1,10 +1,24 @@
-import React from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import useAuth from '../hooks/useAuth';
 
 export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.push('/vision-board');
+      } else {
+        router.push('/login');
+      }
+    }
+  }, [user, loading, router]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center text-center">
-      <h1 className="text-4xl font-bold">Welcome to LISTO</h1>
-      <p className="mt-4">Your smart, visual, multilingual bucket list app.</p>
+    <div className="flex items-center justify-center h-screen text-gray-600 text-xl">
+      Redirecting...
     </div>
   );
 }
