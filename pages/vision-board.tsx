@@ -17,7 +17,6 @@ import {
   doc,
   updateDoc,
 } from 'firebase/firestore';
-import GiphySearchbox from 'react-giphy-searchbox';
 
 export default function VisionBoard() {
   const [images, setImages] = useState<any[]>([]);
