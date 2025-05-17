@@ -24,7 +24,7 @@ export default function VisionBoard() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showGifSearch, setShowGifSearch] = useState(false);
+  const [showMediaSearch, setShowMediaSearch] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'visionBoard'), (snapshot) => {
@@ -75,22 +75,17 @@ export default function VisionBoard() {
             Add Image
           </Button>
           <Button
-            onClick={() => setShowGifSearch(!showGifSearch)}
+            onClick={() => setShowMediaSearch(!showMediaSearch)}
             className="bg-purple-500 hover:bg-purple-600 text-white"
           >
-            {showGifSearch ? 'Close GIFs' : 'GIF Search'}
+            {showMediaSearch ? 'Close Media' : 'Browse Media'}
           </Button>
         </div>
 
-        {showGifSearch && (
-          <GiphySearchbox
-            apiKey="YOUR_GIPHY_API_KEY"
-            onSelect={(item) => {
-              setUrlInput(item.images.original.url);
-              setShowGifSearch(false);
-            }}
-            masonryConfig={[{ columns: 3, imageWidth: 110, gutter: 5 }]}
-          />
+        {showMediaSearch && (
+          <p className="text-center text-gray-600 italic text-sm">
+            🔍 Media search coming soon! This will include GIFs, videos, docs, and images.
+          </p>
         )}
 
         {loading ? (
@@ -116,31 +111,30 @@ export default function VisionBoard() {
                   alt={`Vision ${index}`}
                   width={400}
                   height={300}
-                  className="object-cover w-full ah-48"
+                  className="object-cover w-full h-48"
                 />
                 <div className="p-2 text-xs text-gray-600">Status: {img.status}</div>
                 <div className="absolute top-2 right-2 flex gap-1">
                   <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeImage(img.id);
-                    }}
-                  >
-                    ✖
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDetailsOpen(true);
-                      setSelectedIndex(index);
-                    }}
-                  >
-                    🔍
-                  </Button>
+  className="p-1 text-red-600 hover:text-red-800"
+  onClick={(e) => {
+    e.stopPropagation();
+    removeImage(img.id);
+  }}
+>
+  ✖
+</Button>
+<Button
+  className="p-1 text-blue-600 hover:text-blue-800"
+  onClick={(e) => {
+    e.stopPropagation();
+    setDetailsOpen(true);
+    setSelectedIndex(index);
+  }}
+>
+  🔍
+</Button>
+
                 </div>
               </motion.div>
             ))}
@@ -191,7 +185,10 @@ export default function VisionBoard() {
                     <FilePlus className="w-4 h-4" /> Attach file
                   </div>
                 </div>
-                <Button onClick={() => setDetailsOpen(false)} className="w-full bg-blue-600 text-white">
+                <Button
+                  onClick={() => setDetailsOpen(false)}
+                  className="w-full bg-blue-600 text-white"
+                >
                   Close
                 </Button>
               </motion.div>
