@@ -3,8 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
 import { Dialog } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MapPin, Calendar, Users, Share2, FilePlus } from 'lucide-react';
