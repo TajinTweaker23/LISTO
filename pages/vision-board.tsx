@@ -1,51 +1,59 @@
-// pages/vision-board.tsx
-"use client";
-
-import React, { useState } from "react";
-import Image from "next/image";
-import { Dialog } from "@headlessui/react";
-import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, Calendar, Users, Share2, FilePlus } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Dialog } from '@headlessui/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { MapPin, Calendar, Users, Share2, FilePlus } from 'lucide-react';
+import { db } from '../lib/firebase';
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
+import GiphySearchbox from 'react-giphy-searchbox';
 
 export default function VisionBoard() {
-  const [images, setImages] = useState<string[]>([]);
-  const [urlInput, setUrlInput] = useState("");
+  const [images, setImages] = useState<any[]>([]);
+  const [urlInput, setUrlInput] = useState('');
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [checklists, setChecklists] = useState<string[][]>([]);
-  const [notes, setNotes] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showGifSearch, setShowGifSearch] = useState(false);
 
-  const addImage = () => {
-    if (!urlInput.trim()) return;
-    setImages([...images, urlInput.trim()]);
-    setChecklists([...checklists, []]);
-    setNotes([...notes, ""]);
-    setUrlInput("");
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'visionBoard'), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setImages(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const addImage = async () => {
+    if (urlInput.trim()) {
+      await addDoc(collection(db, 'visionBoard'), {
+        src: urlInput.trim(),
+        createdAt: new Date(),
+        status: 'Not Started',
+      });
+      setUrlInput('');
+    }
   };
 
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-    setChecklists(checklists.filter((_, i) => i !== index));
-    setNotes(notes.filter((_, i) => i !== index));
+  const removeImage = async (id: string) => {
+    await deleteDoc(doc(db, 'visionBoard', id));
+    setSelectedIndex(null);
   };
 
-  const addChecklistItem = (index: number) => {
-    const updated = [...checklists];
-    updated[index].push("");
-    setChecklists(updated);
+  const updateStatus = async (id: string, status: string) => {
+    await updateDoc(doc(db, 'visionBoard', id), { status });
   };
 
-  const updateChecklistItem = (index: number, itemIndex: number, value: string) => {
-    const updated = [...checklists];
-    updated[index][itemIndex] = value;
-    setChecklists(updated);
-  };
-
-  const updateNote = (index: number, value: string) => {
-    const updated = [...notes];
-    updated[index] = value;
-    setNotes(updated);
-  };
+  const statuses = ['Not Started', 'In Progress', 'Complete'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-pink-100 p-6">
@@ -53,58 +61,84 @@ export default function VisionBoard() {
         <h1 className="text-4xl font-extrabold text-center mb-8 text-gray-800">
           ✨ Vision Board
         </h1>
+
         <div className="flex gap-2 mb-6">
-          <input
-            type="text"
-            placeholder="Paste image URL..."
+          <Input
+            placeholder="Paste image URL"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            className="flex-1 px-4 py-2 rounded border shadow"
+            className="flex-1 border border-blue-300 shadow-sm"
           />
-          <button
-            onClick={addImage}
-            className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800"
-          >
+          <Button onClick={addImage} className="bg-blue-500 hover:bg-blue-600 text-white">
             Add Image
-          </button>
+          </Button>
+          <Button
+            onClick={() => setShowGifSearch(!showGifSearch)}
+            className="bg-purple-500 hover:bg-purple-600 text-white"
+          >
+            {showGifSearch ? 'Close GIFs' : 'GIF Search'}
+          </Button>
         </div>
 
-        {images.length === 0 ? (
-          <p className="text-center italic text-gray-500">
+        {showGifSearch && (
+          <GiphySearchbox
+            apiKey="YOUR_GIPHY_API_KEY"
+            onSelect={(item) => {
+              setUrlInput(item.images.original.url);
+              setShowGifSearch(false);
+            }}
+            masonryConfig={[{ columns: 3, imageWidth: 110, gutter: 5 }]}
+          />
+        )}
+
+        {loading ? (
+          <p className="text-center text-gray-500 italic">Loading your dreams...</p>
+        ) : images.length === 0 ? (
+          <p className="text-center text-gray-500 italic">
             Start building your vision by adding images above!
           </p>
         ) : (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {images.map((src, index) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            {images.map((img, index) => (
               <motion.div
-                key={index}
+                key={img.id}
                 layout
-                whileHover={{ scale: 1.05 }}
-                className="relative bg-white rounded shadow hover:shadow-xl transition-all overflow-hidden"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative border rounded-xl overflow-hidden shadow-md hover:shadow-xl bg-white"
+                onClick={() => setSelectedIndex(index)}
               >
                 <Image
-                  src={src}
-                  alt="Vision"
+                  src={img.src}
+                  alt={`Vision ${index}`}
                   width={400}
                   height={300}
-                  className="w-full h-48 object-cover"
+                  className="object-cover w-full h-48"
                 />
-                <div className="absolute top-2 left-2 flex gap-2">
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="bg-red-500 text-white rounded-full p-1"
-                  >
-                    ❌
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedIndex(index);
-                      setIsModalOpen(true);
+                <div className="p-2 text-xs text-gray-600">Status: {img.status}</div>
+                <div className="absolute top-2 right-2 flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(img.id);
                     }}
-                    className="bg-blue-600 text-white px-2 py-1 rounded text-xs"
                   >
-                    Details
-                  </button>
+                    ✖
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDetailsOpen(true);
+                      setSelectedIndex(index);
+                    }}
+                  >
+                    🔍
+                  </Button>
                 </div>
               </motion.div>
             ))}
@@ -112,73 +146,53 @@ export default function VisionBoard() {
         )}
 
         <AnimatePresence>
-          {isModalOpen && selectedIndex !== null && (
+          {detailsOpen && selectedIndex !== null && (
             <Dialog
-              as={motion.div}
-              static
-              open={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
+              open={detailsOpen}
+              onClose={() => setDetailsOpen(false)}
               className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
             >
-              <Dialog.Panel
-                as={motion.div}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl"
+              <motion.div
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.7, opacity: 0 }}
+                className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full space-y-4"
               >
-                <Dialog.Title className="text-xl font-bold mb-4">Details</Dialog.Title>
-
-                <div className="mb-4">
-                  <label className="block font-semibold mb-2">Checklist</label>
-                  {checklists[selectedIndex].map((item, i) => (
-                    <input
-                      key={i}
-                      type="text"
-                      value={item}
-                      onChange={(e) => updateChecklistItem(selectedIndex, i, e.target.value)}
-                      className="w-full mb-2 px-3 py-2 border rounded"
-                    />
-                  ))}
-                  <button
-                    onClick={() => addChecklistItem(selectedIndex)}
-                    className="text-sm text-blue-500 hover:underline"
+                <Image
+                  src={images[selectedIndex].src}
+                  alt="Selected"
+                  width={500}
+                  height={300}
+                  className="rounded-lg object-cover w-full"
+                />
+                <div className="flex flex-col space-y-2">
+                  <label className="text-sm text-gray-600">Status</label>
+                  <select
+                    className="border border-gray-300 rounded p-2"
+                    value={images[selectedIndex].status}
+                    onChange={(e) =>
+                      updateStatus(images[selectedIndex].id, e.target.value)
+                    }
                   >
-                    + Add checklist item
-                  </button>
-                </div>
+                    {statuses.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
 
-                <div className="mb-4">
-                  <label className="block font-semibold mb-2">Notes</label>
-                  <textarea
-                    value={notes[selectedIndex]}
-                    onChange={(e) => updateNote(selectedIndex, e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                    rows={4}
-                  />
-                </div>
-
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex gap-2 text-gray-500">
-                    <MapPin className="w-5 h-5" title="Add location" />
-                    <Calendar className="w-5 h-5" title="Attach calendar" />
-                    <Users className="w-5 h-5" title="Tag users" />
-                    <Share2 className="w-5 h-5" title="Share" />
-                    <FilePlus className="w-5 h-5" title="Upload file" />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      className="text-sm px-3 py-1 border rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button className="text-sm px-3 py-1 bg-blue-600 text-white rounded">
-                      Save
-                    </button>
+                  <div className="flex gap-2 text-sm mt-2 text-gray-600">
+                    <MapPin className="w-4 h-4" /> Add location
+                    <Calendar className="w-4 h-4" /> Add date
+                    <Users className="w-4 h-4" /> Invite others
+                    <Share2 className="w-4 h-4" /> Share goal
+                    <FilePlus className="w-4 h-4" /> Attach file
                   </div>
                 </div>
-              </Dialog.Panel>
+                <Button onClick={() => setDetailsOpen(false)} className="w-full bg-blue-600 text-white">
+                  Close
+                </Button>
+              </motion.div>
             </Dialog>
           )}
         </AnimatePresence>
