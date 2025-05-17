@@ -2,14 +2,15 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import SearchBar from "../components/SearchBar";
+import SmartImage from "../components/SmartImage";
 import { Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, Calendar, Users, Share2, FilePlus } from "lucide-react";
 
 export default function VisionBoard() {
   const [images, setImages] = useState<string[]>([]);
-  const [urlInput, setUrlInput] = useState("");
+  const [urlInput, setUrlInput] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checklists, setChecklists] = useState<string[][]>([]);
@@ -17,16 +18,16 @@ export default function VisionBoard() {
 
   const addImage = () => {
     if (!urlInput.trim()) return;
-    setImages([...images, urlInput.trim()]);
-    setChecklists([...checklists, []]);
-    setNotes([...notes, ""]);
+    setImages((prev) => [...prev, urlInput.trim()]);
+    setChecklists((prev) => [...prev, []]);
+    setNotes((prev) => [...prev, ""]);
     setUrlInput("");
   };
 
   const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-    setChecklists(checklists.filter((_, i) => i !== index));
-    setNotes(notes.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setChecklists((prev) => prev.filter((_, i) => i !== index));
+    setNotes((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addChecklistItem = (index: number) => {
@@ -53,20 +54,15 @@ export default function VisionBoard() {
         <h1 className="text-4xl font-extrabold text-center mb-8 text-gray-800">
           ✨ Vision Board
         </h1>
-        <div className="flex gap-2 mb-6">
-          <input
-            type="text"
-            placeholder="Paste image URL..."
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            className="flex-1 px-4 py-2 rounded border shadow"
+
+        <div className="mb-6">
+          <SearchBar
+            onResultSelect={(url: string) => {
+              setImages((prev) => [...prev, url]);
+              setChecklists((prev) => [...prev, []]);
+              setNotes((prev) => [...prev, ""]);
+            }}
           />
-          <button
-            onClick={addImage}
-            className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800"
-          >
-            Add Image
-          </button>
         </div>
 
         {images.length === 0 ? (
@@ -82,13 +78,14 @@ export default function VisionBoard() {
                 whileHover={{ scale: 1.05 }}
                 className="relative bg-white rounded shadow hover:shadow-xl transition-all overflow-hidden"
               >
-                <Image
+                <SmartImage
                   src={src}
                   alt="Vision"
                   width={400}
                   height={300}
                   className="w-full h-48 object-cover"
                 />
+
                 <div className="absolute top-2 left-2 flex gap-2">
                   <button
                     onClick={() => removeImage(index)}
@@ -160,11 +157,11 @@ export default function VisionBoard() {
 
                 <div className="flex justify-between items-center mt-4">
                   <div className="flex gap-2 text-gray-500">
-                    <MapPin className="w-5 h-5" title="Add location" />
-                    <Calendar className="w-5 h-5" title="Attach calendar" />
-                    <Users className="w-5 h-5" title="Tag users" />
-                    <Share2 className="w-5 h-5" title="Share" />
-                    <FilePlus className="w-5 h-5" title="Upload file" />
+                    <MapPin className="w-5 h-5" />
+                    <Calendar className="w-5 h-5" />
+                    <Users className="w-5 h-5" />
+                    <Share2 className="w-5 h-5" />
+                    <FilePlus className="w-5 h-5" />
                   </div>
                   <div className="flex gap-2">
                     <button
