@@ -1,18 +1,6 @@
-<<<<<<< HEAD
 // pages/vision-board.tsx
 "use client";
 
-import React, { useState } from "react";
-import SearchBar from "../components/SearchBar";
-import SmartImage from "../components/SmartImage";
-import { Dialog } from "@headlessui/react";
-import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, Calendar, Users, Share2, FilePlus } from "lucide-react";
-
-export default function VisionBoard() {
-  const [images, setImages] = useState<string[]>([]);
-  const [urlInput, setUrlInput] = useState<string>("");
-=======
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
@@ -35,25 +23,10 @@ export default function VisionBoard() {
   const [images, setImages] = useState<any[]>([]);
   const [urlInput, setUrlInput] = useState('');
   const [detailsOpen, setDetailsOpen] = useState(false);
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showGifSearch, setShowGifSearch] = useState(false);
 
-<<<<<<< HEAD
-  const addImage = () => {
-    if (!urlInput.trim()) return;
-    setImages((prev) => [...prev, urlInput.trim()]);
-    setChecklists((prev) => [...prev, []]);
-    setNotes((prev) => [...prev, ""]);
-    setUrlInput("");
-  };
-
-  const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setChecklists((prev) => prev.filter((_, i) => i !== index));
-    setNotes((prev) => prev.filter((_, i) => i !== index));
-=======
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'visionBoard'), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -77,7 +50,6 @@ export default function VisionBoard() {
   const removeImage = async (id: string) => {
     await deleteDoc(doc(db, 'visionBoard', id));
     setSelectedIndex(null);
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
   };
 
   const updateStatus = async (id: string, status: string) => {
@@ -93,16 +65,6 @@ export default function VisionBoard() {
           ✨ Vision Board
         </h1>
 
-<<<<<<< HEAD
-        <div className="mb-6">
-          <SearchBar
-            onResultSelect={(url: string) => {
-              setImages((prev) => [...prev, url]);
-              setChecklists((prev) => [...prev, []]);
-              setNotes((prev) => [...prev, ""]);
-            }}
-          />
-=======
         <div className="flex gap-2 mb-6">
           <Input
             placeholder="Paste image URL"
@@ -119,7 +81,6 @@ export default function VisionBoard() {
           >
             {showGifSearch ? 'Close GIFs' : 'GIF Search'}
           </Button>
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
         </div>
 
         {showGifSearch && (
@@ -151,33 +112,13 @@ export default function VisionBoard() {
                 className="relative border rounded-xl overflow-hidden shadow-md hover:shadow-xl bg-white"
                 onClick={() => setSelectedIndex(index)}
               >
-<<<<<<< HEAD
-                <SmartImage
-                  src={src}
-                  alt="Vision"
-=======
                 <Image
                   src={img.src}
                   alt={`Vision ${index}`}
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
                   width={400}
                   height={300}
-                  className="object-cover w-full h-48"
+                  className="object-cover w-full ah-48"
                 />
-<<<<<<< HEAD
-
-                <div className="absolute top-2 left-2 flex gap-2">
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="bg-red-500 text-white rounded-full p-1"
-                  >
-                    ❌
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedIndex(index);
-                      setIsModalOpen(true);
-=======
                 <div className="p-2 text-xs text-gray-600">Status: {img.status}</div>
                 <div className="absolute top-2 right-2 flex gap-1">
                   <Button
@@ -186,7 +127,6 @@ export default function VisionBoard() {
                     onClick={(e) => {
                       e.stopPropagation();
                       removeImage(img.id);
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
                     }}
                   >
                     ✖
@@ -244,43 +184,12 @@ export default function VisionBoard() {
                     ))}
                   </select>
 
-<<<<<<< HEAD
-                <div className="mb-4">
-                  <label className="block font-semibold mb-2">Notes</label>
-                  <textarea
-                    value={notes[selectedIndex]}
-                    onChange={(e) => updateNote(selectedIndex, e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                    rows={4}
-                  />
-                </div>
-
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex gap-2 text-gray-500">
-                    <MapPin className="w-5 h-5" />
-                    <Calendar className="w-5 h-5" />
-                    <Users className="w-5 h-5" />
-                    <Share2 className="w-5 h-5" />
-                    <FilePlus className="w-5 h-5" />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      className="text-sm px-3 py-1 border rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button className="text-sm px-3 py-1 bg-blue-600 text-white rounded">
-                      Save
-                    </button>
-=======
                   <div className="flex gap-2 text-sm mt-2 text-gray-600">
                     <MapPin className="w-4 h-4" /> Add location
                     <Calendar className="w-4 h-4" /> Add date
                     <Users className="w-4 h-4" /> Invite others
                     <Share2 className="w-4 h-4" /> Share goal
                     <FilePlus className="w-4 h-4" /> Attach file
->>>>>>> c4ad05e0956d4cc6b5eed7d4f21dc12df8c345af
                   </div>
                 </div>
                 <Button onClick={() => setDetailsOpen(false)} className="w-full bg-blue-600 text-white">
