@@ -1,62 +1,58 @@
-// pages/index.tsx
-"use client";
-
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 const floatingIcons = [
-  { emoji: '📷', label: 'Photography' },
-  { emoji: '🧠', label: 'Science' },
-  { emoji: '📚', label: 'Education' },
-  { emoji: '🛰️', label: 'Space' },
-  { emoji: '🥗', label: 'Recipes' },
-  { emoji: '🏋️‍♀️', label: 'Fitness' },
-  { emoji: '🛋️', label: 'Interior' },
+  { emoji: '🌐', label: 'Global' },
+  { emoji: '📸', label: 'Photos' },
+  { emoji: '🎥', label: 'Videos' },
+  { emoji: '🍲', label: 'Recipes' },
+  { emoji: '🧘‍♀️', label: 'Wellness' },
+  { emoji: '🏃‍♂️', label: 'Fitness' },
+  { emoji: '🧬', label: 'Science' },
   { emoji: '🌱', label: 'Eco-Friendly' },
-  { emoji: '📺', label: 'Shows' },
+  { emoji: '🎨', label: 'Design' },
+  { emoji: '📚', label: 'Education' },
   { emoji: '📰', label: 'News' },
+  { emoji: '🌌', label: 'Space' },
+  { emoji: '👠', label: 'Fashion' },
+  { emoji: '⚖️', label: 'Justice' },
 ];
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-tr from-white to-blue-50">
-      <div className="z-10 text-center">
-        <h1 className="text-5xl font-extrabold mb-4 text-gray-800">
-          Welcome to <span className="text-purple-600">LISTO</span>
-        </h1>
-        <p className="text-gray-600 mb-6 text-lg">
-          Your personalized dashboard for dreaming, doing, and dominating.
-        </p>
-        <div className="flex gap-4 justify-center">
-          <Link href="/vision-board">
-            <button className="px-5 py-3 bg-yellow-400 hover:bg-yellow-500 text-white font-medium rounded-xl shadow">
-              ✨ Enter Your Vision Board
-            </button>
-          </Link>
-          <Link href="/explore">
-            <button className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow">
-              🌍 Explore Articles & News
-            </button>
-          </Link>
-        </div>
+    <main className="relative min-h-screen flex flex-col items-center justify-center text-center p-6">
+      <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+        Welcome to <span className="text-purple-600">LISTO</span>
+      </h1>
+      <p className="mt-4 text-center text-gray-600 max-w-xl">
+        Your personalized dashboard for dreaming, doing, and dominating.
+      </p>
+      <div className="mt-6 flex gap-3">
+        <Link href="/vision-board">
+          <button className="p-2 border rounded bg-orange-100 hover:bg-orange-200">
+            ✨ Enter Your Vision Board
+          </button>
+        </Link>
+        <Link href="/explore">
+          <button className="p-2 border rounded bg-blue-100 hover:bg-blue-200">
+            🌐 Explore Articles & News
+          </button>
+        </Link>
       </div>
 
-      {/* Floating Icons */}
       {floatingIcons.map((item, index) => (
         <motion.div
-          key={index}
+          key={item.label}
           initial={{ y: 0 }}
-          animate={{ y: [-20, 20, -20] }}
-          transition={{
-            duration: 5 + Math.random() * 5,
-            repeat: Infinity,
-            repeatType: 'reverse',
-          }}
-          className="absolute text-3xl opacity-70 pointer-events-none"
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 4 + index, repeat: Infinity }}
+          className="absolute text-2xl md:text-4xl"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 90}%`,
+            top: `${Math.random() * 90}%`,
             zIndex: 0,
+            pointerEvents: 'none',
           }}
         >
           <span title={item.label}>{item.emoji}</span>
