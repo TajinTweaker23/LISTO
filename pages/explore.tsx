@@ -4,83 +4,81 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const GOOGLE_API_KEY = "AIzaSyCBY-vhluDW2PnFv-wjX7whesf6ZFD_Mw8";
-const SEARCH_ENGINE_ID = "84129d6fc73d94bbd";
-
 export default function Explore() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [query, setQuery] = useState("Hands");
-  const [location, setLocation] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords = `${position.coords.latitude.toFixed(2)}, ${position.coords.longitude.toFixed(2)}`;
-          setLocation(coords);
-        },
-        () => setLocation("Location unavailable")
-      );
-    }
-  }, []);
+  const handleSearch = async () => {
+    if (!query) return;
 
-  useEffect(() => {
-    if (query) {
-      fetch(
-        `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&searchType=image`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          setArticles(data.items || []);
-        })
-        .catch((error) => console.error("Image search error:", error));
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+    const cx = process.env.NEXT_PUBLIC_GOOGLE_CX_ID;
+    const endpoint = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
+      query
+    )}&cx=${cx}&key=${apiKey}&searchType=image`;
+
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      setResults(data.items || []);
+    } catch (error) {
+      console.error("Search failed:", error);
     }
-  }, [query]);
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-2 text-center">🧠 Explore LISTO's Dashboard</h1>
-        <p className="text-center text-gray-600 mb-8 text-sm italic">
-          {location ? `🌍 Showing inspiration near: ${location}` : "📍 Locating you..."}
-        </p>
+        <h1 className="text-4xl font-extrabold mb-4 text-center">
+          🔍 Explore the World
+        </h1>
 
-        <div className="mb-6 text-center">
+        <div className="flex justify-center mb-6">
           <input
-            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search articles, media, and more..."
-            className="px-4 py-2 border rounded w-full sm:w-96 shadow"
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            placeholder="Search GIFs, articles, blogs, etc..."
+            className="p-2 border rounded-l-md w-2/3"
           />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 rounded-r-md hover:bg-blue-600"
+          >
+            Search
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.length === 0 ? (
-            <p className="text-center text-gray-500 italic col-span-full">
-              🔍 Media search coming soon! This will include GIFs, videos, docs, and images.
-            </p>
-          ) : (
-            articles.map((item, index) => (
-              <motion.a
-                key={item.link}
-                href={item.link}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {results.map((item, i) => (
+            <motion.div
+              key={item.link}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white rounded-lg shadow-md overflow-hidden"
+            >
+              <a
+                href={item.image?.contextLink || item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="block p-4 rounded-lg shadow bg-white hover:shadow-lg transition duration-300"
               >
                 <img
-                  src={item.image?.thumbnailLink || item.link}
+                  src={item.link}
                   alt={item.title}
-                  className="w-full h-48 object-cover rounded mb-3"
+                  className="w-full h-56 object-cover"
                 />
-                <h2 className="text-lg font-semibold text-blue-800 mb-1">{item.title}</h2>
-                <p className="text-sm text-gray-600">{item.displayLink}</p>
-              </motion.a>
-            ))
-          )}
+                <div className="p-3">
+                  <h2 className="text-lg font-bold text-blue-700 line-clamp-2">
+                    {item.title}
+                  </h2>
+                  <p className="text-sm text-gray-600 italic mt-1">
+                    Visit full article
+                  </p>
+                </div>
+              </a>
+            </motion.div>
+          ))}
         </div>
       </div>
     </main>
