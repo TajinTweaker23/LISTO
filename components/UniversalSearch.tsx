@@ -1,4 +1,3 @@
-// components/UniversalSearch.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -11,48 +10,54 @@ export default function UniversalSearch() {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const search = async () => {
+  async function handleSearch() {
     if (!query) return;
     setLoading(true);
+    setResults([]);
 
-    const res = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}`
-    );
-    const data = await res.json();
-    setResults(data.items || []);
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${query}`
+      );
+      const data = await res.json();
+      setResults(data.items || []);
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+
     setLoading(false);
-  };
+  }
 
   return (
-    <div className="my-6 text-center">
+    <div className="w-full mb-10">
       <input
-        className="border border-gray-300 rounded px-4 py-2 w-full max-w-xl"
         type="text"
         placeholder="Search for articles, blogs, science, eco, and more..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className="w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <button
-        className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        onClick={search}
+        onClick={handleSearch}
+        className="mt-2 px-4 py-1 rounded bg-gray-200 hover:bg-gray-300"
       >
         Search
       </button>
 
-      {loading && <p className="mt-4 italic text-gray-500">Searching...</p>}
+      {loading && <p className="text-sm text-gray-500 mt-2">Loading...</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {results.map((item, idx) => (
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {results.map((item, index) => (
           <a
-            key={idx}
+            key={index}
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="block border border-gray-200 rounded p-4 shadow hover:shadow-lg bg-white text-left"
+            className="block p-4 border rounded shadow hover:bg-blue-50 transition"
           >
             <h3 className="text-lg font-semibold text-blue-700">{item.title}</h3>
-            <p className="text-sm text-gray-700 mt-1">{item.snippet}</p>
-            <p className="text-xs text-gray-500 mt-2">{item.displayLink}</p>
+            <p className="text-sm text-gray-600 mt-1">{item.snippet}</p>
+            <p className="text-xs text-purple-600 mt-2">{item.displayLink}</p>
           </a>
         ))}
       </div>
