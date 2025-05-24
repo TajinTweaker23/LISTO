@@ -28,14 +28,14 @@ export default function Home() {
       <p className="mt-4 text-center text-gray-600 max-w-xl">
         Your personalized dashboard for dreaming, doing, and dominating.
       </p>
-      <div className="mt-6 flex gap-3">
+      <div className="mt-6 flex flex-wrap gap-3 justify-center">
         <Link href="/vision-board">
-          <button className="p-2 border rounded bg-orange-100 hover:bg-orange-200">
+          <button className="p-2 px-4 border rounded-xl bg-orange-100 hover:bg-orange-200">
             ✨ Enter Your Vision Board
           </button>
         </Link>
         <Link href="/explore">
-          <button className="p-2 border rounded bg-blue-100 hover:bg-blue-200">
+          <button className="p-2 px-4 border rounded-xl bg-blue-100 hover:bg-blue-200">
             🌐 Explore Articles & News
           </button>
         </Link>
