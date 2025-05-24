@@ -86,7 +86,8 @@ export default function Explore() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-2 text-center">🧠 Explore LISTO's Dashboard</h1>
+  <UniversalSearch />
+  <h1 className="text-4xl font-extrabold mb-2 text-center">🧠 Explore LISTO's Dashboard</h1>
         <p className="text-center text-gray-600 mb-8 text-sm italic">
           {location ? `🌍 Showing inspiration near: ${location}` : "📍 Locating you..."}
         </p>
