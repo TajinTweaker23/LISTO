@@ -1,5 +1,5 @@
 "use client";
-
+import UniversalSearch from './components/UniversalSearch';
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
