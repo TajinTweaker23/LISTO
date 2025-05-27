@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sun, Moon, Menu, Home, Compass, User } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "@/firebase";
 
 const ExploreRebuild = () => {
   const [darkMode, setDarkMode] = useState(false);
