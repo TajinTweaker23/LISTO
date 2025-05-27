@@ -1,38 +1,34 @@
 // components/UniversalSearch.tsx
 "use client";
 
-import React, { FC, KeyboardEvent } from "react";
+import React, { KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 
-interface UniversalSearchProps {
+interface Props {
   value: string;
   onChange: (v: string) => void;
   onSearch: () => void;
   placeholder?: string;
 }
 
-const UniversalSearch: FC<UniversalSearchProps> = ({
+export default function UniversalSearch({
   value,
   onChange,
   onSearch,
   placeholder = "Search…",
-}) => {
-  const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onSearch();
-    }
+}: Props) {
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") { e.preventDefault(); onSearch(); }
   };
-
   return (
-    <div className="flex items-center max-w-3xl mx-auto mt-8 px-4 py-2 bg-white rounded-full shadow-md">
+    <div className="flex items-center bg-white rounded-full shadow-md px-4 py-2">
       <input
         type="text"
-        className="flex-1 outline-none px-3 py-2 rounded-full text-gray-700"
+        className="flex-1 outline-none px-3 py-2 text-gray-700"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKey}
+        onChange={e => onChange(e.target.value)}
+        onKeyDown={onKey}
       />
       <button
         onClick={onSearch}
@@ -43,6 +39,4 @@ const UniversalSearch: FC<UniversalSearchProps> = ({
       </button>
     </div>
   );
-};
-
-export default UniversalSearch;
+}
