@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { auth } from '../lib/firebase';
+import { db } from "../firebase"; // ✅ SAFE;
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
