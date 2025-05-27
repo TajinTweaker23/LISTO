@@ -9,7 +9,7 @@ const firebaseConfig = {
   storageBucket: "listo-listo.appspot.com",
   messagingSenderId: "70588131341",
   appId: "1:70588131341:web:f75739f617781be275cd44",
-  measurementId: "G-DBP3FC85KC"
+  measurementId: "G-DBP3FC85KC",
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
