@@ -8,14 +8,14 @@ import { Home, User } from "lucide-react";
 import UniversalSearch from "../components/UniversalSearch";
 
 const tiles = [
-  { emoji: "📰", title: "Breaking News",   desc: "Global updates & headlines", bg: "cream" },
-  { emoji: "🌱", title: "Green Living",    desc: "Daily eco-tips for you",      bg: "blush" },
-  { emoji: "📚", title: "Book Recs",       desc: "Curated reads to inspire",    bg: "sky" },
-  { emoji: "⚽", title: "Sports",          desc: "Highlights & analysis",       bg: "fog" },
-  { emoji: "🛠️", title: "DIY Projects",    desc: "Hands-on creativity",         bg: "apricot" },
-  { emoji: "💖", title: "Humanity Wins",   desc: "Stories of kindness",         bg: "mint" },
-  { emoji: "💡", title: "Mindful Living",  desc: "Peace meets productivity",    bg: "cloud" },
-  { emoji: "📣", title: "Get Involved",    desc: "Volunteer & impact",          bg: "cream" },
+  { emoji: "📰", title: "Breaking News",   desc: "Global updates & headlines", bgClass: "bg-cream" },
+  { emoji: "🌱", title: "Green Living",    desc: "Daily eco-tips for you",      bgClass: "bg-blush" },
+  { emoji: "📚", title: "Book Recs",       desc: "Curated reads to inspire",    bgClass: "bg-sky" },
+  { emoji: "⚽", title: "Sports",          desc: "Highlights & analysis",       bgClass: "bg-fog" },
+  { emoji: "🛠️", title: "DIY Projects",    desc: "Hands-on creativity",         bgClass: "bg-apricot" },
+  { emoji: "💖", title: "Humanity Wins",   desc: "Stories of kindness",         bgClass: "bg-mint" },
+  { emoji: "💡", title: "Mindful Living",  desc: "Peace meets productivity",    bgClass: "bg-cloud" },
+  { emoji: "📣", title: "Get Involved",    desc: "Volunteer & impact",          bgClass: "bg-cream" },
 ];
 
 export default function Explore() {
@@ -40,12 +40,14 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-cloud p-6">
+      {/* NavBar */}
       <nav className="flex justify-between items-center max-w-4xl mx-auto mb-6">
-        <Link href="/"><Home className="w-6 h-6 text-sage"/></Link>
+        <Link href="/"><Home className="w-6 h-6 text-sage" /></Link>
         <h1 className="text-2xl font-bold text-sage">🔍 Explore LISTO</h1>
-        <Link href="/profile"><User className="w-6 h-6 text-sage"/></Link>
+        <Link href="/profile"><User className="w-6 h-6 text-sage" /></Link>
       </nav>
 
+      {/* Search Bar */}
       <div className="max-w-4xl mx-auto sticky top-4 z-10">
         <UniversalSearch
           value={query}
@@ -56,6 +58,7 @@ export default function Explore() {
       </div>
 
       <main className="max-w-4xl mx-auto mt-8">
+        {/* Tiles when no query */}
         <AnimatePresence>
           {!query && !loading && !results.length && (
             <motion.div
@@ -63,10 +66,10 @@ export default function Explore() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              {tiles.map((t,i) => (
+              {tiles.map((t, i) => (
                 <motion.div
                   key={i}
-                  className={`p-6 rounded-xl bg-${t.bg} shadow-md flex flex-col items-center text-center`}
+                  className={`${t.bgClass} p-6 rounded-xl shadow-md flex flex-col items-center text-center`}
                   whileHover={{ scale: 1.03, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -81,16 +84,18 @@ export default function Explore() {
           )}
         </AnimatePresence>
 
+        {/* Loading & Error */}
         {loading && <p className="text-center mt-10">Loading…</p>}
         {error   && <p className="text-center mt-10 text-red-500">{error}</p>}
 
+        {/* Search Results */}
         {results.length > 0 && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            {results.map((item,idx) => (
+            {results.map((item, idx) => (
               <motion.a
                 key={idx}
                 href={item.link}
@@ -123,5 +128,5 @@ export default function Explore() {
         )}
       </main>
     </div>
-);
+  );
 }
