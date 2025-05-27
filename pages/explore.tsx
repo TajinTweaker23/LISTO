@@ -1,9 +1,10 @@
 // pages/explore.tsx
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Search as SearchIcon, User } from "lucide-react";
+import { Home, User } from "lucide-react";
 import UniversalSearch from "../components/UniversalSearch";
 
 const tiles = [
@@ -39,14 +40,12 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-cloud p-6">
-      {/* — NavBar — */}
       <nav className="flex justify-between items-center max-w-4xl mx-auto mb-6">
         <Link href="/"><Home className="w-6 h-6 text-sage"/></Link>
         <h1 className="text-2xl font-bold text-sage">🔍 Explore LISTO</h1>
         <Link href="/profile"><User className="w-6 h-6 text-sage"/></Link>
       </nav>
 
-      {/* — Search Bar — */}
       <div className="max-w-4xl mx-auto sticky top-4 z-10">
         <UniversalSearch
           value={query}
@@ -57,7 +56,6 @@ export default function Explore() {
       </div>
 
       <main className="max-w-4xl mx-auto mt-8">
-        {/* — Tiles (no query) — */}
         <AnimatePresence>
           {!query && !loading && !results.length && (
             <motion.div
@@ -83,11 +81,9 @@ export default function Explore() {
           )}
         </AnimatePresence>
 
-        {/* — Loading, Error — */}
         {loading && <p className="text-center mt-10">Loading…</p>}
         {error   && <p className="text-center mt-10 text-red-500">{error}</p>}
 
-        {/* — Search Results — */}
         {results.length > 0 && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -111,9 +107,15 @@ export default function Explore() {
                   />
                 )}
                 <div className="p-4">
-                  <h3 className="font-bold text-indigo-700 mb-1 line-clamp-2">{item.title}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">{item.snippet}</p>
-                  <span className="text-xs text-indigo-400 mt-2 block">{item.displayLink}</span>
+                  <h3 className="font-bold text-indigo-700 mb-1 line-clamp-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm line-clamp-3">
+                    {item.snippet}
+                  </p>
+                  <span className="text-xs text-indigo-400 mt-2 block">
+                    {item.displayLink}
+                  </span>
                 </div>
               </motion.a>
             ))}
@@ -121,5 +123,5 @@ export default function Explore() {
         )}
       </main>
     </div>
-  );
+);
 }
