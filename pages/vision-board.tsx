@@ -6,7 +6,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
 import { db } from "../firebase";
-import Navbar from "../components/ui/Navbar"; // ✅ Added here
+import Navbar from "../components/ui/Navbar";
+
 import {
   collection,
   addDoc,
@@ -16,7 +17,14 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { FilePlus, ImagePlus, Loader2, Search, UploadCloud } from "lucide-react";
+
+import {
+  FilePlus,
+  ImagePlus,
+  Loader2,
+  Search,
+  UploadCloud,
+} from "lucide-react";
 
 export default function VisionBoard() {
   const [mediaItems, setMediaItems] = useState<any[]>([]);
@@ -66,7 +74,7 @@ export default function VisionBoard() {
 
   return (
     <>
-      <Navbar /> {/* ✅ Injected here at top */}
+      <Navbar />
       <main className="min-h-screen bg-[#f8f9f3] p-6 text-[#2e423f]">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-5xl font-bold text-center mb-10 flex justify-center items-center gap-2">
@@ -75,7 +83,8 @@ export default function VisionBoard() {
 
           <div className="flex flex-wrap gap-4 justify-center mb-6">
             <label className="bg-[#a4c3b2] hover:bg-[#8fb29e] px-5 py-2 rounded cursor-pointer text-white font-medium flex items-center gap-2">
-              <UploadCloud className="w-5 h-5" /> Upload Image
+              <UploadCloud className="w-5 h-5" />
+              Upload Image
               <input
                 type="file"
                 accept="image/*"
@@ -182,8 +191,12 @@ export default function VisionBoard() {
                     ))}
                   </select>
                   <div className="flex flex-wrap gap-3 justify-between text-gray-500 text-xs mt-2">
-                    <span className="flex items-center gap-1"><FilePlus className="w-4 h-4" />Attach</span>
-                    <span className="flex items-center gap-1"><ImagePlus className="w-4 h-4" />Media</span>
+                    <span className="flex items-center gap-1">
+                      <FilePlus className="w-4 h-4" /> Attach
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <ImagePlus className="w-4 h-4" /> Media
+                    </span>
                   </div>
                   <button
                     onClick={() => setDetailsOpen(false)}
