@@ -1,140 +1,112 @@
-// /pages/impact-projects.tsx
+// pages/impact-projects.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
 import {
   collection,
   addDoc,
   onSnapshot,
-  Timestamp,
+  serverTimestamp,
 } from "firebase/firestore";
+import Navbar from "../components/ui/Navbar";
 import { motion } from "framer-motion";
-import { UploadCloud, Calendar, MapPin, FileText } from "lucide-react";
 
 export default function ImpactProjects() {
+  const [projects, setProjects] = useState<any[]>([]);
   const [form, setForm] = useState({
     title: "",
     description: "",
-    date: "",
     location: "",
-    file: null as File | null,
+    date: "",
   });
 
-  const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
-    if (name === "file") {
-      setForm((prev) => ({ ...prev, file: files[0] }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (!form.title.trim()) return;
-    await addDoc(collection(db, "impactProjects"), {
-      ...form,
-      createdAt: Timestamp.now(),
-    });
-    setForm({ title: "", description: "", date: "", location: "", file: null });
-  };
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "impactProjects"), (snap) => {
-      const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const unsub = onSnapshot(collection(db, "impactProjects"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setProjects(data);
-      setLoading(false);
     });
     return () => unsub();
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUploading(true);
+    await addDoc(collection(db, "impactProjects"), {
+      ...form,
+      createdAt: serverTimestamp(),
+    });
+    setForm({ title: "", description: "", location: "", date: "" });
+    setUploading(false);
+  };
+
   return (
-    <div className="min-h-screen bg-[#f5f6f4] p-6 text-gray-800">
-      <h1 className="text-4xl font-bold text-center mb-10">🌍 Organize Humanitarian Projects</h1>
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-[#f6f9f7] text-[#2e423f] p-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-center mb-8">🌍 Impact Projects</h1>
 
-      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-4 bg-white p-6 rounded-xl shadow-xl">
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Project Title"
-          className="w-full border p-2 rounded"
-          required
-        />
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Project Description"
-          className="w-full border p-2 rounded"
-          rows={3}
-        />
-        <div className="flex gap-2">
-          <input
-            name="date"
-            type="date"
-            value={form.date}
-            onChange={handleChange}
-            className="border p-2 rounded w-full"
-          />
-          <input
-            name="location"
-            placeholder="Location"
-            value={form.location}
-            onChange={handleChange}
-            className="border p-2 rounded w-full"
-          />
-        </div>
-        <input
-          name="file"
-          type="file"
-          accept="image/*,application/pdf"
-          onChange={handleChange}
-          className="w-full"
-        />
-        <button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold"
-        >
-          Add Project
-        </button>
-      </form>
-
-      <div className="mt-12 grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {loading ? (
-          <p className="text-center col-span-full text-gray-400 italic">Loading projects...</p>
-        ) : projects.length === 0 ? (
-          <p className="text-center col-span-full text-gray-400 italic">No projects yet. Be the first to make a difference.</p>
-        ) : (
-          projects.map((p, i) => (
-            <motion.div
-              key={p.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition space-y-2"
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white shadow-md rounded-lg p-6 space-y-4 mb-10"
+          >
+            <input
+              type="text"
+              required
+              placeholder="Project Title"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              className="w-full border p-2 rounded"
+            />
+            <textarea
+              placeholder="Description"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="w-full border p-2 rounded h-24"
+            ></textarea>
+            <input
+              type="text"
+              placeholder="Location"
+              value={form.location}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
+              className="w-full border p-2 rounded"
+            />
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+              className="w-full border p-2 rounded"
+            />
+            <button
+              type="submit"
+              className="w-full bg-[#6c9a8b] text-white py-2 rounded hover:bg-[#588076]"
+              disabled={uploading}
             >
-              <h2 className="text-lg font-bold">{p.title}</h2>
-              <p className="text-sm text-gray-600">{p.description}</p>
-              <div className="text-xs text-gray-500 flex items-center gap-1">
-                <Calendar className="w-4 h-4" /> {p.date || "TBD"}
-              </div>
-              <div className="text-xs text-gray-500 flex items-center gap-1">
-                <MapPin className="w-4 h-4" /> {p.location || "TBD"}
-              </div>
-              {p.file && (
-                <div className="text-xs text-blue-600 flex items-center gap-1">
-                  <FileText className="w-4 h-4" /> File attached
+              {uploading ? "Posting..." : "Create Project"}
+            </button>
+          </form>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {projects.map((p) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white p-4 rounded-lg shadow-md space-y-2"
+              >
+                <h2 className="text-xl font-semibold">{p.title}</h2>
+                <p className="text-sm text-gray-700">{p.description}</p>
+                <div className="text-xs text-gray-500">
+                  📍 {p.location} — 📅 {p.date}
                 </div>
-              )}
-            </motion.div>
-          ))
-        )}
-      </div>
-    </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </>
   );
 }
