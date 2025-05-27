@@ -17,7 +17,6 @@ const tiles = [
   { emoji: "📣", title: "Get Involved", desc: "Volunteer & impact" },
 ];
 
-// Brand palette (can move to tailwind.config.js later)
 const bgClasses = [
   "bg-[#D0E7D2]",
   "bg-[#FFF7E0]",
@@ -55,7 +54,7 @@ export default function Explore() {
 
   return (
     <>
-      {/* top search bar */}
+      {/* Top search bar */}
       <UniversalSearch
         value={query}
         onChange={setQuery}
@@ -63,7 +62,7 @@ export default function Explore() {
         placeholder="Search images, articles, docs..."
       />
 
-      {/* show tiles when no query */}
+      {/* Tiles when there’s no search query */}
       <AnimatePresence>
         {!query && !loading && !results.length && (
           <motion.div
@@ -88,17 +87,17 @@ export default function Explore() {
         )}
       </AnimatePresence>
 
-      {/* loading indicator */}
+      {/* Loading indicator */}
       {loading && (
         <p className="text-center mt-8 text-lg text-gray-700">Loading...</p>
       )}
 
-      {/* error message */}
+      {/* Error message */}
       {error && (
         <p className="text-center mt-8 text-red-500 font-semibold">{error}</p>
       )}
 
-      {/* search results */}
+      {/* Search results */}
       {results.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {results.map((item, i) => (
