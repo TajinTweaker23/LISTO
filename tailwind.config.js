@@ -1,9 +1,6 @@
 // tailwind.config.js
 module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}"
-  ],
+  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -14,7 +11,7 @@ module.exports = {
         fog:    "#F1E3F3",
         apricot:"#FFF3E7",
         mint:   "#E6F4EA",
-        cloud:  "#E3E8F0"
+        cloud:  "#E3E8F0",
       }
     }
   },
