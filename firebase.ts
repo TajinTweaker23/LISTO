@@ -12,5 +12,7 @@ const firebaseConfig = {
   measurementId: "G-DBP3FC85KC",
 };
 
+// ✅ this line prevents the duplicate error:
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
 export const db = getFirestore(app);
