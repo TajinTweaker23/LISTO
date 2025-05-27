@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { db } from "../firebase"; // ✅ SAFE;
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut
-} from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { app, db } from "../firebase"; // ✅ Import your app instance
+
+const auth = getAuth(app); // ✅ Initialize auth correctly
 
 export default function Login() {
   const router = useRouter();
