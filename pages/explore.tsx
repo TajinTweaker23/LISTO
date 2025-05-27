@@ -31,11 +31,11 @@ const categories = [
 
 export default function Explore() {
   const [query, setQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const handleSearch = () => {
-    if (!query) return;
-    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-    window.open(url, "_blank");
+    if (!query.trim()) return;
+    setShowSearch(true);
   };
 
   return (
@@ -65,21 +65,31 @@ export default function Explore() {
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((cat, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.03 }}
-            className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition border border-indigo-100"
-          >
-            <h2 className="text-xl font-semibold mb-2">{cat.title}</h2>
-            <p className="text-gray-600">{cat.description}</p>
-            <button className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium">
-              Explore →
-            </button>
-          </motion.div>
-        ))}
-      </div>
+      {showSearch ? (
+        <div className="h-[80vh]">
+          <iframe
+            title="Google Search"
+            src={`https://www.google.com/search?q=${encodeURIComponent(query)}`}
+            className="w-full h-full border rounded-xl shadow-inner"
+          />
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map((cat, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.03 }}
+              className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition border border-indigo-100"
+            >
+              <h2 className="text-xl font-semibold mb-2">{cat.title}</h2>
+              <p className="text-gray-600">{cat.description}</p>
+              <button className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium">
+                Explore →
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
