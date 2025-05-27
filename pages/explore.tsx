@@ -2,33 +2,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-const categories = [
-  {
-    title: "🌟 Inspire Me",
-    description: "Curated stories tailored to your interests.",
-  },
-  {
-    title: "🎥 Stream of the Day",
-    description: "Handpicked insightful videos daily.",
-  },
-  {
-    title: "💡 Quick Eco-Tips",
-    description: "Bite-sized daily actions to help the planet.",
-  },
-  {
-    title: "🛠️ DIY Innovation",
-    description: "Creative DIY projects to spark your innovation.",
-  },
-  {
-    title: "🎧 Podcasts for Growth",
-    description: "Top episodes to accelerate personal growth.",
-  },
-  {
-    title: "📅 Event Radar",
-    description: "Upcoming webinars, meetups, and more.",
-  },
-];
-
 const API_KEY = "AIzaSyBjiX2VKSPSKYnLF9LEzHr4n_WxsZX0qqc";
 const CSE_ID = "84129d6fc73d94bbd";
 
@@ -36,18 +9,30 @@ export default function Explore() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setLoading(true);
+    setError("");
+    setResults([]);
+
     try {
       const response = await fetch(
         `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CSE_ID}&q=${encodeURIComponent(query)}`
       );
       const data = await response.json();
-      setResults(data.items || []);
+
+      if (!data.items || data.items.length === 0) {
+        setError("No results found. Try a different keyword.");
+      } else {
+        setResults(data.items);
+      }
+
+      console.log("✅ GOOGLE API RESPONSE:", data);
     } catch (err) {
-      console.error("Search error:", err);
+      console.error("❌ API FETCH ERROR:", err);
+      setError("Something went wrong while searching. Check the console.");
     } finally {
       setLoading(false);
     }
@@ -67,7 +52,7 @@ export default function Explore() {
       <div className="flex justify-center gap-4 mb-10">
         <input
           type="text"
-          placeholder="Search for images, links, ideas, docs..."
+          placeholder="Search anything (images, topics, docs...)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -82,49 +67,40 @@ export default function Explore() {
       </div>
 
       {loading && (
-        <div className="text-center text-lg text-indigo-600 font-semibold">
-          Searching...
-        </div>
+        <div className="text-center text-indigo-500 font-medium">Loading...</div>
+      )}
+
+      {error && (
+        <div className="text-center text-red-500 font-semibold mt-4">{error}</div>
       )}
 
       {results.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {results.map((item, index) => (
+          {results.map((item, i) => (
             <motion.div
-              key={index}
+              key={i}
               whileHover={{ scale: 1.02 }}
-              className="bg-white rounded-xl p-5 shadow-lg border border-indigo-100 transition"
+              className="bg-white p-4 rounded-xl shadow-md border border-indigo-100 transition"
             >
-              <h3 className="text-lg font-bold mb-2 text-indigo-700">
+              <h2 className="text-lg font-semibold text-indigo-700 mb-1">
                 {item.title}
-              </h3>
+              </h2>
               <p className="text-gray-600 mb-2">{item.snippet}</p>
+              {item.pagemap?.cse_image?.[0]?.src && (
+                <img
+                  src={item.pagemap.cse_image[0].src}
+                  alt={item.title}
+                  className="rounded-lg mb-2 w-full object-cover max-h-40"
+                />
+              )}
               <a
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-500 underline hover:text-indigo-700"
+                className="text-indigo-600 hover:text-indigo-800 font-medium underline"
               >
                 Visit
               </a>
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      {results.length === 0 && !loading && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.03 }}
-              className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition border border-indigo-100"
-            >
-              <h2 className="text-xl font-semibold mb-2">{cat.title}</h2>
-              <p className="text-gray-600">{cat.description}</p>
-              <button className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium">
-                Explore →
-              </button>
             </motion.div>
           ))}
         </div>
