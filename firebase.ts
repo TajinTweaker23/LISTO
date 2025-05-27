@@ -1,3 +1,4 @@
+// firebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -12,8 +13,9 @@ const firebaseConfig = {
   measurementId: "G-DBP3FC85KC"
 };
 
-// ✅ Only initialize once
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// 🔐 Prevent duplicate initialization
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 
