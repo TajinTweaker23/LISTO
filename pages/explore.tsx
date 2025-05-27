@@ -43,8 +43,12 @@ export default function Explore() {
         🚀 Explore LISTO
       </motion.h1>
 
-      <UniversalSearch />
+      {/* Search UI */}
+      <div className="max-w-4xl mx-auto">
+        <UniversalSearch />
+      </div>
 
+      {/* Feature Categories */}
       <section className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {categories.map((category, index) => (
           <motion.div
@@ -64,6 +68,7 @@ export default function Explore() {
         ))}
       </section>
 
+      {/* Footer */}
       <footer className="mt-12 text-center">
         <motion.div
           initial={{ opacity: 0 }}
