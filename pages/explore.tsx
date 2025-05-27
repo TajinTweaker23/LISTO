@@ -28,82 +28,104 @@ export default function Explore() {
       } else {
         setResults(data.items);
       }
-
-      console.log("✅ GOOGLE API RESPONSE:", data);
     } catch (err) {
       console.error("❌ API FETCH ERROR:", err);
-      setError("Something went wrong while searching. Check the console.");
+      setError("Something went wrong. Check console.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
   return (
-    <main className="min-h-screen px-6 py-10 bg-gradient-to-br from-indigo-100 via-white to-indigo-50 text-gray-800">
+    <main className="min-h-screen px-6 py-12 bg-gradient-to-tr from-blue-100 via-white to-violet-200 text-gray-800">
       <motion.h1
-        initial={{ opacity: 0, y: -30 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-4xl font-extrabold text-center mb-8"
+        transition={{ duration: 0.6 }}
+        className="text-center text-4xl font-bold mb-8 text-indigo-800"
       >
         🔍 Explore LISTO
       </motion.h1>
 
-      <div className="flex justify-center gap-4 mb-10">
+      <div className="flex justify-center items-center gap-4 mb-10">
         <input
           type="text"
-          placeholder="Search anything (images, topics, docs...)"
+          placeholder="Search images, docs, topics..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="w-full max-w-xl px-4 py-2 rounded-full border shadow-md outline-none focus:ring-2 focus:ring-indigo-400"
+          onKeyDown={handleKeyPress}
+          className="w-full max-w-xl px-5 py-3 rounded-full border border-indigo-300 shadow-md text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
         />
         <button
           onClick={handleSearch}
-          className="px-5 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition"
+          className="px-6 py-3 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg transition"
         >
           Search
         </button>
       </div>
 
       {loading && (
-        <div className="text-center text-indigo-500 font-medium">Loading...</div>
+        <div className="text-center text-indigo-600 font-semibold text-lg">
+          Loading results...
+        </div>
       )}
 
       {error && (
-        <div className="text-center text-red-500 font-semibold mt-4">{error}</div>
+        <div className="text-center text-red-500 font-medium text-lg">{error}</div>
       )}
 
       {results.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { staggerChildren: 0.15 },
+            },
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+        >
           {results.map((item, i) => (
             <motion.div
               key={i}
+              variants={{
+                hidden: { opacity: 0, scale: 0.95 },
+                visible: { opacity: 1, scale: 1 },
+              }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white p-4 rounded-xl shadow-md border border-indigo-100 transition"
+              className="bg-white p-4 rounded-xl shadow-lg border border-indigo-100 hover:shadow-2xl transition-all flex items-start gap-4"
             >
-              <h2 className="text-lg font-semibold text-indigo-700 mb-1">
-                {item.title}
-              </h2>
-              <p className="text-gray-600 mb-2">{item.snippet}</p>
               {item.pagemap?.cse_image?.[0]?.src && (
                 <img
                   src={item.pagemap.cse_image[0].src}
                   alt={item.title}
-                  className="rounded-lg mb-2 w-full object-cover max-h-40"
+                  className="w-16 h-16 object-cover rounded-md border"
                 />
               )}
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-600 hover:text-indigo-800 font-medium underline"
-              >
-                Visit
-              </a>
+              <div>
+                <h2 className="text-md font-bold text-indigo-700">
+                  {item.title}
+                </h2>
+                <p className="text-gray-600 text-sm mb-1">{item.snippet}</p>
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-500 hover:text-indigo-700 underline text-sm"
+                >
+                  Visit →
+                </a>
+              </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </main>
   );
