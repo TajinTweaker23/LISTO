@@ -5,7 +5,7 @@ import React, { KeyboardEvent } from "react";
 
 export interface UniversalSearchProps {
   value: string;
-  onChange: (newValue: string) => void;
+  onChange: (v: string) => void;
   onSearch: () => void;
   placeholder?: string;
 }
@@ -16,21 +16,19 @@ export default function UniversalSearch({
   onSearch,
   placeholder = "Search…",
 }: UniversalSearchProps) {
-  const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onSearch();
-    }
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") onSearch();
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full max-w-3xl mx-auto">
       <input
         type="text"
-        className="w-full px-4 py-2 rounded-l-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sage"
+        className="flex-1 px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-sage"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKey}
+        onKeyDown={onKey}
       />
       <button
         onClick={onSearch}
