@@ -5,31 +5,35 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const q = req.query.q;
-  if (!q || typeof q !== "string") {
+  const q = Array.isArray(req.query.q) ? req.query.q[0] : req.query.q;
+  if (!q) {
     return res.status(400).json({ error: "Missing query" });
   }
 
-  // Make sure you have set these in Vercel / Environment Variables:
-  // GOOGLE_API_KEY and GOOGLE_CX
+  // first try GOOGLE_CX, then SEARCH_ENGINE_ID
+  const cx = process.env.GOOGLE_CX || process.env.SEARCH_ENGINE_ID;
   const apiKey = process.env.GOOGLE_API_KEY;
-  const cx     = process.env.GOOGLE_CX;
 
-  if (!apiKey || !cx) {
+  if (!cx || !apiKey) {
+    console.error("Missing GOOGLE_CX or SEARCH_ENGINE_ID or GOOGLE_API_KEY");
     return res
       .status(500)
-      .json({ error: "Missing Google API credentials" });
+      .json({ error: "Server mis-configured. Check your env vars." });
   }
 
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
-    q
-  )}&searchType=image`; // image search
+  const url = new URL("https://www.googleapis.com/customsearch/v1");
+  url.searchParams.set("key", apiKey);
+  url.searchParams.set("cx", cx);
+  url.searchParams.set("q", q);
+  url.searchParams.set("searchType", "image");
+  url.searchParams.set("num", "12");
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
+    const r = await fetch(url.toString());
+    const data = await r.json();
     return res.status(200).json(data);
   } catch (err: any) {
+    console.error("Google search error:", err);
     return res.status(500).json({ error: err.message });
   }
 }
