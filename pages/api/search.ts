@@ -9,7 +9,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // ───────────────────────────────────────────────────────────────────────────
-  // 1) Extract the “q” query parameter from /api/search?q=...
+  // 1) Extract “q” from /api/search?q=…
   // ───────────────────────────────────────────────────────────────────────────
   const q = Array.isArray(req.query.q) ? req.query.q[0] : req.query.q;
   if (!q) {
@@ -17,16 +17,16 @@ export default async function handler(
   }
 
   // ───────────────────────────────────────────────────────────────────────────
-  // 2) Read your Custom Search Engine ID and API Key from env vars:
-  //    - Either process.env.SEARCH_ENGINE_ID or process.env.GOOGLE_CX
-  //    - process.env.GOOGLE_API_KEY
+  // 2) Read your CSE ID and API key from env vars:
+  //    process.env.SEARCH_ENGINE_ID  (or process.env.GOOGLE_CX)
+  //    process.env.GOOGLE_API_KEY
   // ───────────────────────────────────────────────────────────────────────────
   const cx = process.env.GOOGLE_CX || process.env.SEARCH_ENGINE_ID;
   const apiKey = process.env.GOOGLE_API_KEY;
 
   if (!cx || !apiKey) {
     console.error(
-      "❌  Missing config:",
+      "❌  Missing CSE or Key:",
       "SEARCH_ENGINE_ID=", process.env.SEARCH_ENGINE_ID,
       "GOOGLE_CX=", process.env.GOOGLE_CX,
       "GOOGLE_API_KEY=", process.env.GOOGLE_API_KEY
@@ -35,14 +35,12 @@ export default async function handler(
       .status(500)
       .json({
         error:
-          "Server misconfigured: missing SEARCH_ENGINE_ID / GOOGLE_API_KEY",
+          "Server misconfigured: missing SEARCH_ENGINE_ID or GOOGLE_API_KEY",
       });
   }
 
   // ───────────────────────────────────────────────────────────────────────────
-  // 3) Build the URL to call Google’s Custom Search JSON API:
-  //    - We specify searchType=image so that results.items will be images
-  //    - We set num=12 to retrieve up to 12 images
+  // 3) Build the Google Custom Search URL (images, up to 12 results)
   // ───────────────────────────────────────────────────────────────────────────
   const url = new URL("https://www.googleapis.com/customsearch/v1");
   url.searchParams.set("key", apiKey);
@@ -55,11 +53,7 @@ export default async function handler(
     const googleResponse = await fetch(url.toString());
     if (!googleResponse.ok) {
       const text = await googleResponse.text();
-      console.error(
-        "Google CSE returned non-OK:",
-        googleResponse.status,
-        text
-      );
+      console.error("Google CSE returned non-OK:", googleResponse.status, text);
       return res.status(502).json({ error: "Bad response from Google CSE" });
     }
     const data = await googleResponse.json();
