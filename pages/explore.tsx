@@ -19,12 +19,12 @@ const tiles = [
 ];
 
 export default function Explore() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery]     = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]     = useState("");
 
-  // 1) Called when user hits “Search”
+  // Called when user clicks “Search”:
   const handleSearch = async () => {
     if (!query.trim()) return;
     setError("");
@@ -66,14 +66,12 @@ export default function Explore() {
 
       {/* ─── Sticky search bar ───────────────────────────────────── */}
       <div className="sticky top-0 z-10 bg-[#E3E8F0] py-4 px-6 border-b border-gray-200">
-        <div className="max-w-4xl mx-auto">
-          <UniversalSearch
-            value={query}
-            onChange={setQuery}
-            onSearch={handleSearch}
-            placeholder="Search images, articles, docs…"
-          />
-        </div>
+        <UniversalSearch
+          value={query}
+          onChange={setQuery}
+          onSearch={handleSearch}
+          placeholder="Search images, articles, docs…"
+        />
       </div>
 
       {/* ─── Main content area ───────────────────────────────────── */}
@@ -115,7 +113,7 @@ export default function Explore() {
           <p className="text-center mt-12 text-red-500 font-semibold">{error}</p>
         )}
 
-        {/* 4) Search results grid (images) */}
+        {/* 4) Show search results grid (images) */}
         {results.length > 0 && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
