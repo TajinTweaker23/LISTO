@@ -1,4 +1,7 @@
-// pages/explore.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// File: pages/explore.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+
 "use client";
 
 import React, { useState } from "react";
@@ -8,25 +11,66 @@ import { Home, User } from "lucide-react";
 import UniversalSearch from "../components/UniversalSearch";
 
 const tiles = [
-  { emoji: "📰", title: "Breaking News", desc: "Global updates & headlines", bgClass: "bg-[#D0E7D2]" },
-  { emoji: "🌱", title: "Green Living",    desc: "Daily eco-tips for you",      bgClass: "bg-[#FFF7E0]" },
-  { emoji: "📚", title: "Book Recs",       desc: "Curated reads to inspire",    bgClass: "bg-[#FBE4E4]" },
-  { emoji: "⚽", title: "Sports",          desc: "Highlights & analysis",       bgClass: "bg-[#E0ECF7]" },
-  { emoji: "🛠️", title: "DIY Projects",    desc: "Hands-on creativity",         bgClass: "bg-[#F1E3F3]" },
-  { emoji: "💖", title: "Humanity Wins",   desc: "Stories of kindness",         bgClass: "bg-[#FFF3E7]" },
-  { emoji: "💡", title: "Mindful Living",  desc: "Peace meets productivity",    bgClass: "bg-[#E6F4EA]" },
-  { emoji: "📣", title: "Get Involved",    desc: "Volunteer & impact",          bgClass: "bg-[#E3E8F0]" },
+  {
+    emoji: "📰",
+    title: "Breaking News",
+    desc: "Global updates & headlines",
+    bgClass: "bg-[#D0E7D2]",
+  },
+  {
+    emoji: "🌱",
+    title: "Green Living",
+    desc: "Daily eco-tips for you",
+    bgClass: "bg-[#FFF7E0]",
+  },
+  {
+    emoji: "📚",
+    title: "Book Recs",
+    desc: "Curated reads to inspire",
+    bgClass: "bg-[#FBE4E4]",
+  },
+  {
+    emoji: "⚽",
+    title: "Sports",
+    desc: "Highlights & analysis",
+    bgClass: "bg-[#E0ECF7]",
+  },
+  {
+    emoji: "🛠️",
+    title: "DIY Projects",
+    desc: "Hands-on creativity",
+    bgClass: "bg-[#F1E3F3]",
+  },
+  {
+    emoji: "💖",
+    title: "Humanity Wins",
+    desc: "Stories of kindness",
+    bgClass: "bg-[#FFF3E7]",
+  },
+  {
+    emoji: "💡",
+    title: "Mindful Living",
+    desc: "Peace meets productivity",
+    bgClass: "bg-[#E6F4EA]",
+  },
+  {
+    emoji: "📣",
+    title: "Get Involved",
+    desc: "Volunteer & impact",
+    bgClass: "bg-[#E3E8F0]",
+  },
 ];
 
 export default function Explore() {
-  const [query, setQuery]     = useState("");
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
+  const [error, setError] = useState("");
 
-  // Called when user clicks “Search”:
+  // Called when “🔍” is clicked or Enter is pressed
   const handleSearch = async () => {
     if (!query.trim()) return;
+
     setError("");
     setResults([]);
     setLoading(true);
@@ -48,12 +92,13 @@ export default function Explore() {
       console.error("Error calling /api/search:", err);
       setError("Search failed. Try again.");
     }
+
     setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-[#E3E8F0]">
-      {/* ─── Top nav bar ──────────────────────────────────────────── */}
+      {/* ─── Top navigation bar ──────────────────────────────────────── */}
       <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
         <Link href="/">
           <Home className="w-6 h-6 text-[#46675B] hover:text-[#36574B]" />
@@ -64,7 +109,7 @@ export default function Explore() {
         </Link>
       </nav>
 
-      {/* ─── Sticky search bar ───────────────────────────────────── */}
+      {/* ─── Sticky search bar ──────────────────────────────────────── */}
       <div className="sticky top-0 z-10 bg-[#E3E8F0] py-4 px-6 border-b border-gray-200">
         <UniversalSearch
           value={query}
@@ -74,9 +119,9 @@ export default function Explore() {
         />
       </div>
 
-      {/* ─── Main content area ───────────────────────────────────── */}
+      {/* ─── Main content ───────────────────────────────────────────── */}
       <main className="max-w-4xl mx-auto px-4 py-6">
-        {/* 1) Show “tiles” if no query, no results, and not loading */}
+        {/* Show tiles when no query, no results, and not loading */}
         <AnimatePresence>
           {!query && !loading && results.length === 0 && (
             <motion.div
@@ -89,7 +134,10 @@ export default function Explore() {
                 <motion.div
                   key={i}
                   className={`${t.bgClass} p-6 rounded-xl shadow-md flex flex-col items-center text-center`}
-                  whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+                  whileHover={{
+                    scale: 1.02,
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                  }}
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: i * 0.1 }}
@@ -103,17 +151,17 @@ export default function Explore() {
           )}
         </AnimatePresence>
 
-        {/* 2) Loading indicator */}
+        {/* Loading indicator */}
         {loading && (
           <p className="text-center mt-12 text-gray-600">Loading results…</p>
         )}
 
-        {/* 3) Error message */}
+        {/* Error message */}
         {error && (
           <p className="text-center mt-12 text-red-500 font-semibold">{error}</p>
         )}
 
-        {/* 4) Show search results grid (images) */}
+        {/* Search results grid */}
         {results.length > 0 && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
