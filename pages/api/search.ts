@@ -24,7 +24,6 @@ export default async function handler(
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
   url.searchParams.set("q", q);
-  url.searchParams.set("searchType", "image");
   url.searchParams.set("num", "12");
 
   // === DEBUG LOG: See what vars the server is actually using ===
