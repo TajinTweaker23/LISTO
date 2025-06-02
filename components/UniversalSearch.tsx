@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// File: components/UniversalSearch.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client";
 
 import React from "react";
@@ -14,8 +10,8 @@ interface UniversalSearchProps {
 }
 
 /**
- * A simple controlled input + “Search” button.
- * When “Enter” or the button is pressed, it calls onSearch().
+ * A controlled input + “Search” button.  When “Enter” or the button is pressed,
+ * it calls onSearch().
  */
 export default function UniversalSearch({
   value,
