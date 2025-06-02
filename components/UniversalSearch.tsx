@@ -1,57 +1,54 @@
-import React, { useState } from "react";
+// components/UniversalSearch.tsx
+"use client";
 
-// ✅ Read both values from environment variables instead of hard-coding:
-const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY!;
-const SEARCH_ENGINE_ID = process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID!;
+import React from "react";
 
-export default function UniversalSearch() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+type UniversalSearchProps = {
+  value: string;
+  onChange: (newValue: string) => void;
+  onSearch: () => void;
+  placeholder?: string;
+};
 
-  const search = async () => {
-    if (!query) return;
-    setLoading(true);
-
-    // Compose the URL using the env vars:
-    const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}`;
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      setResults(data.items || []);
-    } catch (err) {
-      console.error("Custom Search error:", err);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function UniversalSearch({
+  value,
+  onChange,
+  onSearch,
+  placeholder = "Type to search…",
+}: UniversalSearchProps) {
   return (
-    <div>
+    <div className="flex w-full max-w-4xl mx-auto">
       <input
         type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Type something to search…"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="
+          flex-1 
+          px-4 py-2 
+          border border-gray-300 
+          rounded-l-xl 
+          shadow-sm 
+          focus:outline-none focus:ring-2 focus:ring-indigo-500 
+          text-gray-700
+        "
       />
-      <button onClick={search} disabled={loading || !query}>
-        {loading ? "Searching…" : "Search"}
+      <button
+        onClick={onSearch}
+        disabled={value.trim().length === 0}
+        className="
+          px-6 py-2 
+          bg-indigo-600 
+          text-white 
+          font-semibold 
+          rounded-r-xl 
+          hover:bg-indigo-700 
+          transition
+          disabled:opacity-50 disabled:cursor-not-allowed
+        "
+      >
+        🔍
       </button>
-
-      {results.length > 0 && (
-        <ul>
-          {results.map((item: any, idx: number) => (
-            <li key={idx}>
-              <a href={item.link} target="_blank" rel="noopener noreferrer">
-                {item.title}
-              </a>
-              <p>{item.snippet}</p>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
