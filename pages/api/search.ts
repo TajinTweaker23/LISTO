@@ -34,7 +34,7 @@ export default async function handler(
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
   url.searchParams.set("q", q);
-  // We want images, so:
+  // We want images:
   url.searchParams.set("searchType", "image");
   // Return up to 12 images:
   url.searchParams.set("num", "12");
