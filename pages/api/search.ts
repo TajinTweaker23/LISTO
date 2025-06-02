@@ -27,6 +27,14 @@ export default async function handler(
   url.searchParams.set("searchType", "image");
   url.searchParams.set("num", "12");
 
+  // === DEBUG LOG: See what vars the server is actually using ===
+  console.log("DEBUG_GOOGLE_SEARCH:", {
+    apiKey,
+    cx,
+    q,
+    url: url.toString()
+  });
+
   try {
     const response = await fetch(url.toString());
     const text = await response.text();
