@@ -1,41 +1,57 @@
-// components/UniversalSearch.tsx
-"use client";
+import React, { useState } from "react";
 
-import React, { KeyboardEvent } from "react";
-import { Search } from "lucide-react";
+// ✅ Read both values from environment variables instead of hard-coding:
+const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY!;
+const SEARCH_ENGINE_ID = process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID!;
 
-export default function UniversalSearch(props: {
-  value: string;
-  onChange: (val: string) => void;
-  onSearch: () => Promise<void>;
-  placeholder?: string;
-}) {
-  const { value, onChange, onSearch, placeholder } = props;
+export default function UniversalSearch() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // When user hits “Enter” in the input, trigger onSearch()
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onSearch();
+  const search = async () => {
+    if (!query) return;
+    setLoading(true);
+
+    // Compose the URL using the env vars:
+    const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setResults(data.items || []);
+    } catch (err) {
+      console.error("Custom Search error:", err);
+      setResults([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center space-x-2 w-full">
+    <div>
       <input
         type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder || "Search…"}
-        className="w-full px-4 py-2 border border-gray-300 rounded-l-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Type something to search…"
       />
-      <button
-        onClick={() => onSearch()}
-        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-r-full shadow-md transition"
-      >
-        <Search className="w-5 h-5" />
+      <button onClick={search} disabled={loading || !query}>
+        {loading ? "Searching…" : "Search"}
       </button>
+
+      {results.length > 0 && (
+        <ul>
+          {results.map((item: any, idx: number) => (
+            <li key={idx}>
+              <a href={item.link} target="_blank" rel="noopener noreferrer">
+                {item.title}
+              </a>
+              <p>{item.snippet}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
