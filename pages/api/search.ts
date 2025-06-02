@@ -4,22 +4,22 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // 1) Get the query
   const q = Array.isArray(req.query.q) ? req.query.q[0] : req.query.q;
   if (!q) {
     return res.status(400).json({ error: "Missing query parameter 'q'" });
   }
 
+  // 2) Read search engine id and API key
   const cx = process.env.GOOGLE_CX || process.env.SEARCH_ENGINE_ID;
   const apiKey = process.env.GOOGLE_API_KEY;
-
   if (!cx || !apiKey) {
-    return res
-      .status(500)
-      .json({
-        error: "Server misconfigured: missing GOOGLE_CX / SEARCH_ENGINE_ID / GOOGLE_API_KEY"
-      });
+    return res.status(500).json({
+      error: "Server misconfigured: missing GOOGLE_CX / SEARCH_ENGINE_ID / GOOGLE_API_KEY"
+    });
   }
 
+  // 3) Build request URL
   const url = new URL("https://www.googleapis.com/customsearch/v1");
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
@@ -28,22 +28,28 @@ export default async function handler(
   url.searchParams.set("num", "12");
 
   try {
-    const r = await fetch(url.toString());
-    const text = await r.text();
-    if (!r.ok) {
-      // Try to parse error as JSON, fallback to plain text
-      let errorDetail;
-      try { errorDetail = JSON.parse(text); }
-      catch { errorDetail = text; }
+    const response = await fetch(url.toString());
+    const text = await response.text();
+
+    // Debug log (optional, you can remove this after testing)
+    console.log("Google CSE raw response:", text);
+
+    if (!response.ok) {
+      let googleError;
+      try { googleError = JSON.parse(text); }
+      catch { googleError = text; }
       return res.status(502).json({
         error: "Bad response from Google CSE",
-        status: r.status,
-        googleError: errorDetail
+        status: response.status,
+        googleError
       });
     }
+
+    // Parse and return successful result
     const data = JSON.parse(text);
     return res.status(200).json(data);
+
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message || "Unknown error" });
   }
 }
