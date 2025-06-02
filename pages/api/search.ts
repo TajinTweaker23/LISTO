@@ -1,47 +1,25 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// File: pages/api/search.ts
-// ─────────────────────────────────────────────────────────────────────────────
-
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // ───────────────────────────────────────────────────────────────────────────
-  // 1) Extract “q” from /api/search?q=…
-  // ───────────────────────────────────────────────────────────────────────────
   const q = Array.isArray(req.query.q) ? req.query.q[0] : req.query.q;
   if (!q) {
     return res.status(400).json({ error: "Missing query parameter 'q'" });
   }
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // 2) Read your CSE ID and API key from env vars:
-  //    process.env.SEARCH_ENGINE_ID  (or process.env.GOOGLE_CX)
-  //    process.env.GOOGLE_API_KEY
-  // ───────────────────────────────────────────────────────────────────────────
   const cx = process.env.GOOGLE_CX || process.env.SEARCH_ENGINE_ID;
   const apiKey = process.env.GOOGLE_API_KEY;
 
   if (!cx || !apiKey) {
-    console.error(
-      "❌  Missing CSE or Key:",
-      "SEARCH_ENGINE_ID=", process.env.SEARCH_ENGINE_ID,
-      "GOOGLE_CX=", process.env.GOOGLE_CX,
-      "GOOGLE_API_KEY=", process.env.GOOGLE_API_KEY
-    );
     return res
       .status(500)
       .json({
-        error:
-          "Server misconfigured: missing SEARCH_ENGINE_ID or GOOGLE_API_KEY",
+        error: "Server misconfigured: missing GOOGLE_CX / SEARCH_ENGINE_ID / GOOGLE_API_KEY"
       });
   }
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // 3) Build the Google Custom Search URL (images, up to 12 results)
-  // ───────────────────────────────────────────────────────────────────────────
   const url = new URL("https://www.googleapis.com/customsearch/v1");
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
@@ -50,16 +28,22 @@ export default async function handler(
   url.searchParams.set("num", "12");
 
   try {
-    const googleResponse = await fetch(url.toString());
-    if (!googleResponse.ok) {
-      const text = await googleResponse.text();
-      console.error("Google CSE returned non-OK:", googleResponse.status, text);
-      return res.status(502).json({ error: "Bad response from Google CSE" });
+    const r = await fetch(url.toString());
+    const text = await r.text();
+    if (!r.ok) {
+      // Try to parse error as JSON, fallback to plain text
+      let errorDetail;
+      try { errorDetail = JSON.parse(text); }
+      catch { errorDetail = text; }
+      return res.status(502).json({
+        error: "Bad response from Google CSE",
+        status: r.status,
+        googleError: errorDetail
+      });
     }
-    const data = await googleResponse.json();
+    const data = JSON.parse(text);
     return res.status(200).json(data);
   } catch (err: any) {
-    console.error("Error fetching from Google CSE:", err);
     return res.status(500).json({ error: err.message });
   }
 }
