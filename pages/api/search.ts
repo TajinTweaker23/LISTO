@@ -5,35 +5,44 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // 1) Extract the “q” query parameter
   const q = Array.isArray(req.query.q) ? req.query.q[0] : req.query.q;
   if (!q) {
-    return res.status(400).json({ error: "Missing query" });
+    return res.status(400).json({ error: "Missing query parameter 'q'" });
   }
 
-  // first try GOOGLE_CX, then SEARCH_ENGINE_ID
+  // 2) Read either GOOGLE_CX or SEARCH_ENGINE_ID from environment
   const cx = process.env.GOOGLE_CX || process.env.SEARCH_ENGINE_ID;
   const apiKey = process.env.GOOGLE_API_KEY;
-
   if (!cx || !apiKey) {
-    console.error("Missing GOOGLE_CX or SEARCH_ENGINE_ID or GOOGLE_API_KEY");
+    console.error("❌  Missing CX or API key. GOOGLE_CX:", process.env.GOOGLE_CX,
+                  "SEARCH_ENGINE_ID:", process.env.SEARCH_ENGINE_ID,
+                  "GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY);
     return res
       .status(500)
-      .json({ error: "Server mis-configured. Check your env vars." });
+      .json({ error: "Server misconfigured: missing GOOGLE_CX / SEARCH_ENGINE_ID / GOOGLE_API_KEY" });
   }
 
+  // 3) Build the Google Custom Search URL
   const url = new URL("https://www.googleapis.com/customsearch/v1");
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
   url.searchParams.set("q", q);
   url.searchParams.set("searchType", "image");
+  // optional: adjust number of images returned
   url.searchParams.set("num", "12");
 
   try {
     const r = await fetch(url.toString());
+    if (!r.ok) {
+      const text = await r.text();
+      console.error("Google returned non-OK:", r.status, text);
+      return res.status(502).json({ error: "Bad response from Google CSE" });
+    }
     const data = await r.json();
     return res.status(200).json(data);
   } catch (err: any) {
-    console.error("Google search error:", err);
+    console.error("Error fetching from Google CSE:", err);
     return res.status(500).json({ error: err.message });
   }
 }
