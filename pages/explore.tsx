@@ -1,65 +1,13 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// File: pages/explore.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Home, User } from "lucide-react";
-import UniversalSearch from "../components/UniversalSearch";
+import { motion } from "framer-motion";
 
-const tiles = [
-  {
-    emoji: "📰",
-    title: "Breaking News",
-    desc: "Global updates & headlines",
-    bgClass: "bg-[#D0E7D2]",
-  },
-  {
-    emoji: "🌱",
-    title: "Green Living",
-    desc: "Daily eco-tips for you",
-    bgClass: "bg-[#FFF7E0]",
-  },
-  {
-    emoji: "📚",
-    title: "Book Recs",
-    desc: "Curated reads to inspire",
-    bgClass: "bg-[#FBE4E4]",
-  },
-  {
-    emoji: "⚽",
-    title: "Sports",
-    desc: "Highlights & analysis",
-    bgClass: "bg-[#E0ECF7]",
-  },
-  {
-    emoji: "🛠️",
-    title: "DIY Projects",
-    desc: "Hands-on creativity",
-    bgClass: "bg-[#F1E3F3]",
-  },
-  {
-    emoji: "💖",
-    title: "Humanity Wins",
-    desc: "Stories of kindness",
-    bgClass: "bg-[#FFF3E7]",
-  },
-  {
-    emoji: "💡",
-    title: "Mindful Living",
-    desc: "Peace meets productivity",
-    bgClass: "bg-[#E6F4EA]",
-  },
-  {
-    emoji: "📣",
-    title: "Get Involved",
-    desc: "Volunteer & impact",
-    bgClass: "bg-[#E3E8F0]",
-  },
-];
+// Helper to get safe image for each result
+const getImageUrl = (item: any) =>
+  item.pagemap?.cse_image?.[0]?.src ||
+  item.pagemap?.cse_thumbnail?.[0]?.src ||
+  "";
 
 export default function Explore() {
   const [query, setQuery] = useState("");
@@ -67,137 +15,99 @@ export default function Explore() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSearch = async () => {
+  const doSearch = async () => {
     if (!query.trim()) return;
-
     setError("");
     setResults([]);
     setLoading(true);
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      if (!res.ok) {
-        setError("Search failed. Try again.");
-        setLoading(false);
-        return;
-      }
       const data = await res.json();
-      if (Array.isArray(data.items) && data.items.length > 0) {
+      if (data?.items?.length) {
         setResults(data.items);
       } else {
         setError("No results found.");
       }
-    } catch (err) {
-      console.error("Error calling /api/search:", err);
+    } catch (e) {
       setError("Search failed. Try again.");
     }
-
     setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-[#E3E8F0]">
-      {/* ─── Top navigation bar ──────────────────────────────────────── */}
+      {/* Navbar */}
       <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
         <Link href="/">
-          <Home className="w-6 h-6 text-[#46675B] hover:text-[#36574B]" />
+          <span className="font-bold text-xl text-[#46675B] hover:text-[#36574B]">🏠 Listo</span>
         </Link>
-        <h1 className="text-xl font-bold text-[#46675B]">🔍 Explore LISTO</h1>
-        <Link href="/profile">
-          <User className="w-6 h-6 text-[#46675B] hover:text-[#36574B]" />
-        </Link>
+        <h1 className="text-2xl font-bold text-[#46675B] flex items-center">
+          <span className="mr-2">🔍</span> Explore LISTO
+        </h1>
+        <div />
       </nav>
-
-      {/* ─── Sticky search bar ──────────────────────────────────────── */}
+      {/* Search Bar */}
       <div className="sticky top-0 z-10 bg-[#E3E8F0] py-4 px-6 border-b border-gray-200">
-        <UniversalSearch
-          value={query}
-          onChange={setQuery}
-          onSearch={handleSearch}
-          placeholder="Search images, articles, docs…"
-        />
-      </div>
-
-      {/* ─── Main content ───────────────────────────────────────────── */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        {/* Show tiles when no query, no results, and not loading */}
-        <AnimatePresence>
-          {!query && !loading && results.length === 0 && (
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {tiles.map((t, i) => (
-                <motion.div
-                  key={i}
-                  className={`${t.bgClass} p-6 rounded-xl shadow-md flex flex-col items-center text-center`}
-                  whileHover={{
-                    scale: 1.02,
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-                  }}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <div className="text-5xl mb-2">{t.emoji}</div>
-                  <h2 className="font-semibold text-lg text-[#2e423f]">{t.title}</h2>
-                  <p className="text-gray-700 mt-1">{t.desc}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Loading indicator */}
-        {loading && (
-          <p className="text-center mt-12 text-gray-600">Loading results…</p>
-        )}
-
-        {/* Error message */}
-        {error && (
-          <p className="text-center mt-12 text-red-500 font-semibold">{error}</p>
-        )}
-
-        {/* Search results grid */}
-        {results.length > 0 && (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+        <div className="flex max-w-xl mx-auto">
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && doSearch()}
+            placeholder="Search anything..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-l-xl shadow-sm focus:outline-none"
+          />
+          <button
+            onClick={doSearch}
+            disabled={!query.trim()}
+            className="px-5 py-2 bg-indigo-600 text-white rounded-r-xl font-semibold hover:bg-indigo-700 disabled:opacity-50"
           >
-            {results.map((item: any, idx: number) => (
-              <motion.a
-                key={idx}
+            🔍
+          </button>
+        </div>
+      </div>
+      {/* Results */}
+      <main className="max-w-6xl mx-auto px-4 py-8">
+        {loading && <p className="text-center text-gray-600 mt-12">Loading...</p>}
+        {error && <p className="text-center text-red-500 mt-12">{error}</p>}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {results.map((item, idx) => (
+            <motion.div
+              key={item.cacheId || item.link || idx}
+              whileHover={{ scale: 1.03 }}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col"
+            >
+              <a
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transform transition"
-                whileHover={{ scale: 1.02 }}
+                className="group block"
               >
-                {item.pagemap?.cse_image?.[0]?.src && (
+                {getImageUrl(item) && (
                   <img
-                    src={item.pagemap.cse_image[0].src}
+                    src={getImageUrl(item)}
                     alt={item.title}
-                    className="w-full h-40 object-cover"
+                    className="h-48 w-full object-cover group-hover:opacity-90 transition"
                   />
                 )}
-                <div className="p-4">
-                  <h3 className="font-bold text-[#46675B] mb-1 line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">
-                    {item.snippet}
-                  </p>
-                  <span className="text-xs text-indigo-400 mt-2 block">
-                    {item.displayLink}
-                  </span>
+                <div className="p-4 flex-1 flex flex-col">
+                  <h2 className="font-bold text-lg mb-1 text-[#46675B] line-clamp-2">{item.title}</h2>
+                  <p className="text-gray-600 text-sm line-clamp-2 mb-2">{item.snippet}</p>
+                  <span className="text-xs text-indigo-400">{item.displayLink}</span>
                 </div>
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
+              </a>
+              {/* Example: Add-to-board icon, can hook this up later */}
+              <button
+                className="bg-indigo-100 hover:bg-indigo-300 text-indigo-700 py-2 font-semibold rounded-b-2xl"
+                title="Save to Vision Board"
+                // onClick={() => saveToBoard(item)} // You’ll add this later
+              >
+                📌 Save
+              </button>
+            </motion.div>
+          ))}
+        </div>
       </main>
     </div>
   );
