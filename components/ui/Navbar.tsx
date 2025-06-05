@@ -1,35 +1,44 @@
-// components/ui/Navbar.tsx
-"use client";
+// components/Nav.tsx (or wherever your <Nav /> is defined)
 import Link from "next/link";
-import { useState } from "react";
-import { Home, LayoutGrid, Compass, User, Leaf, Menu } from "lucide-react";
+import { useAuth } from "../lib/firebase"; // or wherever your auth hook lives
+import { signOut } from "firebase/auth";
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
+export default function Nav() {
+  const { user } = useAuth(); // your custom hook that returns { user }
+  
+  const handleLogout = async () => {
+    try {
+      await signOut(/* your Firebase auth instance */);
+      // optionally redirect to home
+    } catch (err) {
+      console.error("Logout error", err);
+    }
+  };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-[#46675B] flex items-center gap-2">
-          <Leaf className="w-6 h-6 text-green-600" />
+    <nav className="flex items-center justify-between bg-white px-6 py-4 shadow">
+      {/* Left side: logo */}
+      <Link href="/">
+        <a className="text-xl font-semibold text-[#46675B] hover:text-[#36574B]">
           LISTO
-        </Link>
+        </a>
+      </Link>
 
-        <button className="lg:hidden" onClick={() => setOpen(!open)}>
-          <Menu className="w-6 h-6 text-gray-600" />
-        </button>
-
-        <ul
-          className={`lg:flex gap-8 items-center font-medium text-sm ${
-            open ? "block mt-4" : "hidden lg:flex"
-          }`}
+      {/* Always-visible Login / Logout button on the right */}
+      {user ? (
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
         >
-          <li><Link href="/vision-board" className="hover:text-green-700 flex items-center gap-1"><LayoutGrid size={18} /> Vision Board</Link></li>
-          <li><Link href="/explore" className="hover:text-green-700 flex items-center gap-1"><Compass size={18} /> Explore</Link></li>
-          <li><Link href="/impact-projects" className="hover:text-green-700 flex items-center gap-1"><Leaf size={18} /> Impact Projects</Link></li>
-          <li><Link href="/profile" className="hover:text-green-700 flex items-center gap-1"><User size={18} /> My Space</Link></li>
-        </ul>
-      </div>
+          Logout
+        </button>
+      ) : (
+        <Link href="/login">
+          <a className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700">
+            Login
+          </a>
+        </Link>
+      )}
     </nav>
   );
 }
