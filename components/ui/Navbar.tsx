@@ -1,52 +1,45 @@
 // components/ui/Navbar.tsx
-// ───────────────────────────────────────────────────────────────────────────
-// A simple, always-visible Navbar that displays "Login" or "Logout".
-// We use `useAuth()` from lib/firebase, and `auth.signOut()` to log out.
-
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAuth, auth } from "../../lib/firebase"; // ← our useAuth + auth instance
+import { useAuth, auth } from "../../lib/firebase";
 import { signOut } from "firebase/auth";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
-  const { user } = useAuth();       // user is `null` if not signed in, or a Firebase User object
+  const { user } = useAuth();
   const router = useRouter();
 
-  // Handles clicking the "Logout" button
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      // Optionally force a redirect to home page after logout:
-      router.push("/");
-    } catch (err) {
-      console.error("Error during sign-out:", err);
-    }
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push("/login"); // adjust to your login route
   };
 
   return (
-    <nav className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
-      {/* Left side: Logo or Home link */}
-      <Link href="/">
-        <a className="text-xl font-semibold text-[#46675B] hover:text-[#36574B]">
+    <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
+      <Link href="/" passHref>
+        <span className="text-lg font-bold text-indigo-600 cursor-pointer">
           LISTO
-        </a>
+        </span>
       </Link>
 
-      {/* Right side: show Login or Logout */}
-      {user ? (
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
-      ) : (
-        <Link href="/login">
-          <a className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-            Login
-          </a>
-        </Link>
-      )}
+      <div className="flex items-center space-x-4">
+        {!user ? (
+          <Link href="/login" passHref>
+            <span className="text-indigo-600 hover:underline cursor-pointer">
+              Login
+            </span>
+          </Link>
+        ) : (
+          <>
+            <span className="text-gray-700">Hello, {user.email}</span>
+            <button
+              onClick={handleSignOut}
+              className="text-red-500 hover:underline"
+            >
+              Sign Out
+            </button>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
