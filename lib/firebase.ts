@@ -14,7 +14,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 // ─── 1. Your Firebase configuration ───────────────────────────────────────────
 //    (These NEXT_PUBLIC_... variables must exist in .env.local / Vercel Environment)
-//    Make sure you have these set:
+//    Make sure you have these set exactly (in both your local .env.local and in Vercel):
 //      NEXT_PUBLIC_FIREBASE_API_KEY
 //      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
 //      NEXT_PUBLIC_FIREBASE_PROJECT_ID
@@ -48,7 +48,7 @@ interface AuthContextValue {
   user: User | null;
 }
 
-// Here we create AuthContext. Notice we export it so we can reference Provider below.
+// Create the context (default value: { user: null })
 const AuthContext = createContext<AuthContextValue>({ user: null });
 
 interface AuthProviderProps {
@@ -59,14 +59,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Listen for changes in auth state (login/logout)
+    // Subscribe to auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
     return () => unsubscribe();
   }, []);
 
-  // Now we can safely use AuthContext.Provider (AuthContext is already in scope)
+  // Provide the `user` object to any component that calls useAuth()
   return (
     <AuthContext.Provider value={{ user }}>
       {children}
@@ -79,5 +79,5 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-// ─── 5. Export the raw `auth` object in case you need to call signIn/signOut  ───
+// ─── 5. Export the raw `auth` object (for signIn/signOut calls) ────────────────
 export { auth };
