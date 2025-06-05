@@ -1,7 +1,7 @@
 // lib/firebase.ts
-// ─────────────────────────────────────────────────────────────────────────────
-// 1) Initialize Firebase client‐side
-// 2) Expose `auth` + React context + `useAuth()` hook
+// ────────────────────────────────────────────────────────────────────────────────
+// 1) Initialize Firebase (client-side)
+// 2) Expose `auth` and a React context + `useAuth()` hook
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import {
@@ -10,15 +10,18 @@ import {
   type User,
   type Auth
 } from "firebase/auth";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode
-} from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-// ─── 1. Your Firebase configuration (from `.env.local`) ────────────────────────
+// ─── 1. Your Firebase configuration ───────────────────────────────────────────
+//    (These NEXT_PUBLIC_... variables must exist in .env.local / Vercel Environment)
+//    Make sure you have these set:
+//      NEXT_PUBLIC_FIREBASE_API_KEY
+//      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+//      NEXT_PUBLIC_FIREBASE_PROJECT_ID
+//      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+//      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+//      NEXT_PUBLIC_FIREBASE_APP_ID
+//
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -28,7 +31,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!
 };
 
-// ─── 2. Initialize App & Auth ─────────────────────────────────────────────────
+// ─── 2. Initialize App & Auth ───────────────────────────────────────────────────
 let firebaseApp: FirebaseApp;
 let auth: Auth;
 
@@ -40,11 +43,12 @@ if (!getApps().length) {
   auth = getAuth();
 }
 
-// ─── 3. Create React Context & Provider ───────────────────────────────────────
+// ─── 3. Create a React Context & Provider ───────────────────────────────────────
 interface AuthContextValue {
   user: User | null;
 }
 
+// Here we create AuthContext. Notice we export it so we can reference Provider below.
 const AuthContext = createContext<AuthContextValue>({ user: null });
 
 interface AuthProviderProps {
@@ -55,12 +59,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    // Listen for changes in auth state (login/logout)
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
     return () => unsubscribe();
   }, []);
 
+  // Now we can safely use AuthContext.Provider (AuthContext is already in scope)
   return (
     <AuthContext.Provider value={{ user }}>
       {children}
@@ -68,10 +74,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// ─── 4. Export a `useAuth()` hook ─────────────────────────────────────────────
+// ─── 4. Export a `useAuth()` hook ───────────────────────────────────────────────
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-// ─── 5. Export the raw `auth` object (for signIn/signOut) ─────────────────────
+// ─── 5. Export the raw `auth` object in case you need to call signIn/signOut  ───
 export { auth };
