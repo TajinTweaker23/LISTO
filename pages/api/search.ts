@@ -21,17 +21,12 @@ export default async function handler(
   url.searchParams.set("key", apiKey);
   url.searchParams.set("cx", cx);
   url.searchParams.set("q", q);
-  // url.searchParams.set("searchType", "image"); // REMOVE THIS FOR NOW
   url.searchParams.set("num", "12");
-
-  console.log("DEBUG_GOOGLE_SEARCH:", {
-    apiKey, cx, q, url: url.toString()
-  });
+  // DO NOT SET searchType=image
 
   try {
     const response = await fetch(url.toString());
     const text = await response.text();
-    console.log("Google CSE raw response:", text);
 
     if (!response.ok) {
       let googleError;
