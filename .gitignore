@@ -1,2 +1,3 @@
+# Ignore local environment file (do not commit your real API keys)
 .env.local
 node_modules/
