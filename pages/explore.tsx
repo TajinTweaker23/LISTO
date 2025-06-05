@@ -1,7 +1,4 @@
 // pages/explore.tsx
-// ───────────────────────────────────────────────────────────────────────────
-// "Explore" page with a top-level Navbar, search input, and results grid.
-
 import Navbar from "../components/ui/Navbar";
 import { useState } from "react";
 import Link from "next/link";
@@ -53,10 +50,10 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-[#E3E8F0]">
-      {/* ─── 1) Navbar ─────────────────────────────────────────────────────────── */}
+      {/* Navbar */}
       <Navbar />
 
-      {/* ─── 2) Search Input (sticky) ───────────────────────────────────────────── */}
+      {/* Search Input */}
       <div className="sticky top-0 z-10 bg-[#E3E8F0] py-4 px-6 border-b border-gray-200">
         <div className="flex items-center w-full max-w-4xl mx-auto">
           <input
@@ -79,9 +76,9 @@ export default function Explore() {
         </div>
       </div>
 
-      {/* ─── 3) Main Content Area ───────────────────────────────────────────────── */}
+      {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-6">
-        {/* ─── 3.1) Suggestions / Hero Grid (when no query yet) ───────────────────── */}
+        {/* Suggestions / Hero Grid (when no query) */}
         {!query && !loading && items.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -92,42 +89,40 @@ export default function Explore() {
               { emoji: "🛠️", title: "DIY Projects", desc: "Hands-on" },
               { emoji: "❤️", title: "Humanity Wins", desc: "Stories" },
               { emoji: "💡", title: "Mindful Living", desc: "Peace & Prod" },
-              { emoji: "📢", title: "Get Involved", desc: "Volunteer" },
+              { emoji: "📢", title: "Get Involved", desc: "Volunteer" }
             ].map((card, idx) => (
               <motion.div
                 key={idx}
                 className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center text-center"
                 whileHover={{
                   scale: 1.03,
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
                 }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 * idx }}
               >
                 <div className="text-5xl mb-2">{card.emoji}</div>
-                <h2 className="font-semibold text-lg text-[#2e423f]">
-                  {card.title}
-                </h2>
+                <h2 className="font-semibold text-lg text-[#2e423f]">{card.title}</h2>
                 <p className="text-gray-700 mt-1">{card.desc}</p>
               </motion.div>
             ))}
           </div>
         )}
 
-        {/* ─── 3.2) Loading State ─────────────────────────────────────────────────── */}
+        {/* Loading State */}
         {loading && (
           <p className="text-center mt-12 text-gray-600">Loading results…</p>
         )}
 
-        {/* ─── 3.3) Error Message ────────────────────────────────────────────────── */}
+        {/* Error Message */}
         {errorMessage && !loading && (
           <p className="text-center mt-12 text-red-500 font-semibold">
             {errorMessage}
           </p>
         )}
 
-        {/* ─── 3.4) Search Results Grid ───────────────────────────────────────────── */}
+        {/* Search Results Grid */}
         {!loading && items.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <AnimatePresence>
@@ -146,7 +141,7 @@ export default function Explore() {
                     exit={{ opacity: 0 }}
                     transition={{ delay: 0.05 * idx }}
                   >
-                    {/* ─── 3.4.1) Thumbnail / Image Section ───────────────────────── */}
+                    {/* Image */}
                     {imgSrc ? (
                       <div className="relative h-40 w-full">
                         <img
@@ -154,7 +149,7 @@ export default function Explore() {
                           alt={item.title}
                           className="w-full h-full object-cover"
                         />
-                        {/* "Add to board" overlay button */}
+                        {/* "Add to board" overlay */}
                         <div className="absolute top-2 right-2 bg-white rounded-full p-1 opacity-0 hover:opacity-100 transition-opacity">
                           <PlusCircle className="w-6 h-6 text-indigo-600 hover:text-indigo-800 cursor-pointer" />
                         </div>
@@ -165,7 +160,7 @@ export default function Explore() {
                       </div>
                     )}
 
-                    {/* ─── 3.4.2) Text Content Section ────────────────────────────── */}
+                    {/* Content */}
                     <div className="p-4">
                       <h3 className="font-bold text-[#46675B] mb-1 line-clamp-2">
                         {item.title}
