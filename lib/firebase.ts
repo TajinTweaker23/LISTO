@@ -1,5 +1,5 @@
 // lib/firebase.ts
-// ────────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // 1) Initialize Firebase (client-side)
 // 2) Expose `auth` and a React context + `useAuth()` hook
 
@@ -13,14 +13,13 @@ import {
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 // ─── 1. Your Firebase configuration ───────────────────────────────────────────
-//    (These NEXT_PUBLIC_... variables must exist in .env.local / Vercel Environment)
-//    Make sure you have these set exactly (in both your local .env.local and in Vercel):
-//      NEXT_PUBLIC_FIREBASE_API_KEY
-//      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-//      NEXT_PUBLIC_FIREBASE_PROJECT_ID
-//      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-//      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-//      NEXT_PUBLIC_FIREBASE_APP_ID
+//    (These NEXT_PUBLIC_... vars must exist in .env.local / Vercel env vars):
+//    NEXT_PUBLIC_FIREBASE_API_KEY
+//    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+//    NEXT_PUBLIC_FIREBASE_PROJECT_ID
+//    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+//    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+//    NEXT_PUBLIC_FIREBASE_APP_ID
 //
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -48,7 +47,7 @@ interface AuthContextValue {
   user: User | null;
 }
 
-// Create the context (default value: { user: null })
+// ** This line MUST exist exactly as written below **
 const AuthContext = createContext<AuthContextValue>({ user: null });
 
 interface AuthProviderProps {
@@ -66,7 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => unsubscribe();
   }, []);
 
-  // Provide the `user` object to any component that calls useAuth()
+  // Provide `user` to any component using useAuth()
   return (
     <AuthContext.Provider value={{ user }}>
       {children}
@@ -79,5 +78,5 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-// ─── 5. Export the raw `auth` object (for signIn/signOut calls) ────────────────
+// ─── 5. Export the raw `auth` object (for signIn/signOut) ───────────────────────
 export { auth };
