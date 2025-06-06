@@ -1,100 +1,86 @@
 // pages/impact-projects.tsx
+// ──────────────────────────────────────────────────────────────────────────────
+// Example page that reads/writes from Firestore. We fix the import path for `db`.
 
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar";
-import { db } from "../lib/firebase"; // ← updated path
-import {
-  collection,
-  addDoc,
-  getDocs,
-  type DocumentData
-} from "firebase/firestore";
+import { db } from "../lib/firebase"; // ← correct path to lib/firebase.ts
+import { collection, addDoc, getDocs } from "firebase/firestore";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+}
 
 export default function ImpactProjects() {
-  const [projects, setProjects] = useState<DocumentData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch all projects on mount
+  // Fetch existing projects from Firestore
   useEffect(() => {
-    async function fetchProjects() {
-      setLoading(true);
+    const fetchProjects = async () => {
       try {
         const snapshot = await getDocs(collection(db, "projects"));
-        const items: DocumentData[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setProjects(items);
+        const loaded: Project[] = [];
+        snapshot.forEach((doc) => {
+          loaded.push({
+            id: doc.id,
+            ...(doc.data() as Omit<Project, "id">),
+          });
+        });
+        setProjects(loaded);
       } catch (err) {
         console.error("Error fetching projects:", err);
       }
       setLoading(false);
-    }
-
+    };
     fetchProjects();
   }, []);
 
-  // Add a new project
-  const addProject = async () => {
-    if (!newTitle.trim()) return;
+  // Add a dummy project (demo)
+  const addDummyProject = async () => {
     try {
-      const docRef = await addDoc(collection(db, "projects"), {
-        title: newTitle,
-        createdAt: new Date()
+      const ref = await addDoc(collection(db, "projects"), {
+        title: "New Impact Project",
+        description: "Description goes here.",
       });
       setProjects((prev) => [
         ...prev,
-        { id: docRef.id, title: newTitle, createdAt: new Date() }
+        { id: ref.id, title: "New Impact Project", description: "Description goes here." },
       ]);
-      setNewTitle("");
     } catch (err) {
       console.error("Error adding project:", err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F3F4F6]">
       <Navbar />
+
       <main className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">
-          Impact Projects
-        </h1>
+        <h2 className="text-2xl font-semibold mb-4">Impact Projects</h2>
 
-        {/* New Project Input */}
-        <div className="flex mb-6">
-          <input
-            type="text"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Enter project title…"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none"
-          />
-          <button
-            onClick={addProject}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700"
-          >
-            Add
-          </button>
-        </div>
+        <button
+          onClick={addDummyProject}
+          className="mb-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Add Dummy Project
+        </button>
 
-        {/* Loading Indicator */}
-        {loading && <p className="text-gray-600">Loading…</p>}
-
-        {/* Project List */}
-        {!loading && projects.length === 0 && (
-          <p className="text-gray-500">No projects yet.</p>
-        )}
-        {!loading && projects.length > 0 && (
-          <ul className="space-y-2">
+        {loading ? (
+          <p>Loading projects…</p>
+        ) : projects.length === 0 ? (
+          <p>No projects found.</p>
+        ) : (
+          <ul className="space-y-4">
             {projects.map((proj) => (
-              <li key={proj.id} className="p-4 bg-white rounded shadow">
-                <strong className="text-lg text-gray-800">{proj.title}</strong>
-                <span className="block text-sm text-gray-500">
-                  {proj.createdAt?.toDate
-                    ? proj.createdAt.toDate().toLocaleString()
-                    : new Date(proj.createdAt).toLocaleString()}
-                </span>
+              <li
+                key={proj.id}
+                className="p-4 bg-white rounded-lg shadow flex flex-col"
+              >
+                <h3 className="font-bold text-lg">{proj.title}</h3>
+                <p className="text-gray-600">{proj.description}</p>
               </li>
             ))}
           </ul>
