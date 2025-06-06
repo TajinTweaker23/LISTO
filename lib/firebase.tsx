@@ -1,26 +1,28 @@
-// lib/firebase.tsx
-// ────────────────────────────────────────────────────────────────────────────────
+// lib/firebase.ts
+// -----------------------
 // 1) Initialize Firebase (client‐side)
 // 2) Expose `auth`, `db` (Firestore), and a React context + `useAuth()` hook
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
-import {
-  getAuth,
-  onAuthStateChanged,
-  type User,
-  type Auth
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, type User, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
-// ─── 1. Your Firebase configuration ─────────────────────────────────────────────
-//    (These env vars should be set in Vercel / .env.local):
-//      NEXT_PUBLIC_FIREBASE_API_KEY
-//      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-//      NEXT_PUBLIC_FIREBASE_PROJECT_ID
-//      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-//      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-//      NEXT_PUBLIC_FIREBASE_APP_ID
+// ─── 1. Your Firebase configuration ───────────────────────────────────────────
+//    (These environment variables should already be set in Vercel / .env.local)
+//    Make sure you create the following NEXT_PUBLIC_... variables in Vercel and .env.local:
+//      - NEXT_PUBLIC_FIREBASE_API_KEY
+//      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+//      - NEXT_PUBLIC_FIREBASE_PROJECT_ID
+//      - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+//      - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+//      - NEXT_PUBLIC_FIREBASE_APP_ID
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -28,10 +30,10 @@ const firebaseConfig = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-// ─── 2. Initialize App, Auth & Firestore ───────────────────────────────────────
+// ─── 2. Initialize App, Auth & Firestore ────────────────────────────────────────
 let firebaseApp: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
@@ -41,6 +43,7 @@ if (!getApps().length) {
   auth = getAuth(firebaseApp);
   db = getFirestore(firebaseApp);
 } else {
+  // If it's already initialized (e.g. during hot reload), reuse it
   firebaseApp = getApps()[0];
   auth = getAuth();
   db = getFirestore();
@@ -50,6 +53,7 @@ if (!getApps().length) {
 interface AuthContextValue {
   user: User | null;
 }
+
 const AuthContext = createContext<AuthContextValue>({ user: null });
 
 interface AuthProviderProps {
@@ -60,7 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Subscribe to authentication state changes
+    // Subscribe to onAuthStateChanged
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
@@ -74,10 +78,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// ─── 4. Export a `useAuth()` hook ────────────────────────────────────────────────
+// ─── 4. Export a `useAuth()` hook ───────────────────────────────────────────────
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-// ─── 5. Export raw `auth` and `db` ──────────────────────────────────────────────
+// ─── 5. Export the raw `auth` and `db` objects ─────────────────────────────────
 export { auth, db };
+
