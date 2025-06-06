@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
-import { db } from "../firebase";
+import { db } from "../lib/firebase";
 import Navbar from "../components/ui/Navbar";
 import {
   collection,
@@ -16,7 +16,13 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { FilePlus, ImagePlus, Loader2, Search, UploadCloud } from "lucide-react";
+import {
+  FilePlus,
+  ImagePlus,
+  Loader2,
+  Search,
+  UploadCloud,
+} from "lucide-react";
 
 export default function VisionBoard() {
   const [mediaItems, setMediaItems] = useState<any[]>([]);
@@ -28,11 +34,17 @@ export default function VisionBoard() {
   const [showSearchOptions, setShowSearchOptions] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "visionBoard"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setMediaItems(data);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      collection(db, "visionBoard"),
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMediaItems(data);
+        setLoading(false);
+      }
+    );
     return () => unsubscribe();
   }, []);
 
@@ -109,13 +121,16 @@ export default function VisionBoard() {
                 exit={{ opacity: 0, y: -10 }}
                 className="text-center text-sm text-gray-600 italic mb-8"
               >
-                🔍 Advanced media search (GIFs, videos, documents, images) — Coming soon!
+                🔍 Advanced media search (GIFs, videos, documents, images) —
+                Coming soon!
               </motion.div>
             )}
           </AnimatePresence>
 
           {loading ? (
-            <p className="text-center text-gray-500 italic">Loading your dreams…</p>
+            <p className="text-center text-gray-500 italic">
+              Loading your dreams…
+            </p>
           ) : mediaItems.length === 0 ? (
             <p className="text-center text-gray-500 italic">
               Start building your vision by uploading images or browsing media.
@@ -139,7 +154,9 @@ export default function VisionBoard() {
                     height={300}
                     className="w-full h-48 object-cover"
                   />
-                  <div className="p-3 text-sm text-gray-600">Status: {item.status}</div>
+                  <div className="p-3 text-sm text-gray-600">
+                    Status: {item.status}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -180,8 +197,14 @@ export default function VisionBoard() {
                     ))}
                   </select>
                   <div className="flex flex-wrap gap-3 justify-between text-gray-500 text-xs mt-2">
-                    <span className="flex items-center gap-1"><FilePlus className="w-4 h-4" />Attach</span>
-                    <span className="flex items-center gap-1"><ImagePlus className="w-4 h-4" />Media</span>
+                    <span className="flex items-center gap-1">
+                      <FilePlus className="w-4 h-4" />
+                      Attach
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <ImagePlus className="w-4 h-4" />
+                      Media
+                    </span>
                   </div>
                   <button
                     onClick={() => setDetailsOpen(false)}

@@ -1,21 +1,26 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { app, db } from "../firebase"; // ✅ Import your app instance
+import { useState } from "react";
+import { useRouter } from "next/router";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { app, db } from "../lib/firebase"; // ✅ Import your app instance
 
 const auth = getAuth(app); // ✅ Initialize auth correctly
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isNewUser, setIsNewUser] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
       if (isNewUser) {
@@ -23,7 +28,7 @@ export default function Login() {
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      router.push('/vision-board');
+      router.push("/vision-board");
     } catch (err: any) {
       setError(err.message);
     }
@@ -37,7 +42,7 @@ export default function Login() {
         className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-4"
       >
         <h1 className="text-2xl font-bold text-center mb-4">
-          {isNewUser ? 'Create Account' : 'Login'}
+          {isNewUser ? "Create Account" : "Login"}
         </h1>
         <input
           type="email"
@@ -61,13 +66,15 @@ export default function Login() {
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           disabled={loading}
         >
-          {loading ? 'Please wait...' : isNewUser ? 'Sign Up' : 'Log In'}
+          {loading ? "Please wait..." : isNewUser ? "Sign Up" : "Log In"}
         </button>
         <p
           onClick={() => setIsNewUser(!isNewUser)}
           className="text-center text-sm text-blue-600 cursor-pointer"
         >
-          {isNewUser ? 'Already have an account? Log in' : 'New user? Create an account'}
+          {isNewUser
+            ? "Already have an account? Log in"
+            : "New user? Create an account"}
         </p>
         <button
           type="button"
