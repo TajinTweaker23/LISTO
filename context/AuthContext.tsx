@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from "react";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../lib/firebase"; // ✅ Corrected import
+import { auth } from "../lib/firebase.ts"; // ✅ Corrected import
 
 interface AuthContextValue {
   user: User | null;
