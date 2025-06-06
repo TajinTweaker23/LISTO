@@ -1,3 +1,4 @@
+import { AuthContext } from '../context/AuthContext';
 // lib/firebase.ts
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
