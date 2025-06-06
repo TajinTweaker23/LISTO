@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Home as HomeIcon, User as UserIcon, LogOut } from "lucide-react";
-import { useAuth, auth } from "../../lib/firebase";
-import { signOut } from "firebase/auth";
+import { useAuth } from "../../context/AuthContext"; // ✅ Corrected import
+import { auth } from "../../lib/firebase"; // ✅ Corrected import
+import { signOut } from "firebase/auth"; // ✅ Fixed import
 
 export default function Navbar() {
   const { user } = useAuth();

@@ -47,7 +47,11 @@ export default function ImpactProjects() {
       });
       setProjects((prev) => [
         ...prev,
-        { id: ref.id, title: "New Impact Project", description: "Description goes here." },
+        {
+          id: ref.id,
+          title: "New Impact Project",
+          description: "Description goes here.",
+        },
       ]);
     } catch (err) {
       console.error("Error adding project:", err);

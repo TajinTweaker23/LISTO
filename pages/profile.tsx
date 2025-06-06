@@ -2,7 +2,7 @@
 
 import React from "react";
 import Navbar from "../components/ui/Navbar";
-import { useAuth } from "../lib/firebase"; // ← updated path
+import { useAuth } from "../context/AuthContext"; // ← updated path
 import Link from "next/link";
 
 export default function Profile() {

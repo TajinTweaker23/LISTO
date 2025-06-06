@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { app, db } from "../firebase"; // ✅ Import your app instance
+import { app, db } from "../lib/firebase"; // ✅ Import your app instance
 
 const auth = getAuth(app); // ✅ Initialize auth correctly
 
