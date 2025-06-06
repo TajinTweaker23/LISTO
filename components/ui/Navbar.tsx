@@ -1,38 +1,24 @@
-// components/ui/Navbar.tsx
-// ──────────────────────────────────────────────────────────────────────────────
-// A top‐bar that shows a “Home” link + Profile (if logged in). Uses `useAuth()`.
-
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Home as HomeIcon, User as UserIcon, LogOut } from "lucide-react";
-import { useAuth, auth } from "../../lib/firebase"; // ← correct relative path
+import { useAuth, auth } from "../../lib/firebase";
 import { signOut } from "firebase/auth";
-import { useEffect } from "react";
 
 export default function Navbar() {
   const { user } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      router.push("/login");
-    } catch (err) {
-      console.error("Sign-out error:", err);
-    }
+    await signOut(auth);
+    router.push("/login");
   };
 
   return (
     <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
-      {/* Home Icon */}
       <Link href="/" passHref>
         <HomeIcon className="w-6 h-6 text-[#46675B] hover:text-[#36574B] cursor-pointer" />
       </Link>
-
-      {/* Placeholder Logo or Title */}
       <h1 className="text-xl font-bold text-[#46675B]">LISTO</h1>
-
-      {/* Right side: either Show “Login” or User+Logout */}
       {user ? (
         <div className="flex items-center space-x-4">
           <Link href="/profile" passHref>
