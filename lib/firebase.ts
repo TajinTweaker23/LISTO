@@ -1,6 +1,6 @@
 // lib/firebase.ts
 // -----------------------------------------------------------------------------
-// 1) Initialize Firebase (client-side)
+// 1) Initialize Firebase (client‐side)
 // 2) Expose `auth` and a React context + `useAuth()` hook
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
@@ -13,13 +13,13 @@ import {
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 // ─── 1. Your Firebase configuration ───────────────────────────────────────────
-//    (These NEXT_PUBLIC_... vars must exist in .env.local / Vercel env vars):
-//    NEXT_PUBLIC_FIREBASE_API_KEY
-//    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-//    NEXT_PUBLIC_FIREBASE_PROJECT_ID
-//    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-//    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-//    NEXT_PUBLIC_FIREBASE_APP_ID
+//    (These NEXT_PUBLIC_... vars must exist in .env.local and Vercel env variables):
+//      NEXT_PUBLIC_FIREBASE_API_KEY
+//      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+//      NEXT_PUBLIC_FIREBASE_PROJECT_ID
+//      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+//      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+//      NEXT_PUBLIC_FIREBASE_APP_ID
 //
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -47,7 +47,7 @@ interface AuthContextValue {
   user: User | null;
 }
 
-// ** This line MUST exist exactly as written below **
+// **This line is absolutely required**—it declares the AuthContext namespace
 const AuthContext = createContext<AuthContextValue>({ user: null });
 
 interface AuthProviderProps {
@@ -58,14 +58,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Subscribe to auth state changes
+    // Subscribe to auth‐state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
     return () => unsubscribe();
   }, []);
 
-  // Provide `user` to any component using useAuth()
+  // Provide `user` to any component calling useAuth()
   return (
     <AuthContext.Provider value={{ user }}>
       {children}
