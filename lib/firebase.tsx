@@ -13,14 +13,14 @@ import {
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-// ─── 1. Your Firebase configuration ────────────────
-// (Make sure you’ve set these in Vercel/.env.local under NEXT_PUBLIC_...)
-//   NEXT_PUBLIC_FIREBASE_API_KEY
-//   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-//   NEXT_PUBLIC_FIREBASE_PROJECT_ID
-//   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-//   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-//   NEXT_PUBLIC_FIREBASE_APP_ID
+// ─── 1. Your Firebase configuration ─────────────────────────────────────────────
+//    (These env vars should be set in Vercel / .env.local):
+//      NEXT_PUBLIC_FIREBASE_API_KEY
+//      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+//      NEXT_PUBLIC_FIREBASE_PROJECT_ID
+//      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+//      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+//      NEXT_PUBLIC_FIREBASE_APP_ID
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -31,7 +31,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!
 };
 
-// ─── 2. Initialize App, Auth & Firestore ─────────
+// ─── 2. Initialize App, Auth & Firestore ───────────────────────────────────────
 let firebaseApp: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
@@ -46,7 +46,7 @@ if (!getApps().length) {
   db = getFirestore();
 }
 
-// ─── 3. Create a React Context & Provider ─────────
+// ─── 3. Create a React Context & Provider ───────────────────────────────────────
 interface AuthContextValue {
   user: User | null;
 }
@@ -60,6 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    // Subscribe to authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
@@ -73,10 +74,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// ─── 4. Export a `useAuth()` hook ──────────────────
+// ─── 4. Export a `useAuth()` hook ────────────────────────────────────────────────
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-// ─── 5. Export raw `auth` and `db` for Firestore usage ───
+// ─── 5. Export raw `auth` and `db` ──────────────────────────────────────────────
 export { auth, db };
