@@ -1,82 +1,78 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { app, db } from "../firebase"; // ✅ Import your app instance
+import { useRouter } from "next/router";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { useState } from "react";
+import Navbar from "../components/ui/Navbar";
 
-const auth = getAuth(app); // ✅ Initialize auth correctly
-
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  const handleSignIn = async () => {
     try {
-      if (isNewUser) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-      router.push('/vision-board');
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/");
     } catch (err: any) {
       setError(err.message);
     }
-    setLoading(false);
+  };
+
+  const handleSignUp = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-gray-200 p-4">
-      <form
-        onSubmit={handleAuth}
-        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-center mb-4">
-          {isNewUser ? 'Create Account' : 'Login'}
-        </h1>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className="w-full px-4 py-2 border rounded"
-        />
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded"
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? 'Please wait...' : isNewUser ? 'Sign Up' : 'Log In'}
-        </button>
-        <p
-          onClick={() => setIsNewUser(!isNewUser)}
-          className="text-center text-sm text-blue-600 cursor-pointer"
-        >
-          {isNewUser ? 'Already have an account? Log in' : 'New user? Create an account'}
-        </p>
-        <button
-          type="button"
-          onClick={() => signOut(auth)}
-          className="w-full mt-2 text-sm text-gray-500 underline"
-        >
-          Sign Out
-        </button>
-      </form>
+    <div className="min-h-screen bg-[#F3F4F6]">
+      <Navbar />
+      <main className="max-w-md mx-auto px-4 py-8">
+        <h2 className="text-2xl font-semibold mb-6">Login / Sign Up</h2>
+        {error && <p className="mb-4 text-red-600">{error}</p>}
+        <label className="block mb-2">
+          <span className="text-gray-700">Email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border rounded-md"
+          />
+        </label>
+        <label className="block mb-4">
+          <span className="text-gray-700">Password</span>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border rounded-md"
+          />
+        </label>
+        <div className="flex space-x-4">
+          <button onClick={handleSignIn}
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Sign In</button>
+          <button onClick={handleSignUp}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Sign Up</button>
+          <button onClick={handleSignOut}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Sign Out</button>
+        </div>
+      </main>
     </div>
   );
 }
