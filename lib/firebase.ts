@@ -1,8 +1,3 @@
-// lib/firebase.ts
-// -----------------------------------------------------------------------------
-// 1) Initialize Firebase (client‐side)
-// 2) Expose `auth` and a React context + `useAuth()` hook
-
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import {
   getAuth,
