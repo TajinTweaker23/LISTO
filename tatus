@@ -1,0 +1,67 @@
+[33mf60d23c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Saving latest Vision Board changes before reset
+[33mf126dc8[m Merged local changes with latest updates
+[33m531a238[m fix: setup Tailwind CSS correctly
+[33m7e5ab46[m fix: use @tailwindcss/postcss plugin for Vercel build
+[33me9d3cba[m fix: add tailwindcss and build dependencies
+[33m0e5abef[m fix: add framer-motion for animations
+[33m4d73094[m fix: add missing headlessui dependency
+[33m99db3d6[m chore: add @types/react for successful TS build
+[33m9ea1460[m fix: remove GiphySearchbox and deploy working vision board
+[33mc005cbf[m fix: remove broken giphy search and add placeholder
+[33m718810b[m fix: install lucide-react to fix Vercel build
+[33m0e42046[m fix: install lucide-react and others with legacy-peer-deps
+[33m43ba820[m fix: change alias paths to relative for Vercel compatibility
+[33meb9ae6b[m fix: add auth and db exports to firebase config
+[33m62df385[m fix: sync all files, ignore node_modules, resolve build issues
+[33m9ca14e8[m chore: properly ignore node_modules
+[33m1cdaa0c[m Fix: resolved .gitignore conflict and updated vision board
+[33m0d81b06[m fix: update vision board component and paths for deployment
+[33mc4ad05e[m Create .gitignore
+[33m0610f04[m Update vision-board.tsx
+[33m81ffec9[m Update vercel.json
+[33m20dd5d5[m Add files via upload
+[33m2bbcd90[m Create vercel.json
+[33mab6479f[m Update vision-board.tsx
+[33m63adff2[m Update package.json
+[33mcd31925[m Update vision-board.tsx
+[33m1ef619d[m Update vision-board.tsx
+[33md54e9bc[m Update vision-board.tsx
+[33me467978[m Update vision-board.tsx
+[33m6c75e7c[m Update index.tsx
+[33m21f999c[m Update index.tsx
+[33m071217b[m Update index.tsx
+[33mc11a88e[m Update package.json
+[33m64513dd[m Update package.json
+[33m5e0e5e0[m Update package.json
+[33m3bbd71b[m Update package.json
+[33m14cb6b0[m Update package.json
+[33m7912075[m Update package.json
+[33ma71f2af[m Update vision-board.tsx
+[33m535c1bb[m Add files via upload
+[33m7b1d9e6[m Delete pages/pages/login.tsx
+[33m7530b80[m Add files via upload
+[33mf88e5bf[m Delete pages/login.tsx
+[33me84bc0c[m Update vision-board.tsx
+[33m9dc2c4b[m Update firebase.ts
+[33m6fb5681[m Add files via upload
+[33mcd93979[m Create _app.tsx
+[33mb258da7[m Update vision-board.tsx
+[33m5df2ec3[m Update vision-board.tsx
+[33mef9056b[m Create vision-board.tsx
+[33m6448eb4[m Delete pages/vision-board.tsx
+[33m2464998[m Create vision-board.tsx
+[33m6a309cf[m Add files via upload
+[33mee2c1f0[m Delete package.json
+[33meeb96bd[m Delete LISTO_Starter_App.zip
+[33m984c368[m Delete styles directory
+[33meb05f67[m Delete pages directory
+[33m507cbc1[m Delete lib directory
+[33m13c8336[m Delete components directory
+[33mbf21fb7[m Rename package (3).json to package.json
+[33m10e1e11[m Add files via upload
+[33m6e10cca[m Delete package (2).json
+[33m51625cd[m Delete package.json
+[33md06eaf5[m Add files via upload
+[33m38420c4[m Add files via upload
+[33m05928df[m Add files via upload
+[33m8869423[m Add files via upload
