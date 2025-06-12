@@ -7,11 +7,7 @@ import { Button } from "../components/ui/button";
 import { Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { FilePlus, Moon, Sun, Settings, Square } from "lucide-react";
 import { db } from "../lib/firebase";
 import {
@@ -68,12 +64,17 @@ const FloatingIcons = () => {
 // ------------------------------
 // Animated Moodboard Card with Carousel Effect
 // ------------------------------
-const AnimatedMoodboardCard = ({ moodboard, index }: { moodboard: any; index: number; }) => {
+const AnimatedMoodboardCard = ({
+  moodboard,
+  index,
+}: {
+  moodboard: any;
+  index: number;
+}) => {
   // For carousel: cycle through multiple images
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Using Unsplash endpoints for reliable images.
-  // Append a signature parameter so that multiple requests produce variations.
+  // Build a set of image URLs using Unsplash with a signature parameter for variation
   const images = [
     moodboard.image,
     `${moodboard.image}&sig=${index * 10 + 2}`,
@@ -87,44 +88,47 @@ const AnimatedMoodboardCard = ({ moodboard, index }: { moodboard: any; index: nu
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // Assign a border style based on moodboard title for visual distinction
-  let cardStyle = {};
+  // Glassmorphism-inspired style with a futuristic neon border based on the title
+  let cardStyle: React.CSSProperties = {
+    borderRadius: "12px",
+    backdropFilter: "blur(10px)",
+    background: "rgba(255, 255, 255, 0.1)",
+    border: "1px solid rgba(255,255,255,0.2)",
+  };
+
   if (moodboard.title.includes("Pastels")) {
-    cardStyle = { border: "2px solid #FFC0CB" };
+    cardStyle.border = "2px solid #FFC0CB";
   } else if (moodboard.title.includes("Bold")) {
-    cardStyle = { border: "2px solid #C70039" };
+    cardStyle.border = "2px solid #C70039";
   } else if (moodboard.title.includes("Earthy")) {
-    cardStyle = { border: "2px solid #8B4513" };
+    cardStyle.border = "2px solid #8B4513";
   } else if (moodboard.title.includes("Vibrant")) {
-    cardStyle = { border: "2px solid #f77f00" };
+    cardStyle.border = "2px solid #f77f00";
   } else if (moodboard.title.includes("Serenity")) {
-    cardStyle = { border: "2px solid #8ecae6" };
+    cardStyle.border = "2px solid #8ecae6";
   }
 
   return (
     <motion.div
-      className="bg-white bg-opacity-80 backdrop-blur-md shadow-xl rounded-lg overflow-hidden transform hover:scale-105"
+      className="backdrop-blur-md shadow-xl overflow-hidden transform hover:scale-105"
       style={cardStyle}
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Ensure the image container has both h-56 and a minimum height */}
+      {/* Image container with fixed height */}
       <div className="relative h-56 min-h-[224px] overflow-hidden">
-        {/* Updated Next.js 13 Image usage: use fill + inline objectFit */}
         <Image
           src={images[currentIndex]}
           alt={moodboard.title}
           fill
           style={{ objectFit: "cover" }}
         />
-        {/* Floating icons overlay */}
+        {/* Floating futuristic icons overlay */}
         <FloatingIcons />
       </div>
       <div className="p-4">
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">
-          {moodboard.title}
-        </h2>
-        <p className="text-gray-600 mb-4">{moodboard.description}</p>
+        <h2 className="text-2xl font-bold mb-2 text-gray-100">{moodboard.title}</h2>
+        <p className="text-gray-300 mb-4">{moodboard.description}</p>
         <div className="flex gap-2">
           {moodboard.colors.map((color: string, idx: number) => (
             <motion.div
@@ -144,7 +148,6 @@ const AnimatedMoodboardCard = ({ moodboard, index }: { moodboard: any; index: nu
 // ------------------------------
 // Moodboards for Landing Page
 // ------------------------------
-// Updated to use Unsplash URLs for reliable images.
 const moodboards = [
   {
     title: "Dreamy Pastels",
@@ -181,7 +184,7 @@ const moodboards = [
 // ------------------------------
 // Board Categories
 // ------------------------------
-const boards = ["Personal", "Career", "Health", "Travel"];
+const boardCategories = ["Personal", "Career", "Health", "Travel"];
 
 // ------------------------------
 // Main Vision Board Component
@@ -191,13 +194,14 @@ export default function VisionBoard() {
   const [showLanding, setShowLanding] = useState(true);
   const [currentMoodboard, setCurrentMoodboard] = useState(0);
 
+  // Functions for navigating moodboards
   const nextMoodboard = () =>
     setCurrentMoodboard((prev) => (prev + 1) % moodboards.length);
   const prevMoodboard = () =>
     setCurrentMoodboard((prev) => (prev - 1 + moodboards.length) % moodboards.length);
 
   // Editor State
-  const [selectedBoard, setSelectedBoard] = useState(boards[0]);
+  const [selectedBoard, setSelectedBoard] = useState(boardCategories[0]);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [urlInput, setUrlInput] = useState("");
@@ -304,7 +308,7 @@ export default function VisionBoard() {
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over.id);
       setItems(arrayMove(items, oldIndex, newIndex));
-      // Optionally update the order in Firestore.
+      // Optionally update ordering in the database.
     }
   };
 
@@ -325,18 +329,13 @@ export default function VisionBoard() {
   // ------------------------------
   if (showLanding) {
     return (
-      <div className="min-h-screen relative flex flex-col overflow-hidden">
+      <div className="min-h-screen relative flex flex-col overflow-hidden animated-gradient">
         {/* Background Floating Icons */}
         <FloatingIcons />
         {/* Futuristic Header */}
-        <header
-          className="w-full py-12"
-          style={{
-            background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
-          }}
-        >
+        <header className="w-full py-12">
           <motion.h1
-            className="text-5xl font-extrabold text-center text-white"
+            className="text-5xl font-extrabold text-center text-white futuristic-title"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -366,13 +365,13 @@ export default function VisionBoard() {
             <div className="flex justify-around mt-8">
               <Button
                 onClick={prevMoodboard}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 futuristic-button"
               >
                 Prev
               </Button>
               <Button
                 onClick={nextMoodboard}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 futuristic-button"
               >
                 Next
               </Button>
@@ -382,7 +381,7 @@ export default function VisionBoard() {
         <footer className="py-8 text-center relative z-10">
           <Button
             onClick={() => setShowLanding(false)}
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-xl"
+            className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-xl futuristic-button"
           >
             Create Your Vision Board
           </Button>
@@ -416,7 +415,7 @@ export default function VisionBoard() {
               onChange={(e) => setSelectedBoard(e.target.value)}
               className="border p-2 rounded"
             >
-              {boards.map((board, idx) => (
+              {boardCategories.map((board, idx) => (
                 <option key={idx} value={board}>
                   {board}
                 </option>
@@ -433,31 +432,31 @@ export default function VisionBoard() {
           />
           <Button
             onClick={addImage}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="bg-blue-500 hover:bg-blue-600 text-white futuristic-button"
           >
             Add Image
           </Button>
           <Button
             onClick={() => setShowMediaSearch(!showMediaSearch)}
-            className="bg-purple-500 hover:bg-purple-600 text-white"
+            className="bg-purple-500 hover:bg-purple-600 text-white futuristic-button"
           >
             {showMediaSearch ? "Close Media" : "Browse Media"}
           </Button>
           <Button
             onClick={() => setDarkMode(!darkMode)}
-            className="bg-gray-700 text-white"
+            className="bg-gray-700 text-white futuristic-button"
           >
             {darkMode ? <Sun /> : <Moon />}
           </Button>
           <Button
             onClick={() => setSettingsOpen(true)}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white futuristic-button"
           >
             <Settings className="mr-1" /> Settings
           </Button>
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-teal-500 hover:bg-teal-600 text-white"
+            className="bg-teal-500 hover:bg-teal-600 text-white futuristic-button"
           >
             <FilePlus className="mr-1" /> Upload Files
           </Button>
@@ -719,3 +718,43 @@ export default function VisionBoard() {
     </div>
   );
 }
+
+// ------------------------------
+// Global Styles for Futuristic Effects
+// ------------------------------
+<style jsx global>{`
+  /* Animated Gradient Background for Landing Page */
+  .animated-gradient {
+    background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+    background-size: 600% 600%;
+    animation: gradientAnimation 15s ease infinite;
+  }
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Futuristic Title Styling */
+  .futuristic-title {
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+  }
+
+  /* Neon Effect for Buttons on Hover */
+  .futuristic-button {
+    transition: all 0.3s ease;
+  }
+
+  .futuristic-button:hover {
+    box-shadow: 0 0 10px cyan, 0 0 20px cyan;
+    transform: translateY(-2px);
+  }
+`}</style>

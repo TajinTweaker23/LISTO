@@ -1,3 +1,163 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* globals.css */
+
+/* ----------------------------------------------------------------------------------
+   1. Global Base & Reset
+---------------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* ----------------------------------------------------------------------------------
+   2. Define a Futuristic Color Palette and Font Variables
+---------------------------------------------------------------------------------- */
+:root {
+  /* Color palette */
+  --color-background: #121212;
+  --color-primary: #00ffff;         /* bright cyan */
+  --color-accent: #ff00ff;          /* bright magenta */
+  --color-secondary: #00ccff;
+  --color-text: #e0e0e0;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-shadow: rgba(0, 255, 255, 0.2);
+  
+  /* Font – use a futuristic Google font like Orbitron */
+  --font-sans: 'Orbitron', sans-serif;
+
+  /* Shadows and rounded corners */
+  --shadow-elevated: 0 4px 12px var(--color-shadow);
+  --rounded-md: 8px;
+
+  /* For animated gradient backgrounds */
+  --gradient-colors: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+}
+
+/* Import Orbitron from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+
+/* ----------------------------------------------------------------------------------
+   3. Global Body and Typography
+---------------------------------------------------------------------------------- */
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  text-shadow: 0 0 8px var(--color-primary);
+  margin-bottom: 0.75rem;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1rem;
+}
+
+/* ----------------------------------------------------------------------------------
+   4. Buttons with a Neon Glow Effect
+---------------------------------------------------------------------------------- */
+.button {
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+  color: #000;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--rounded-md);
+  box-shadow: var(--shadow-elevated);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.4);
+}
+
+/* ----------------------------------------------------------------------------------
+   5. Card and Panel Styling (Glassmorphism)
+---------------------------------------------------------------------------------- */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(5px);
+  border-radius: var(--rounded-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-elevated);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* ----------------------------------------------------------------------------------
+   6. Container and Layout Helpers
+---------------------------------------------------------------------------------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid var(--color-border);
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ----------------------------------------------------------------------------------
+   7. Animated Gradient Background for Landing Pages (Optional)
+---------------------------------------------------------------------------------- */
+.animated-gradient {
+  background: var(--gradient-colors);
+  background-size: 600% 600%;
+  animation: gradientAnimation 15s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ----------------------------------------------------------------------------------
+   8. Additional Utility Classes (Examples)
+---------------------------------------------------------------------------------- */
+.text-center {
+  text-align: center;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
