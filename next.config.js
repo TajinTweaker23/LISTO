@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['picsum.photos', 'listo-listo.firebasestorage.app'], // Allowed external image domains
+    domains: ['picsum.photos', 'listo-listo.firebasestorage.app', 'source.unsplash.com'],
   },
   // any other configuration can go here
 };

@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Input } from "../components/ui/input";
@@ -22,7 +21,6 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-
 // ------------------------------
 // Floating Icons Component (Smaller Icons)
 // ------------------------------
@@ -36,13 +34,11 @@ const FloatingIcons = () => {
     <Square key="5" size={16} />,
   ];
 
-
   const getRandomStyle = () => ({
     top: `${Math.floor(Math.random() * 90)}%`,
     left: `${Math.floor(Math.random() * 90)}%`,
     animationDelay: `${Math.random() * 2}s`,
   });
-
 
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -65,7 +61,6 @@ const FloatingIcons = () => {
   );
 };
 
-
 // ------------------------------
 // Animated Moodboard Card with Carousel Effect
 // ------------------------------
@@ -79,14 +74,12 @@ const AnimatedMoodboardCard = ({
   // For carousel: cycle through multiple images
   const [currentIndex, setCurrentIndex] = useState(0);
 
-
   // Build a set of image URLs using Unsplash with a signature parameter for variation
   const images = [
     moodboard.image,
     `${moodboard.image}&sig=${index * 10 + 2}`,
     `${moodboard.image}&sig=${index * 10 + 3}`,
   ];
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -95,7 +88,6 @@ const AnimatedMoodboardCard = ({
     return () => clearInterval(interval);
   }, [images.length]);
 
-
   // Glassmorphism-inspired style with a futuristic neon border based on the title
   let cardStyle: React.CSSProperties = {
     borderRadius: "12px",
@@ -103,7 +95,6 @@ const AnimatedMoodboardCard = ({
     background: "rgba(255, 255, 255, 0.1)",
     border: "1px solid rgba(255,255,255,0.2)",
   };
-
 
   if (moodboard.title.includes("Pastels")) {
     cardStyle.border = "2px solid #FFC0CB";
@@ -116,7 +107,6 @@ const AnimatedMoodboardCard = ({
   } else if (moodboard.title.includes("Serenity")) {
     cardStyle.border = "2px solid #8ecae6";
   }
-
 
   return (
     <motion.div
@@ -137,7 +127,9 @@ const AnimatedMoodboardCard = ({
         <FloatingIcons />
       </div>
       <div className="p-4">
-        <h2 className="text-2xl font-bold mb-2 text-gray-100">{moodboard.title}</h2>
+        <h2 className="text-2xl font-bold mb-2 text-gray-100">
+          {moodboard.title}
+        </h2>
         <p className="text-gray-300 mb-4">{moodboard.description}</p>
         <div className="flex gap-2">
           {moodboard.colors.map((color: string, idx: number) => (
@@ -154,7 +146,6 @@ const AnimatedMoodboardCard = ({
     </motion.div>
   );
 };
-
 
 // ------------------------------
 // Moodboards for Landing Page
@@ -192,12 +183,10 @@ const moodboards = [
   },
 ];
 
-
 // ------------------------------
 // Board Categories
 // ------------------------------
 const boardCategories = ["Personal", "Career", "Health", "Travel"];
-
 
 // ------------------------------
 // Main Vision Board Component
@@ -207,13 +196,11 @@ export default function VisionBoard() {
   const [showLanding, setShowLanding] = useState(true);
   const [currentMoodboard, setCurrentMoodboard] = useState(0);
 
-
   // Functions for navigating moodboards
   const nextMoodboard = () =>
     setCurrentMoodboard((prev) => (prev + 1) % moodboards.length);
   const prevMoodboard = () =>
     setCurrentMoodboard((prev) => (prev - 1 + moodboards.length) % moodboards.length);
-
 
   // Editor State
   const [selectedBoard, setSelectedBoard] = useState(boardCategories[0]);
@@ -231,7 +218,6 @@ export default function VisionBoard() {
     secondary: "#2d3748",
   });
   const fileInputRef = useRef<any>(null);
-
 
   // Firestore data fetching in the editor view
   useEffect(() => {
@@ -251,37 +237,45 @@ export default function VisionBoard() {
     }
   }, [selectedBoard, showLanding]);
 
-
   // ------------------------------
   // Editor Action Functions
   // ------------------------------
   const addImage = async () => {
     if (urlInput.trim()) {
       const colRef = collection(db, `visionBoards_${selectedBoard}`);
-      await addDoc(colRef, {
-        src: urlInput.trim(),
-        createdAt: new Date(),
-        status: "Not Started",
-        note: "",
-        progress: 0,
-        type: "image",
-      });
-      setUrlInput("");
+      try {
+        await addDoc(colRef, {
+          src: urlInput.trim(),
+          createdAt: new Date(),
+          status: "Not Started",
+          note: "",
+          progress: 0,
+          type: "image",
+        });
+        setUrlInput("");
+      } catch (error) {
+        console.error("Error adding image:", error);
+      }
     }
   };
 
-
   const removeItem = async (id: string) => {
-    await deleteDoc(doc(db, `visionBoards_${selectedBoard}`, id));
-    setDetailModalOpen(false);
-    setSelectedItem(null);
+    try {
+      await deleteDoc(doc(db, `visionBoards_${selectedBoard}`, id));
+      setDetailModalOpen(false);
+      setSelectedItem(null);
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
   };
-
 
   const updateItemDetails = async (id: string, updates: any) => {
-    await updateDoc(doc(db, `visionBoards_${selectedBoard}`, id), updates);
+    try {
+      await updateDoc(doc(db, `visionBoards_${selectedBoard}`, id), updates);
+    } catch (error) {
+      console.error("Error updating item:", error);
+    }
   };
-
 
   const handleFileUpload = async (files: FileList) => {
     const colRef = collection(db, `visionBoards_${selectedBoard}`);
@@ -291,19 +285,22 @@ export default function VisionBoard() {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const src = event.target?.result;
-        await addDoc(colRef, {
-          src,
-          createdAt: new Date(),
-          status: "Not Started",
-          note: "",
-          progress: 0,
-          type: fileType,
-        });
+        try {
+          await addDoc(colRef, {
+            src,
+            createdAt: new Date(),
+            status: "Not Started",
+            note: "",
+            progress: 0,
+            type: fileType,
+          });
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -311,11 +308,9 @@ export default function VisionBoard() {
     }
   };
 
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
-
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -325,17 +320,16 @@ export default function VisionBoard() {
     }
   };
 
-
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    if (active.id !== over?.id) {
+    if (!over) return;
+    if (active.id !== over.id) {
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over.id);
       setItems(arrayMove(items, oldIndex, newIndex));
-      // Optionally update ordering in the database.
+      // Optionally, update ordering in the database here.
     }
   };
-
 
   const handleDetailSave = async () => {
     if (selectedItem) {
@@ -348,7 +342,6 @@ export default function VisionBoard() {
       setSelectedItem(null);
     }
   };
-
 
   // ------------------------------
   // Rendering: Landing Page vs. Editor
@@ -415,7 +408,6 @@ export default function VisionBoard() {
       </div>
     );
   }
-
 
   // ------------------------------
   // Editor View
@@ -742,54 +734,43 @@ export default function VisionBoard() {
           )}
         </AnimatePresence>
       </div>
+      {/* Global Styles for Futuristic Effects */}
+      <style jsx global>{`
+        /* Animated Gradient Background for Landing Page */
+        .animated-gradient {
+          background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+          background-size: 600% 600%;
+          animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        /* Futuristic Title Styling */
+        .futuristic-title {
+          letter-spacing: 2px;
+          text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Neon Effect for Buttons on Hover */
+        .futuristic-button {
+          transition: all 0.3s ease;
+        }
+
+        .futuristic-button:hover {
+          box-shadow: 0 0 10px cyan, 0 0 20px cyan;
+          transform: translateY(-2px);
+        }
+      `}</style>
     </div>
   );
 }
-
-
-// ------------------------------
-// Global Styles for Futuristic Effects
-// ------------------------------
-<style jsx global>{`
-  /* Animated Gradient Background for Landing Page */
-  .animated-gradient {
-    background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
-    background-size: 600% 600%;
-    animation: gradientAnimation 15s ease infinite;
-  }
-
-
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-
-  /* Futuristic Title Styling */
-  .futuristic-title {
-    letter-spacing: 2px;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
-  }
-
-
-  /* Neon Effect for Buttons on Hover */
-  .futuristic-button {
-    transition: all 0.3s ease;
-  }
-
-
-  .futuristic-button:hover {
-    box-shadow: 0 0 10px cyan, 0 0 20px cyan;
-    transform: translateY(-2px);
-  }
-`}</style>
-
-
-
