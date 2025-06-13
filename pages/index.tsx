@@ -1,9 +1,10 @@
 // pages/index.tsx
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-// Define your mood boards array
+// Moodboards array (from HEAD)
 const moodboards = [
   {
     title: "Dreamy Pastels",
@@ -37,9 +38,8 @@ const moodboards = [
   },
 ];
 
-// Inline AnimatedMoodboardCard component updated to use Next.js 13 Image API
+// AnimatedMoodboardCard component (from HEAD)
 const AnimatedMoodboardCard = ({ moodboard, index }) => {
-  // Create a pseudo-carousel: cycle through multiple images per card
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
     moodboard.image,
@@ -60,8 +60,6 @@ const AnimatedMoodboardCard = ({ moodboard, index }) => {
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Updated Image usage: 'fill' prop makes the image fill its parent,
-          and inline style sets objectFit */}
       <div className="relative h-56 overflow-hidden">
         <Image
           src={images[currentIndex]}
@@ -89,48 +87,106 @@ const AnimatedMoodboardCard = ({ moodboard, index }) => {
   );
 };
 
-export default function Home() {
-  const [currentMoodboard, setCurrentMoodboard] = useState(0);
+// Floating icons array (from remote)
+const floatingIcons = [
+  { emoji: '🌐', label: 'Global' },
+  { emoji: '📸', label: 'Photos' },
+  { emoji: '🎥', label: 'Videos' },
+  { emoji: '🍲', label: 'Recipes' },
+  { emoji: '🧘‍♀️', label: 'Wellness' },
+  { emoji: '🏃‍♂️', label: 'Fitness' },
+  { emoji: '🧬', label: 'Science' },
+  { emoji: '🌱', label: 'Eco-Friendly' },
+  { emoji: '🎨', label: 'Design' },
+  { emoji: '📚', label: 'Education' },
+  { emoji: '📰', label: 'News' },
+  { emoji: '🌌', label: 'Space' },
+  { emoji: '👠', label: 'Fashion' },
+  { emoji: '⚖️', label: 'Justice' },
+];
 
+export default function Home() {
+  // State for moodboard navigation (from HEAD)
+  const [currentMoodboard, setCurrentMoodboard] = useState(0);
   const nextMoodboard = () =>
     setCurrentMoodboard((prev) => (prev + 1) % moodboards.length);
   const prevMoodboard = () =>
-    setCurrentMoodboard(
-      (prev) => (prev - 1 + moodboards.length) % moodboards.length
-    );
+    setCurrentMoodboard((prev) => (prev - 1 + moodboards.length) % moodboards.length);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="w-full py-12 bg-gradient-to-r from-blue-900 to-teal-500">
-        <h1 className="text-5xl font-extrabold text-center text-white">
-          LISTO Vision Board
+    <div>
+      {/* Welcome / Dashboard Section (from remote) */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gray-100">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+          Welcome to <span className="text-purple-600">LISTO</span>
         </h1>
-      </header>
-      <main className="flex-grow p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-            {moodboards.map((mb, idx) => (
-              <div key={idx} className="break-inside">
-                <AnimatedMoodboardCard moodboard={mb} index={idx} />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-around mt-8">
-            <button
-              onClick={prevMoodboard}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
-            >
-              Prev
+        <p className="mt-4 text-center text-gray-600 max-w-xl">
+          Your personalized dashboard for dreaming, doing, and dominating.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3 justify-center z-10">
+          <Link href="/vision-board">
+            <button className="p-2 px-4 border rounded-xl bg-orange-100 hover:bg-orange-200">
+              ✨ Enter Your Vision Board
             </button>
-            <button
-              onClick={nextMoodboard}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
-            >
-              Next
+          </Link>
+          <Link href="/explore">
+            <button className="p-2 px-4 border rounded-xl bg-blue-100 hover:bg-blue-200">
+              🌐 Explore Articles & News
             </button>
-          </div>
+          </Link>
         </div>
-      </main>
+        {floatingIcons.map((item, index) => (
+          <motion.div
+            key={item.label}
+            initial={{ y: 0 }}
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 4 + index, repeat: Infinity }}
+            className="absolute text-2xl md:text-4xl"
+            style={{
+              left: `${Math.random() * 90}%`,
+              top: `${Math.random() * 90}%`,
+              zIndex: 0,
+              pointerEvents: 'none',
+            }}
+          >
+            <span title={item.label}>{item.emoji}</span>
+          </motion.div>
+        ))}
+      </section>
+
+      {/* Moodboards Section (from HEAD) */}
+      <section className="min-h-screen flex flex-col">
+        <header className="w-full py-12 bg-gradient-to-r from-blue-900 to-teal-500">
+          <h1 className="text-5xl font-extrabold text-center text-white">
+            LISTO Vision Board
+          </h1>
+        </header>
+        <main className="flex-grow p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+              {moodboards.map((mb, idx) => (
+                <div key={idx} className="break-inside">
+                  <AnimatedMoodboardCard moodboard={mb} index={idx} />
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-around mt-8">
+              <button
+                onClick={prevMoodboard}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
+              >
+                Prev
+              </button>
+              <button
+                onClick={nextMoodboard}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </main>
+      </section>
     </div>
   );
 }

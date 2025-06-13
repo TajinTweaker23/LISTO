@@ -1,0 +1,13 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/impact-projects": "pages/impact-projects.js",
+  "/": "pages/index.js",
+  "/layout": "pages/layout.js",
+  "/explore": "pages/explore.js",
+  "/api/search": "pages/api/search.js",
+  "/login": "pages/login.js",
+  "/profile": "pages/profile.js",
+  "/vision-board": "pages/vision-board.js",
+  "/_document": "pages/_document.js"
+}

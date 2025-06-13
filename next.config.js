@@ -2,9 +2,17 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['picsum.photos', 'listo-listo.firebasestorage.app', 'source.unsplash.com'],
+    // Allow these domains for image optimization
+    domains: ['picsum.photos', 'listo-listo.firebaseapp.com', 'source.unsplash.com'],
+    // Additionally, use remotePatterns for a catch-all HTTPS rule
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
-  // any other configuration can go here
+  // Any other configuration can go here
 };
 
 module.exports = nextConfig;
