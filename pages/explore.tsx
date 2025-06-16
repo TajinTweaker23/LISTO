@@ -382,3 +382,66 @@ export default function Explore() {
                       key={idx}
                       className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl hover:shadow-2xl border border-gray-200 dark:border-gray-800 transition cursor-move group"
                       whileHover={{ scale: 
+                                {/* Grab Box Footer */}
+        {grabBox.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700 p-4 shadow-inner z-50">
+            <div className="flex justify-between items-center max-w-6xl mx-auto">
+              <div className="flex flex-wrap gap-2">
+                {grabBox.map((item, idx) => (
+                  <span key={idx} className="px-2 py-1 bg-indigo-200 dark:bg-indigo-700 text-xs rounded flex items-center gap-1">
+                    <Move className="w-3 h-3 opacity-60" />
+                    {item.title.slice(0, 25)}…
+                    <button
+                      className="ml-1 text-xs text-red-400 hover:text-red-600"
+                      onClick={() => removeFromGrabBox(item.link)}
+                    >✕</button>
+                  </span>
+                ))}
+              </div>
+              <button
+                onClick={clearGrabBox}
+                className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1"
+              >
+                <Trash2 className="w-4 h-4" /> Clear All
+              </button>
+            </div>
+            {/* Show/Hide Itinerary */}
+            <button
+              className="absolute top-2 right-4 text-indigo-500 hover:text-pink-500 font-semibold"
+              onClick={() => setShowItinerary(!showItinerary)}
+            >
+              {showItinerary ? "Hide Itinerary" : "Show Itinerary"}
+            </button>
+            {showItinerary && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900 rounded-xl shadow"
+              >
+                <div className="font-bold mb-2 text-lg text-indigo-700 dark:text-indigo-300">
+                  🗺️ Your Drag & Drop Itinerary
+                </div>
+                <ul className="flex flex-wrap gap-3">
+                  {grabBox.map((item, idx) => (
+                    <li key={idx} className="bg-white dark:bg-gray-800 px-3 py-2 rounded shadow text-sm flex items-center gap-2">
+                      <span className="font-medium">{item.title.slice(0, 30)}</span>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-500 hover:text-pink-500 underline"
+                      >Visit</a>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-3 text-xs text-gray-500 dark:text-gray-300">
+                  * Drag items here as you explore. Plan your day to reduce extra travel & make the most of your trip!
+                </div>
+              </motion.div>
+            )}
+          </div>
+        )}
+      </div> {/* CLOSES min-h-screen */}
+    </div>   {/* CLOSES top-level div */}
+  );
+}
