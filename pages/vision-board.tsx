@@ -9,35 +9,35 @@ const moodboardsData = [
     title: "Dreamy Pastels",
     description: "Soft hues to calm your mind and spark creativity.",
     colors: ["#FFB6C1", "#FFDAB9", "#E6E6FA", "#B0E0E6"],
-    image: "https://source.unsplash.com/200x160/?pastel",
+    image: "https://source.unsplash.com/100x80/?pastel,abstract",
     themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
   },
   {
     title: "Bold Contrast",
     description: "Vivid shades that ignite passion and energy.",
     colors: ["#FF5733", "#C70039", "#900C3F", "#581845"],
-    image: "https://source.unsplash.com/200x160/?bold",
+    image: "https://source.unsplash.com/100x80/?bold,art",
     themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
   },
   {
     title: "Earthy Tones",
     description: "Natural shades to ground your ambitions.",
     colors: ["#8B4513", "#D2B48C", "#A0522D", "#F4A460"],
-    image: "https://source.unsplash.com/200x160/?earth",
+    image: "https://source.unsplash.com/100x80/?earth,nature",
     themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
   },
   {
     title: "Vibrant Energy",
     description: "Bursting with zest and vigor for a productive day.",
     colors: ["#f77f00", "#d62828", "#003049", "#fcbf49"],
-    image: "https://source.unsplash.com/200x160/?vibrant",
+    image: "https://source.unsplash.com/100x80/?vibrant,painting",
     themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
   },
   {
     title: "Calm Serenity",
     description: "A peaceful blend of cool tones to relax and inspire.",
     colors: ["#8ecae6", "#219ebc", "#023047", "#ffb703"],
-    image: "https://source.unsplash.com/200x160/?serene",
+    image: "https://source.unsplash.com/100x80/?serene,abstract",
     themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
   },
 ];
@@ -126,7 +126,7 @@ export default function VisionBoard() {
                 draggable
                 onDragStart={() => setDraggedMood({ ...mood, type: "mood" })}
                 whileHover={{ scale: 1.08 }}
-                className="cursor-grab flex-shrink-0 w-28 h-36 border-2 border-white rounded-xl relative shadow-lg"
+                className="cursor-grab flex-shrink-0 w-24 h-32 border-2 border-white rounded-xl relative shadow-lg"
                 style={{
                   borderColor: mood.colors[0],
                   background: "rgba(255,255,255,0.18)",
@@ -137,7 +137,7 @@ export default function VisionBoard() {
                   handleSelectThemeSong(mood.themeSong);
                 }}
               >
-                <img src={mood.image} alt={mood.title} className="w-full h-16 object-cover rounded-t-xl" />
+                <img src={mood.image} alt={mood.title} className="w-full h-12 object-cover rounded-t-xl" />
                 <div className="p-2">
                   <h3 className="font-semibold text-xs mb-1">{mood.title}</h3>
                   <div className="flex gap-1 mb-1">
@@ -218,7 +218,7 @@ export default function VisionBoard() {
         {/* Vision Board Grid */}
         <section>
           <div
-            className="mb-8 border-4 border-dashed border-indigo-400 rounded-2xl min-h-[150px] flex flex-wrap items-center justify-center gap-2 p-2"
+            className="mb-8 border-4 border-dashed border-indigo-400 rounded-2xl min-h-[120px] flex flex-wrap items-center justify-center gap-2 p-2"
             style={{
               background: "rgba(255,255,255,0.32)",
               backdropFilter: "blur(8px) saturate(180%)"
@@ -240,7 +240,7 @@ export default function VisionBoard() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="relative w-24 h-20 m-1 rounded-lg shadow-lg overflow-hidden border-2"
+                    className="relative w-[100px] h-[80px] m-1 rounded-lg shadow-lg overflow-hidden border-2"
                     style={{
                       borderColor: item.colors?.[0] || "#aaa",
                       background: "rgba(255,255,255,0.18)",
@@ -261,7 +261,7 @@ export default function VisionBoard() {
                     key={idx}
                     src={item.src}
                     alt="GIF"
-                    className="w-20 h-20 m-1 rounded"
+                    className="w-[80px] h-[80px] m-1 rounded"
                     style={{
                       background: "rgba(255,255,255,0.14)",
                       backdropFilter: "blur(4px)"
@@ -278,8 +278,8 @@ export default function VisionBoard() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
                     key={idx}
-                    width="80"
-                    height="48"
+                    width="100"
+                    height="56"
                     src={`https://www.youtube.com/embed/${videoId}`}
                     title="YouTube Video"
                     className="rounded m-1"
@@ -295,7 +295,7 @@ export default function VisionBoard() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
                     key={idx}
-                    className="w-12 h-12 m-1 rounded"
+                    className="w-10 h-10 m-1 rounded"
                     style={{
                       background: item.color,
                       border: "2px solid #fff"
@@ -310,7 +310,7 @@ export default function VisionBoard() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
                     key={idx}
-                    className="w-12 h-12 m-1 rounded border-4"
+                    className="w-10 h-10 m-1 rounded border-4"
                     style={{
                       borderColor: item.color,
                       borderStyle: "solid",
@@ -375,11 +375,4 @@ export default function VisionBoard() {
           animation: gradient-animate 24s ease infinite;
         }
         @keyframes gradient-animate {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
-    </div>
-  );
-}
+         
