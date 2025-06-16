@@ -1,334 +1,283 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Youtube, Plus } from "lucide-react";
+import { Youtube, Plus, Search } from "lucide-react";
 
-// ---- Moodboard Presets ----
+// Moodboard Presets
 const moodboardsData = [
   {
     title: "Dreamy Pastels",
     description: "Soft hues to calm your mind and spark creativity.",
     colors: ["#FFB6C1", "#FFDAB9", "#E6E6FA", "#B0E0E6"],
-    image: "https://source.unsplash.com/100x80/?pastel,abstract",
-    themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    image: "https://source.unsplash.com/300x180/?pastel",
   },
   {
     title: "Bold Contrast",
     description: "Vivid shades that ignite passion and energy.",
     colors: ["#FF5733", "#C70039", "#900C3F", "#581845"],
-    image: "https://source.unsplash.com/100x80/?bold,art",
-    themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+    image: "https://source.unsplash.com/300x180/?bold",
   },
   {
     title: "Earthy Tones",
     description: "Natural shades to ground your ambitions.",
     colors: ["#8B4513", "#D2B48C", "#A0522D", "#F4A460"],
-    image: "https://source.unsplash.com/100x80/?earth,nature",
-    themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+    image: "https://source.unsplash.com/300x180/?earth",
   },
   {
     title: "Vibrant Energy",
     description: "Bursting with zest and vigor for a productive day.",
     colors: ["#f77f00", "#d62828", "#003049", "#fcbf49"],
-    image: "https://source.unsplash.com/100x80/?vibrant,painting",
-    themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+    image: "https://source.unsplash.com/300x180/?vibrant",
   },
   {
     title: "Calm Serenity",
     description: "A peaceful blend of cool tones to relax and inspire.",
     colors: ["#8ecae6", "#219ebc", "#023047", "#ffb703"],
-    image: "https://source.unsplash.com/100x80/?serene,abstract",
-    themeSong: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+    image: "https://source.unsplash.com/300x180/?serene",
   },
 ];
 
+// Giphy API Key
+const GIPHY_API_KEY = "SvaLDNl2HY3Hf1gmvT2rLNJwH6Tbiano";
+
 export default function VisionBoard() {
   const [visionItems, setVisionItems] = useState<any[]>([]);
-  const [draggedMood, setDraggedMood] = useState<any | null>(null);
   const [showFabMenu, setShowFabMenu] = useState(false);
-  const [gifUrl, setGifUrl] = useState("");
   const [showGifModal, setShowGifModal] = useState(false);
-  const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [colorBlock, setColorBlock] = useState("#ff69b4");
-  const [borderBlock, setBorderBlock] = useState("#222");
-  const [themeSong, setThemeSong] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [gifSearch, setGifSearch] = useState("");
+  const [gifResults, setGifResults] = useState<any[]>([]);
+  const [showMoodboards, setShowMoodboards] = useState(true);
 
-  useEffect(() => {
-    if (themeSong && audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
-    }
-  }, [themeSong]);
-
-  // ---- Drag and Drop ----
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (draggedMood) {
-      setVisionItems([...visionItems, draggedMood]);
-      setDraggedMood(null);
-      return;
-    }
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setVisionItems([...visionItems, { type: "image", src: event.target?.result as string }]);
-      };
-      reader.readAsDataURL(file);
-    }
-    e.dataTransfer.clearData();
+  // Giphy Search Handler
+  const handleGifSearch = async () => {
+    if (!gifSearch) return;
+    setGifResults([]);
+    const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(
+      gifSearch
+    )}&limit=12&rating=pg`;
+    const res = await fetch(url);
+    const data = await res.json();
+    setGifResults(data.data || []);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleAddGifResult = (gif: any) => {
+    setVisionItems([...visionItems, { type: "gif", src: gif.images.fixed_height.url }]);
+    setShowGifModal(false);
+    setGifResults([]);
+    setGifSearch("");
   };
 
-  // ---- Add Media ----
-  const handleAddGif = () => {
-    if (gifUrl) {
-      setVisionItems([...visionItems, { type: "gif", src: gifUrl }]);
-      setGifUrl("");
-      setShowGifModal(false);
-    }
+  // Moodboard quick add
+  const handleAddMoodboard = (mb: any) => {
+    setVisionItems([
+      ...visionItems,
+      {
+        type: "moodboard",
+        title: mb.title,
+        description: mb.description,
+        colors: mb.colors,
+        image: mb.image,
+      },
+    ]);
   };
 
-  const handleAddYoutube = () => {
-    if (youtubeUrl) {
-      setVisionItems([...visionItems, { type: "youtube", src: youtubeUrl }]);
-      setYoutubeUrl("");
+  // Add YouTube link (simple demo, can be improved later)
+  const handleAddYouTube = () => {
+    const url = prompt("Paste a YouTube link:");
+    if (url) {
+      setVisionItems([...visionItems, { type: "youtube", src: url }]);
     }
   };
 
-  const handleAddColorBlock = () => {
-    setVisionItems([...visionItems, { type: "color", color: colorBlock }]);
+  // Drag and drop (simple; full reorder coming next version)
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+
+  const handleDragStart = (index: number) => {
+    dragItem.current = index;
+  };
+  const handleDragEnter = (index: number) => {
+    dragOverItem.current = index;
+  };
+  const handleDragEnd = () => {
+    const items = [...visionItems];
+    const dragged = items.splice(dragItem.current!, 1)[0];
+    items.splice(dragOverItem.current!, 0, dragged);
+    setVisionItems(items);
+    dragItem.current = null;
+    dragOverItem.current = null;
   };
 
-  const handleAddBorderBlock = () => {
-    setVisionItems([...visionItems, { type: "border", color: borderBlock }]);
-  };
-
-  const handleSelectThemeSong = (url: string) => {
-    setThemeSong(url);
-  };
-
+  // UI
   return (
-    <div className={`min-h-screen py-6 px-2 sm:px-6 relative`} style={{ fontFamily: "Inter, Poppins, Arial, sans-serif" }}>
+    <div
+      className="min-h-screen py-6 px-2 sm:px-6 relative"
+      style={{ fontFamily: "Inter, Poppins, Arial, sans-serif" }}
+    >
+      {/* Animated Gradient BG */}
       <div className="animated-gradient-bg" />
-      <div className="relative z-10 max-w-4xl mx-auto">
 
-        {/* Moodboard Presets Row */}
-        <section className="mb-6">
-          <h2 className="text-lg sm:text-xl font-bold mb-2">Moodboard Presets</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {moodboardsData.map((mood, idx) => (
-              <motion.div
-                key={idx}
-                draggable
-                onDragStart={() => setDraggedMood({ ...mood, type: "mood" })}
-                whileHover={{ scale: 1.08 }}
-                className="cursor-grab flex-shrink-0 w-24 h-32 border-2 border-white rounded-xl relative shadow-lg"
-                style={{
-                  borderColor: mood.colors[0],
-                  background: "rgba(255,255,255,0.18)",
-                  backdropFilter: "blur(9px) saturate(180%)"
-                }}
-                onDoubleClick={() => {
-                  setVisionItems([...visionItems, { ...mood, type: "mood" }]);
-                  handleSelectThemeSong(mood.themeSong);
-                }}
-              >
-                <img src={mood.image} alt={mood.title} className="w-full h-12 object-cover rounded-t-xl" />
-                <div className="p-2">
-                  <h3 className="font-semibold text-xs mb-1">{mood.title}</h3>
+      <div className="relative z-10 max-w-4xl mx-auto">
+        <header className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white drop-shadow">
+            ✨ Vision Board
+          </h1>
+          <button
+            className="rounded-full bg-blue-600 text-white w-12 h-12 shadow-xl flex items-center justify-center hover:bg-blue-700 transition"
+            onClick={() => setShowFabMenu((s) => !s)}
+            aria-label="Add"
+          >
+            <Plus size={28} />
+          </button>
+        </header>
+
+        {/* Moodboards always visible */}
+        {showMoodboards && (
+          <>
+            <h2 className="text-xl font-bold text-white mb-2">Moodboards</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+              {moodboardsData.map((mb, idx) => (
+                <motion.div
+                  key={idx}
+                  className="bg-white/80 rounded-xl shadow flex flex-col items-center p-2 border border-gray-200 hover:scale-105 transition cursor-pointer"
+                  whileHover={{ scale: 1.04 }}
+                  onClick={() => handleAddMoodboard(mb)}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragEnter={() => handleDragEnter(idx)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <img
+                    src={mb.image}
+                    alt={mb.title}
+                    className="rounded-lg mb-1"
+                    style={{ width: 120, height: 72, objectFit: "cover" }}
+                  />
+                  <div className="font-semibold text-sm mb-1 text-gray-800 text-center">
+                    {mb.title}
+                  </div>
                   <div className="flex gap-1 mb-1">
-                    {mood.colors.map((c, i) => (
-                      <div key={i} className="w-3 h-3 rounded-full border" style={{ background: c }} />
+                    {mb.colors.map((c, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          background: c,
+                          width: 16,
+                          height: 16,
+                          borderRadius: "100%",
+                          border: "1px solid #eee",
+                        }}
+                      />
                     ))}
                   </div>
-                  <button className="text-xs text-blue-500 mt-1 underline" onClick={() => handleSelectThemeSong(mood.themeSong)}>
-                    Play
+                  <div className="text-xs text-gray-500 text-center">{mb.description}</div>
+                  <button className="mt-1 px-2 py-1 bg-blue-500 text-xs text-white rounded shadow hover:bg-blue-600">
+                    Add
                   </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
 
-        {/* Hero Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl py-4 mb-5 shadow-lg flex flex-col items-center"
-          style={{
-            background: "rgba(255,255,255,0.36)",
-            backdropFilter: "blur(10px) saturate(180%)"
-          }}
-        >
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wide mb-2" style={{ fontFamily: "Poppins, Inter, Arial" }}>✨ Your Vision Board</h1>
-          <p className="text-base text-center max-w-xl text-gray-700 dark:text-gray-200">Drag moodboards, GIFs, YouTube, colors, and more—make it yours!</p>
-        </motion.div>
-
-        {/* Media FAB (Floating Action Button) */}
-        <button
-          className="fixed bottom-10 right-10 z-50 bg-indigo-600 hover:bg-indigo-700 rounded-full p-4 shadow-lg focus:outline-none transition-all flex items-center gap-2"
-          onClick={() => setShowFabMenu((v) => !v)}
-          style={{ boxShadow: "0 4px 24px rgba(80,0,170,0.16)" }}
-        >
-          <Plus className="w-7 h-7 text-white" />
-          <span className="hidden sm:inline text-white font-bold text-lg">Add Media</span>
-        </button>
-
+        {/* Floating Add Menu */}
         <AnimatePresence>
           {showFabMenu && (
             <motion.div
-              className="fixed bottom-28 right-10 z-50 p-4 rounded-xl flex flex-col gap-3 shadow-lg"
-              style={{
-                background: "rgba(255,255,255,0.42)",
-                backdropFilter: "blur(16px) saturate(180%)"
-              }}
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 40 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              className="fixed right-8 bottom-20 sm:bottom-12 bg-white/90 rounded-xl shadow-lg p-4 z-50 flex flex-col gap-3"
             >
-              <button onClick={() => setShowGifModal(true)} className="bg-pink-500 hover:bg-pink-600 text-white rounded px-4 py-2">Add GIF</button>
-              <div className="flex gap-1">
-                <input
-                  type="text"
-                  placeholder="YouTube URL"
-                  className="p-1 border rounded w-28"
-                  value={youtubeUrl}
-                  onChange={e => setYoutubeUrl(e.target.value)}
-                />
-                <button onClick={handleAddYoutube} className="bg-red-500 hover:bg-red-600 text-white rounded px-2">
-                  <Youtube size={18}/> Video
-                </button>
-              </div>
-              <div className="flex gap-1">
-                <input type="color" value={colorBlock} onChange={e => setColorBlock(e.target.value)} />
-                <button onClick={handleAddColorBlock} className="bg-blue-500 hover:bg-blue-600 text-white rounded px-2">Color Block</button>
-              </div>
-              <div className="flex gap-1">
-                <input type="color" value={borderBlock} onChange={e => setBorderBlock(e.target.value)} />
-                <button onClick={handleAddBorderBlock} className="bg-gray-600 hover:bg-gray-700 text-white rounded px-2">Border Block</button>
-              </div>
+              <button
+                onClick={() => setShowGifModal(true)}
+                className="bg-pink-500 hover:bg-pink-600 text-white rounded px-4 py-2 flex items-center gap-1"
+              >
+                <Search size={18} /> Giphy GIF
+              </button>
+              <button
+                onClick={handleAddYouTube}
+                className="bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2 flex items-center gap-1"
+              >
+                <Youtube size={18} /> YouTube
+              </button>
+              <button
+                onClick={() => setShowFabMenu(false)}
+                className="text-gray-700 hover:underline text-sm mt-1"
+              >
+                Cancel
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Vision Board Grid */}
-        <section>
-          <div
-            className="mb-8 border-4 border-dashed border-indigo-400 rounded-2xl min-h-[120px] flex flex-wrap items-center justify-center gap-2 p-2"
-            style={{
-              background: "rgba(255,255,255,0.32)",
-              backdropFilter: "blur(8px) saturate(180%)"
-            }}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          >
-            <p className="text-md text-gray-500 w-full text-center mb-1">
-              Drag here to add items, or use the + button below!
-            </p>
-            {visionItems.length === 0 && (
-              <p className="text-center text-gray-400 italic w-full">Your board is empty. Start creating!</p>
-            )}
-            {visionItems.map((item, idx) => {
-              if (item.type === "image" || item.type === "mood") {
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative w-[100px] h-[80px] m-1 rounded-lg shadow-lg overflow-hidden border-2"
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {visionItems.map((item, idx) => (
+            <motion.div
+              key={idx}
+              className="bg-white/80 rounded-lg shadow p-2 flex flex-col gap-1 items-center"
+              draggable
+              onDragStart={() => handleDragStart(idx)}
+              onDragEnter={() => handleDragEnter(idx)}
+              onDragEnd={handleDragEnd}
+            >
+              {item.type === "gif" ? (
+                <img
+                  src={item.src}
+                  alt="GIF"
+                  style={{
+                    width: "100%",
+                    height: 90,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                  }}
+                />
+              ) : item.type === "youtube" ? (
+                <iframe
+                  width="100%"
+                  height={90}
+                  src={item.src.replace("watch?v=", "embed/")}
+                  title="YouTube video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    borderRadius: 8,
+                  }}
+                ></iframe>
+              ) : item.type === "moodboard" ? (
+                <>
+                  <img
+                    src={item.image}
+                    alt={item.title}
                     style={{
-                      borderColor: item.colors?.[0] || "#aaa",
-                      background: "rgba(255,255,255,0.18)",
-                      backdropFilter: "blur(6px) saturate(180%)"
-                    }}
-                  >
-                    <img src={item.image || item.src} alt="" className="object-cover w-full h-full" />
-                    {item.title && <div className="absolute bottom-0 bg-black/30 w-full text-[10px] text-white text-center">{item.title}</div>}
-                  </motion.div>
-                );
-              }
-              if (item.type === "gif") {
-                return (
-                  <motion.img
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    key={idx}
-                    src={item.src}
-                    alt="GIF"
-                    className="w-[80px] h-[80px] m-1 rounded"
-                    style={{
-                      background: "rgba(255,255,255,0.14)",
-                      backdropFilter: "blur(4px)"
+                      width: "100%",
+                      height: 90,
+                      objectFit: "cover",
+                      borderRadius: 8,
                     }}
                   />
-                );
-              }
-              if (item.type === "youtube") {
-                const match = item.src.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-                const videoId = match?.[1];
-                return videoId ? (
-                  <motion.iframe
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    key={idx}
-                    width="100"
-                    height="56"
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube Video"
-                    className="rounded m-1"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : null;
-              }
-              if (item.type === "color") {
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    key={idx}
-                    className="w-10 h-10 m-1 rounded"
-                    style={{
-                      background: item.color,
-                      border: "2px solid #fff"
-                    }}
-                  ></motion.div>
-                );
-              }
-              if (item.type === "border") {
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    key={idx}
-                    className="w-10 h-10 m-1 rounded border-4"
-                    style={{
-                      borderColor: item.color,
-                      borderStyle: "solid",
-                      background: "rgba(255,255,255,0.08)",
-                      backdropFilter: "blur(3px)"
-                    }}
-                  ></motion.div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        </section>
+                  <div className="font-semibold text-xs text-gray-800">{item.title}</div>
+                  <div className="flex gap-1">
+                    {item.colors.map((c: string, i: number) => (
+                      <div
+                        key={i}
+                        style={{
+                          background: c,
+                          width: 14,
+                          height: 14,
+                          borderRadius: "100%",
+                          border: "1px solid #eee",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      {/* Theme Song Player */}
-      <audio ref={audioRef} src={themeSong || undefined} hidden />
 
       {/* GIF Modal */}
       <AnimatePresence>
@@ -340,23 +289,37 @@ export default function VisionBoard() {
             exit={{ opacity: 0 }}
           >
             <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full flex flex-col gap-3">
-              <h3 className="font-bold mb-2">Add a GIF</h3>
-              <input
-                type="text"
-                placeholder="Paste GIF URL"
-                value={gifUrl}
-                onChange={e => setGifUrl(e.target.value)}
-                className="p-2 border rounded"
-              />
-              <button
-                onClick={handleAddGif}
-                className="bg-pink-500 text-white px-3 py-1 rounded"
-              >
-                Add GIF
-              </button>
+              <h3 className="font-bold mb-2">Search Giphy GIFs</h3>
+              <div className="flex gap-1">
+                <input
+                  type="text"
+                  placeholder="Search GIFs"
+                  value={gifSearch}
+                  onChange={(e) => setGifSearch(e.target.value)}
+                  className="p-2 border rounded w-4/5"
+                  onKeyDown={(e) => e.key === "Enter" && handleGifSearch()}
+                />
+                <button
+                  onClick={handleGifSearch}
+                  className="bg-pink-400 text-white px-2 rounded"
+                >
+                  Search
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-2 mt-2 max-h-40 overflow-auto">
+                {gifResults.map((gif, i) => (
+                  <img
+                    key={gif.id}
+                    src={gif.images.fixed_height_small.url}
+                    alt={gif.title}
+                    className="rounded shadow cursor-pointer transition hover:scale-105"
+                    onClick={() => handleAddGifResult(gif)}
+                  />
+                ))}
+              </div>
               <button
                 onClick={() => setShowGifModal(false)}
-                className="text-gray-600 hover:underline text-sm"
+                className="text-gray-600 hover:underline text-sm mt-2"
               >
                 Cancel
               </button>
@@ -365,16 +328,15 @@ export default function VisionBoard() {
         )}
       </AnimatePresence>
 
-      {/* Animated Gradient Background */}
+      {/* Animated Gradient BG */}
       <style jsx global>{`
-        body {
-          font-family: 'Inter', 'Poppins', Arial, sans-serif;
-        }
         .animated-gradient-bg {
           position: fixed;
           inset: 0;
+          width: 100vw;
+          height: 100vh;
           z-index: 0;
-          background: linear-gradient(270deg, #5eead4, #818cf8, #f472b6, #facc15, #38bdf8, #f472b6);
+          background: linear-gradient(270deg, #5eead4, #818cf8, #f472b6, #fde68a, #34d399, #a21caf);
           background-size: 1800% 1800%;
           animation: gradient-animate 24s ease infinite;
         }
