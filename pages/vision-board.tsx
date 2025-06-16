@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FilePlus, Moon, Sun, Music, LayoutGrid, Youtube, Plus } from "lucide-react";
+import { Youtube, Plus } from "lucide-react";
 
 // ---- Moodboard Presets ----
 const moodboardsData = [
@@ -45,14 +45,13 @@ const moodboardsData = [
 export default function VisionBoard() {
   const [visionItems, setVisionItems] = useState<any[]>([]);
   const [draggedMood, setDraggedMood] = useState<any | null>(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const [showGifModal, setShowGifModal] = useState(false);
+  const [showFabMenu, setShowFabMenu] = useState(false);
   const [gifUrl, setGifUrl] = useState("");
+  const [showGifModal, setShowGifModal] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [colorBlock, setColorBlock] = useState("#ff69b4");
   const [borderBlock, setBorderBlock] = useState("#222");
   const [themeSong, setThemeSong] = useState<string | null>(null);
-  const [showFabMenu, setShowFabMenu] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -116,31 +115,18 @@ export default function VisionBoard() {
     <div className={`min-h-screen py-6 px-2 sm:px-6 relative`} style={{ fontFamily: "Inter, Poppins, Arial, sans-serif" }}>
       <div className="animated-gradient-bg" />
       <div className="relative z-10 max-w-4xl mx-auto">
-        {/* Hero Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl py-8 mb-6 shadow-lg flex flex-col items-center"
-          style={{
-            background: "rgba(255,255,255,0.36)",
-            backdropFilter: "blur(12px) saturate(180%)"
-          }}
-        >
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-wide mb-2" style={{ fontFamily: "Poppins, Inter, Arial" }}>✨ Your Vision Board</h1>
-          <p className="text-lg font-medium text-center max-w-xl text-gray-700 dark:text-gray-200">Drag in moodboards, GIFs, YouTube, colored blocks, and more—make it yours!</p>
-        </motion.div>
 
-        {/* Moodboard Presets */}
-        <section className="mb-4">
+        {/* Moodboard Presets Row */}
+        <section className="mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-2">Moodboard Presets</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="flex gap-3 overflow-x-auto pb-2">
             {moodboardsData.map((mood, idx) => (
               <motion.div
                 key={idx}
                 draggable
                 onDragStart={() => setDraggedMood({ ...mood, type: "mood" })}
                 whileHover={{ scale: 1.08 }}
-                className="cursor-grab flex-shrink-0 w-36 h-52 border-4 border-white rounded-xl relative shadow-lg"
+                className="cursor-grab flex-shrink-0 w-28 h-36 border-2 border-white rounded-xl relative shadow-lg"
                 style={{
                   borderColor: mood.colors[0],
                   background: "rgba(255,255,255,0.18)",
@@ -151,22 +137,36 @@ export default function VisionBoard() {
                   handleSelectThemeSong(mood.themeSong);
                 }}
               >
-                <img src={mood.image} alt={mood.title} className="w-full h-24 object-cover rounded-t-xl" />
+                <img src={mood.image} alt={mood.title} className="w-full h-16 object-cover rounded-t-xl" />
                 <div className="p-2">
-                  <h3 className="font-semibold text-base mb-1">{mood.title}</h3>
+                  <h3 className="font-semibold text-xs mb-1">{mood.title}</h3>
                   <div className="flex gap-1 mb-1">
                     {mood.colors.map((c, i) => (
-                      <div key={i} className="w-4 h-4 rounded-full border" style={{ background: c }} />
+                      <div key={i} className="w-3 h-3 rounded-full border" style={{ background: c }} />
                     ))}
                   </div>
                   <button className="text-xs text-blue-500 mt-1 underline" onClick={() => handleSelectThemeSong(mood.themeSong)}>
-                    Play Theme
+                    Play
                   </button>
                 </div>
               </motion.div>
             ))}
           </div>
         </section>
+
+        {/* Hero Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl py-4 mb-5 shadow-lg flex flex-col items-center"
+          style={{
+            background: "rgba(255,255,255,0.36)",
+            backdropFilter: "blur(10px) saturate(180%)"
+          }}
+        >
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wide mb-2" style={{ fontFamily: "Poppins, Inter, Arial" }}>✨ Your Vision Board</h1>
+          <p className="text-base text-center max-w-xl text-gray-700 dark:text-gray-200">Drag moodboards, GIFs, YouTube, colors, and more—make it yours!</p>
+        </motion.div>
 
         {/* Media FAB (Floating Action Button) */}
         <button
@@ -218,7 +218,7 @@ export default function VisionBoard() {
         {/* Vision Board Grid */}
         <section>
           <div
-            className="mb-8 border-4 border-dashed border-indigo-400 rounded-2xl min-h-[150px] flex flex-wrap items-center justify-center gap-3 p-4"
+            className="mb-8 border-4 border-dashed border-indigo-400 rounded-2xl min-h-[150px] flex flex-wrap items-center justify-center gap-2 p-2"
             style={{
               background: "rgba(255,255,255,0.32)",
               backdropFilter: "blur(8px) saturate(180%)"
@@ -226,7 +226,7 @@ export default function VisionBoard() {
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <p className="text-lg text-gray-500 w-full text-center mb-1">
+            <p className="text-md text-gray-500 w-full text-center mb-1">
               Drag here to add items, or use the + button below!
             </p>
             {visionItems.length === 0 && (
@@ -239,16 +239,16 @@ export default function VisionBoard() {
                     key={idx}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative w-32 h-28 m-1 rounded-lg shadow-lg overflow-hidden border-2"
+                    transition={{ duration: 0.3 }}
+                    className="relative w-24 h-20 m-1 rounded-lg shadow-lg overflow-hidden border-2"
                     style={{
                       borderColor: item.colors?.[0] || "#aaa",
-                      background: "rgba(255,255,255,0.22)",
+                      background: "rgba(255,255,255,0.18)",
                       backdropFilter: "blur(6px) saturate(180%)"
                     }}
                   >
                     <img src={item.image || item.src} alt="" className="object-cover w-full h-full" />
-                    {item.title && <div className="absolute bottom-0 bg-black/40 w-full text-xs text-white text-center">{item.title}</div>}
+                    {item.title && <div className="absolute bottom-0 bg-black/30 w-full text-[10px] text-white text-center">{item.title}</div>}
                   </motion.div>
                 );
               }
@@ -257,11 +257,11 @@ export default function VisionBoard() {
                   <motion.img
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.3 }}
                     key={idx}
                     src={item.src}
                     alt="GIF"
-                    className="w-28 h-28 m-1 rounded"
+                    className="w-20 h-20 m-1 rounded"
                     style={{
                       background: "rgba(255,255,255,0.14)",
                       backdropFilter: "blur(4px)"
@@ -276,10 +276,10 @@ export default function VisionBoard() {
                   <motion.iframe
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.3 }}
                     key={idx}
-                    width="120"
-                    height="70"
+                    width="80"
+                    height="48"
                     src={`https://www.youtube.com/embed/${videoId}`}
                     title="YouTube Video"
                     className="rounded m-1"
@@ -293,9 +293,9 @@ export default function VisionBoard() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.3 }}
                     key={idx}
-                    className="w-16 h-16 m-1 rounded"
+                    className="w-12 h-12 m-1 rounded"
                     style={{
                       background: item.color,
                       border: "2px solid #fff"
@@ -308,9 +308,9 @@ export default function VisionBoard() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.3 }}
                     key={idx}
-                    className="w-16 h-16 m-1 rounded border-4"
+                    className="w-12 h-12 m-1 rounded border-4"
                     style={{
                       borderColor: item.color,
                       borderStyle: "solid",
