@@ -179,7 +179,7 @@ const ImageElement = /*#__PURE__*/ (0, _react.forwardRef)((param, forwardedRef)=
         }
     });
 });
-function ImagePreload(param) {
+function Image(param) {
     let { isAppRouter, imgAttributes } = param;
     const opts = {
         as: "image",
@@ -191,15 +191,15 @@ function ImagePreload(param) {
     };
     if (isAppRouter) {
         // See https://github.com/facebook/react/pull/26940
-        (0, _reactdom.preload)(imgAttributes.src, opts);
+        (0, _reactdom.)(imgAttributes.src, opts);
         return null;
     }
     return /*#__PURE__*/ _react.default.createElement(_head.default, null, /*#__PURE__*/ _react.default.createElement("link", {
         key: "__nimg-" + imgAttributes.src + imgAttributes.srcSet + imgAttributes.sizes,
-        rel: "preload",
+        rel: "",
         // Note how we omit the `href` attribute, as it would only be relevant
         // for browsers that do not support `imagesrcset`, and in those cases
-        // it would cause the incorrect image to be preloaded.
+        // it would cause the incorrect image to be ed.
         //
         // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-imagesrcset
         href: imgAttributes.srcSet ? undefined : imgAttributes.src,
@@ -257,7 +257,7 @@ const Image = /*#__PURE__*/ (0, _react.forwardRef)((props, forwardedRef)=>{
         setBlurComplete: setBlurComplete,
         setShowAltText: setShowAltText,
         ref: forwardedRef
-    }), imgMeta.priority ? /*#__PURE__*/ _react.default.createElement(ImagePreload, {
+    }), imgMeta.priority ? /*#__PURE__*/ _react.default.createElement(Image, {
         isAppRouter: isAppRouter,
         imgAttributes: imgAttributes
     }) : null);

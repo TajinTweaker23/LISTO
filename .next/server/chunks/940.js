@@ -231,17 +231,17 @@ function getNextFontLinkTags(nextFontManifest, dangerousAsPath, assetPrefix = ""
     if (!nextFontManifest) {
         return {
             preconnect: null,
-            preload: null
+            : null
         };
     }
     const appFontsEntry = nextFontManifest.pages["/_app"];
     const pageFontsEntry = nextFontManifest.pages[dangerousAsPath];
-    const preloadedFontFiles = [
+    const edFontFiles = [
         ...appFontsEntry ?? [],
         ...pageFontsEntry ?? []
     ];
-    // If no font files should preload but there's an entry for the path, add a preconnect tag.
-    const preconnectToSelf = !!(preloadedFontFiles.length === 0 && (appFontsEntry || pageFontsEntry));
+    // If no font files should  but there's an entry for the path, add a preconnect tag.
+    const preconnectToSelf = !!(edFontFiles.length === 0 && (appFontsEntry || pageFontsEntry));
     return {
         preconnect: preconnectToSelf ? /*#__PURE__*/ _react.default.createElement("link", {
             "data-next-font": nextFontManifest.pagesUsingSizeAdjust ? "size-adjust" : "",
@@ -249,11 +249,11 @@ function getNextFontLinkTags(nextFontManifest, dangerousAsPath, assetPrefix = ""
             href: "/",
             crossOrigin: "anonymous"
         }) : null,
-        preload: preloadedFontFiles ? preloadedFontFiles.map((fontFile)=>{
+        : edFontFiles ? edFontFiles.map((fontFile)=>{
             const ext = /\.(woff|woff2|eot|ttf|otf)$/.exec(fontFile)[1];
             return /*#__PURE__*/ _react.default.createElement("link", {
                 key: fontFile,
-                rel: "preload",
+                rel: "",
                 href: `${assetPrefix}/_next/${encodeURI(fontFile)}`,
                 as: "font",
                 type: `font/${ext}`,
@@ -286,9 +286,9 @@ class Head extends _react.default.Component {
             const isSharedFile = sharedFiles.has(file);
             if (!optimizeCss) {
                 cssLinkElements.push(/*#__PURE__*/ _react.default.createElement("link", {
-                    key: `${file}-preload`,
+                    key: `${file}-`,
                     nonce: this.props.nonce,
-                    rel: "preload",
+                    rel: "",
                     href: `${assetPrefix}/_next/${encodeURI(file)}${assetQueryString}`,
                     as: "style",
                     crossOrigin: this.props.crossOrigin || crossOrigin
@@ -310,14 +310,14 @@ class Head extends _react.default.Component {
         }
         return cssLinkElements.length === 0 ? null : cssLinkElements;
     }
-    getPreloadDynamicChunks() {
+    getDynamicChunks() {
         const { dynamicImports, assetPrefix, assetQueryString, crossOrigin } = this.context;
         return dynamicImports.map((file)=>{
             if (!file.endsWith(".js")) {
                 return null;
             }
             return /*#__PURE__*/ _react.default.createElement("link", {
-                rel: "preload",
+                rel: "",
                 key: file,
                 href: `${assetPrefix}/_next/${encodeURI(file)}${assetQueryString}`,
                 as: "script",
@@ -327,24 +327,24 @@ class Head extends _react.default.Component {
         }) // Filter out nulled scripts
         .filter(Boolean);
     }
-    getPreloadMainLinks(files) {
+    getMainLinks(files) {
         const { assetPrefix, assetQueryString, scriptLoader, crossOrigin } = this.context;
-        const preloadFiles = files.allFiles.filter((file)=>{
+        const Files = files.allFiles.filter((file)=>{
             return file.endsWith(".js");
         });
         return [
             ...(scriptLoader.beforeInteractive || []).map((file)=>/*#__PURE__*/ _react.default.createElement("link", {
                     key: file.src,
                     nonce: this.props.nonce,
-                    rel: "preload",
+                    rel: "",
                     href: file.src,
                     as: "script",
                     crossOrigin: this.props.crossOrigin || crossOrigin
                 })),
-            ...preloadFiles.map((file)=>/*#__PURE__*/ _react.default.createElement("link", {
+            ...Files.map((file)=>/*#__PURE__*/ _react.default.createElement("link", {
                     key: file,
                     nonce: this.props.nonce,
-                    rel: "preload",
+                    rel: "",
                     href: `${assetPrefix}/_next/${encodeURI(file)}${assetQueryString}`,
                     as: "script",
                     crossOrigin: this.props.crossOrigin || crossOrigin
@@ -411,12 +411,12 @@ class Head extends _react.default.Component {
         }).filter(Boolean);
     }
     render() {
-        const { styles, ampPath, inAmpMode, hybridAmp, canonicalBase, __NEXT_DATA__, dangerousAsPath, headTags, unstable_runtimeJS, unstable_JsPreload, disableOptimizedLoading, optimizeCss, optimizeFonts, assetPrefix, nextFontManifest } = this.context;
+        const { styles, ampPath, inAmpMode, hybridAmp, canonicalBase, __NEXT_DATA__, dangerousAsPath, headTags, unstable_runtimeJS, unstable_Js, disableOptimizedLoading, optimizeCss, optimizeFonts, assetPrefix, nextFontManifest } = this.context;
         const disableRuntimeJS = unstable_runtimeJS === false;
-        const disableJsPreload = unstable_JsPreload === false || !disableOptimizedLoading;
+        const disableJs = unstable_Js === false || !disableOptimizedLoading;
         this.context.docComponentsRendered.Head = true;
         let { head } = this.context;
-        let cssPreloads = [];
+        let csss = [];
         let otherHeadElements = [];
         if (head) {
             head.forEach((c)=>{
@@ -427,9 +427,9 @@ class Head extends _react.default.Component {
                         content: "1"
                     });
                 }
-                if (c && c.type === "link" && c.props["rel"] === "preload" && c.props["as"] === "style") {
-                    metaTag && cssPreloads.push(metaTag);
-                    cssPreloads.push(c);
+                if (c && c.type === "link" && c.props["rel"] === "" && c.props["as"] === "style") {
+                    metaTag && csss.push(metaTag);
+                    csss.push(c);
                 } else {
                     if (c) {
                         if (metaTag && (c.type !== "meta" || !c.props["charSet"])) {
@@ -439,7 +439,7 @@ class Head extends _react.default.Component {
                     }
                 }
             });
-            head = cssPreloads.concat(otherHeadElements);
+            head = csss.concat(otherHeadElements);
         }
         let children = _react.default.Children.toArray(this.props.children).filter(Boolean);
         // show a warning if Head contains <title> (only in development)
@@ -505,14 +505,14 @@ class Head extends _react.default.Component {
             content: _react.default.Children.count(head || []).toString()
         }), children, optimizeFonts && /*#__PURE__*/ _react.default.createElement("meta", {
             name: "next-font-preconnect"
-        }), nextFontLinkTags.preconnect, nextFontLinkTags.preload,  true && inAmpMode && /*#__PURE__*/ _react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/ _react.default.createElement("meta", {
+        }), nextFontLinkTags.preconnect, nextFontLinkTags.,  true && inAmpMode && /*#__PURE__*/ _react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/ _react.default.createElement("meta", {
             name: "viewport",
             content: "width=device-width,minimum-scale=1,initial-scale=1"
         }), !hasCanonicalRel && /*#__PURE__*/ _react.default.createElement("link", {
             rel: "canonical",
             href: canonicalBase + (__webpack_require__(6368).cleanAmpPath)(dangerousAsPath)
         }), /*#__PURE__*/ _react.default.createElement("link", {
-            rel: "preload",
+            rel: "",
             as: "script",
             href: "https://cdn.ampproject.org/v0.js"
         }), /*#__PURE__*/ _react.default.createElement(AmpStyles, {
@@ -535,7 +535,7 @@ class Head extends _react.default.Component {
             href: canonicalBase + getAmpPath(ampPath, dangerousAsPath)
         }), this.getBeforeInteractiveInlineScripts(), !optimizeCss && this.getCssLinks(files), !optimizeCss && /*#__PURE__*/ _react.default.createElement("noscript", {
             "data-n-css": this.props.nonce ?? ""
-        }), !disableRuntimeJS && !disableJsPreload && this.getPreloadDynamicChunks(), !disableRuntimeJS && !disableJsPreload && this.getPreloadMainLinks(files), !disableOptimizedLoading && !disableRuntimeJS && this.getPolyfillScripts(), !disableOptimizedLoading && !disableRuntimeJS && this.getPreNextScripts(), !disableOptimizedLoading && !disableRuntimeJS && this.getDynamicChunks(files), !disableOptimizedLoading && !disableRuntimeJS && this.getScripts(files), optimizeCss && this.getCssLinks(files), optimizeCss && /*#__PURE__*/ _react.default.createElement("noscript", {
+        }), !disableRuntimeJS && !disableJs && this.getDynamicChunks(), !disableRuntimeJS && !disableJs && this.getMainLinks(files), !disableOptimizedLoading && !disableRuntimeJS && this.getPolyfillScripts(), !disableOptimizedLoading && !disableRuntimeJS && this.getPreNextScripts(), !disableOptimizedLoading && !disableRuntimeJS && this.getDynamicChunks(files), !disableOptimizedLoading && !disableRuntimeJS && this.getScripts(files), optimizeCss && this.getCssLinks(files), optimizeCss && /*#__PURE__*/ _react.default.createElement("noscript", {
             "data-n-css": this.props.nonce ?? ""
         }), this.context.isDevelopment && // this element is used to mount development styles so the
         // ordering matches production
