@@ -56,6 +56,7 @@ export default function VisionBoard() {
 
   useEffect(() => {
     if (themeSong && audioRef.current) {
+      audioRef.current.currentTime = 0;
       audioRef.current.play();
     }
   }, [themeSong]);
@@ -326,6 +327,9 @@ export default function VisionBoard() {
         </section>
       </div>
 
+      {/* Theme Song Player */}
+      <audio ref={audioRef} src={themeSong || undefined} hidden />
+
       {/* GIF Modal */}
       <AnimatePresence>
         {showGifModal && (
@@ -375,4 +379,11 @@ export default function VisionBoard() {
           animation: gradient-animate 24s ease infinite;
         }
         @keyframes gradient-animate {
-         
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+    </div>
+  );
+}
