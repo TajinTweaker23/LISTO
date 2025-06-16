@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Home as HomeIcon, User as UserIcon, LogOut } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; // ✅ Corrected import
-import { auth } from "../../lib/firebase"; // ✅ Corrected import
-import { signOut } from "firebase/auth"; // ✅ Fixed import
+import { Home as HomeIcon, User as UserIcon, LogOut, LayoutGrid } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { auth } from "../../lib/firebase";
+import { signOut } from "firebase/auth";
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -16,10 +16,23 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
-      <Link href="/" passHref>
-        <HomeIcon className="w-6 h-6 text-[#46675B] hover:text-[#36574B] cursor-pointer" />
-      </Link>
+      {/* Left: Home and Vision Board */}
+      <div className="flex items-center gap-4">
+        <Link href="/" passHref>
+          <HomeIcon className="w-6 h-6 text-[#46675B] hover:text-[#36574B] cursor-pointer" />
+        </Link>
+        <Link href="/vision-board" passHref>
+          <button className="flex items-center px-3 py-1 rounded bg-[#46675B] text-white hover:bg-[#36574B]">
+            <LayoutGrid className="w-5 h-5 mr-1" />
+            Vision Board
+          </button>
+        </Link>
+      </div>
+
+      {/* Center: App Title */}
       <h1 className="text-xl font-bold text-[#46675B]">LISTO</h1>
+
+      {/* Right: Profile/Login/Sign Out */}
       {user ? (
         <div className="flex items-center space-x-4">
           <Link href="/profile" passHref>
