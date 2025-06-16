@@ -181,3 +181,8 @@ input:focus, select:focus, textarea:focus {
 
 /* 10. Misc: Hide scrollbars for webkit (optional) */
 body::-webkit-scrollbar { display: none; }
+/* Utility grid for responsive cards */
+.grid-1 { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .sm\:grid-2 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .md\:grid-3 { grid-template-columns: 1fr 1fr 1fr; } }
+@media (min-width: 1200px) { .lg\:grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; } }
