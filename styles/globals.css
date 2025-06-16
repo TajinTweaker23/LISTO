@@ -1,8 +1,6 @@
 /* globals.css */
 
-/* ----------------------------------------------------------------------------------
-   1. Global Base & Reset
----------------------------------------------------------------------------------- */
+/* 1. Global Reset */
 *,
 *::before,
 *::after {
@@ -15,149 +13,171 @@ html, body {
   height: 100%;
 }
 
-/* ----------------------------------------------------------------------------------
-   2. Define a Futuristic Color Palette and Font Variables
----------------------------------------------------------------------------------- */
+/* 2. Brand Color Palette + Fonts */
 :root {
-  /* Color palette */
-  --color-background: #121212;
-  --color-primary: #00ffff;         /* bright cyan */
-  --color-accent: #ff00ff;          /* bright magenta */
-  --color-secondary: #00ccff;
-  --color-text: #e0e0e0;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-shadow: rgba(0, 255, 255, 0.2);
-  
-  /* Font – use a futuristic Google font like Orbitron */
-  --font-sans: 'Orbitron', sans-serif;
+  /* --- MAIN PALETTE --- */
+  --color-bg: #FCFAF5;
+  --color-card: #E8D7C1;
+  --color-sage: #A8BBA8;
+  --color-teal: #8DAA9D;
+  --color-clay: #C9B29B;
+  --color-gold: #D6B05A;
+  --color-fog: #A7C7C7;
+  --color-moss: #7E8E7A;
+  --color-muted-clay: #BFA387;
 
-  /* Shadows and rounded corners */
-  --shadow-elevated: 0 4px 12px var(--color-shadow);
-  --rounded-md: 8px;
+  --color-primary: #A8BBA8;   /* Sage */
+  --color-secondary: #E8D7C1; /* Tan */
+  --color-accent: #D6B05A;    /* Muted gold */
+  --color-text-title: #5B6D5B; /* Deep sage */
+  --color-text-main: #2E3A35; /* Charcoal */
+  --color-text-light: #AFAFAF; /* Warm gray */
+  --color-border: #e4e4e4;
+  --color-shadow: rgba(160,170,170,0.10);
 
-  /* For animated gradient backgrounds */
-  --gradient-colors: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+  /* Font families */
+  --font-brand: 'Poppins', 'Inter', Arial, sans-serif;
+  --font-body: 'Inter', Arial, sans-serif;
+
+  /* Rounded, shadow */
+  --rounded-md: 18px;
+  --shadow-elevated: 0 4px 32px 0 rgba(31,38,135,0.11);
+
+  /* Hopper-style gradient */
+  --gradient-bg: linear-gradient(135deg, #E8D7C1 0%, #A8BBA8 100%);
 }
 
-/* Import Orbitron from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@500;700&display=swap');
 
-/* ----------------------------------------------------------------------------------
-   3. Global Body and Typography
----------------------------------------------------------------------------------- */
+/* 3. Body, Headings, Typography */
 body {
-  background: var(--color-background);
-  color: var(--color-text);
-  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text-main);
+  font-family: var(--font-body);
   line-height: 1.6;
   scroll-behavior: smooth;
 }
 
-/* Headers */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-primary);
-  text-shadow: 0 0 8px var(--color-primary);
+  font-family: var(--font-brand);
+  color: var(--color-text-title);
+  letter-spacing: 0.01em;
   margin-bottom: 0.75rem;
 }
 
-/* Paragraphs */
-p {
-  margin-bottom: 1rem;
-}
+h1 { font-size: 2.2rem; font-weight: 700; }
+h2 { font-size: 1.6rem; font-weight: 600; }
+h3 { font-size: 1.2rem; font-weight: 600; }
 
-/* ----------------------------------------------------------------------------------
-   4. Buttons with a Neon Glow Effect
----------------------------------------------------------------------------------- */
-.button {
-  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
-  color: #000;
+p { margin-bottom: 1rem; }
+
+/* 4. Buttons */
+.button, button, .btn {
+  background: var(--color-sage);
+  color: white;
+  font-family: var(--font-brand);
+  font-weight: 600;
   border: none;
+  border-radius: var(--rounded-md);
+  box-shadow: var(--shadow-elevated);
   padding: 0.75rem 1.5rem;
-  border-radius: var(--rounded-md);
-  box-shadow: var(--shadow-elevated);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1rem;
   cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s, background 0.15s;
 }
 
-.button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.4);
+.button:hover, button:hover, .btn:hover {
+  background: var(--color-teal);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.13);
 }
 
-/* ----------------------------------------------------------------------------------
-   5. Card and Panel Styling (Glassmorphism)
----------------------------------------------------------------------------------- */
+/* 5. Card/Panel (Glass, Hopper, Modern) */
 .card {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-card);
   border: 1px solid var(--color-border);
-  backdrop-filter: blur(5px);
   border-radius: var(--rounded-md);
-  padding: 1rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow-elevated);
-  transition: transform 0.3s ease;
+  margin-bottom: 1.2rem;
+  transition: box-shadow 0.18s, transform 0.18s;
 }
 
 .card:hover {
-  transform: scale(1.02);
+  box-shadow: 0 12px 28px 0 rgba(31, 38, 135, 0.16);
+  transform: scale(1.025);
 }
 
-/* ----------------------------------------------------------------------------------
-   6. Container and Layout Helpers
----------------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+/* 6. Containers, Navbar, Footer */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
-
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--color-sage);
   border-bottom: 1px solid var(--color-border);
+  color: white;
 }
-
 footer {
   text-align: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--color-card);
   border-top: 1px solid var(--color-border);
+  color: var(--color-text-main);
 }
 
-/* ----------------------------------------------------------------------------------
-   7. Animated Gradient Background for Landing Pages (Optional)
----------------------------------------------------------------------------------- */
-.animated-gradient {
-  background: var(--gradient-colors);
-  background-size: 600% 600%;
-  animation: gradientAnimation 15s ease infinite;
+/* 7. Gradient Backgrounds */
+.animated-gradient,
+.main-bg {
+  background: var(--gradient-bg);
+  background-size: 180% 180%;
+  animation: gradient-animate 18s ease infinite;
+}
+@keyframes gradient-animate {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+/* 8. Utilities */
+.text-center { text-align: center; }
+.mt-8 { margin-top: 2rem; }
+.mb-8 { margin-bottom: 2rem; }
+.rounded { border-radius: var(--rounded-md); }
+
+/* 9. Input Styles */
+input, select, textarea {
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-md);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--color-text-main);
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  transition: border 0.14s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-sage);
+  outline: none;
 }
 
-/* ----------------------------------------------------------------------------------
-   8. Additional Utility Classes (Examples)
----------------------------------------------------------------------------------- */
-.text-center {
-  text-align: center;
-}
-
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.mb-8 {
-  margin-bottom: 2rem;
-}
+/* 10. Misc: Hide scrollbars for webkit (optional) */
+body::-webkit-scrollbar { display: none; }
