@@ -16,6 +16,7 @@ interface Project {
 export default function ImpactProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("light");
 
   // Fetch existing projects from Firestore
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function ImpactProjects() {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
-      <Navbar />
+      <Navbar theme="light" />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-semibold mb-4">Impact Projects</h2>
@@ -71,6 +72,18 @@ export default function ImpactProjects() {
         >
           Add Dummy Project
         </button>
+
+        <div className="flex justify-end p-4">
+          <select
+            value={theme}
+            onChange={(e) => setTheme(e.target.value as "light" | "dark" | "system")}
+            className="border rounded px-2 py-1"
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </select>
+        </div>
 
         {loading ? (
           <p>Loading projects…</p>
