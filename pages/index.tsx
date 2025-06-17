@@ -1,190 +1,144 @@
 // pages/index.tsx
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
 
-// Moodboards array (from HEAD)
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import Link from "next/link";
+
+// Use motion-ified Link to avoid nested <a> mismatches:
+const MotionLink = motion(Link);
+
 const moodboards = [
   {
     title: "Dreamy Pastels",
     description: "Soft hues to calm your mind and spark creativity.",
     colors: ["#FFB6C1", "#FFDAB9", "#E6E6FA", "#B0E0E6"],
-    image: "https://picsum.photos/600/400?random=1",
+    images: [
+      // FIXED Unsplash asset URLs
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1513116476489-7635e79feb27?auto=format&fit=crop&w=600&q=80",
+    ],
   },
   {
     title: "Bold Contrast",
     description: "Vivid shades that ignite passion and energy.",
     colors: ["#FF5733", "#C70039", "#900C3F", "#581845"],
-    image: "https://picsum.photos/600/400?random=2",
+    images: [
+      "https://images.unsplash.com/photo-1511909525230-c4f3092f0a47?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+    ],
   },
   {
     title: "Earthy Tones",
     description: "Natural shades to ground your ambitions.",
     colors: ["#8B4513", "#D2B48C", "#A0522D", "#F4A460"],
-    image: "https://picsum.photos/600/400?random=3",
+    images: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80",
+    ],
   },
   {
     title: "Vibrant Energy",
     description: "Bursting with zest and vigor for a productive day.",
     colors: ["#f77f00", "#d62828", "#003049", "#fcbf49"],
-    image: "https://picsum.photos/600/400?random=4",
+    images: [
+      "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
+    ],
   },
   {
     title: "Calm Serenity",
     description: "A peaceful blend of cool tones to relax and inspire.",
     colors: ["#8ecae6", "#219ebc", "#023047", "#ffb703"],
-    image: "https://picsum.photos/600/400?random=5",
+    images: [
+      "https://images.unsplash.com/photo-1470274477920-577b0e039142?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1499084732479-de2c02d45fcc?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1500631195313-5a1b7f6a6dd8?auto=format&fit=crop&w=600&q=80",
+    ],
   },
 ];
 
-// AnimatedMoodboardCard component (from HEAD)
-const AnimatedMoodboardCard = ({ moodboard, index }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const images = [
-    moodboard.image,
-    `https://picsum.photos/600/400?random=${index * 10 + 2}`,
-    `https://picsum.photos/600/400?random=${index * 10 + 3}`,
-  ];
-
+function AnimatedMoodboardCard({ images, title, description, colors }) {
+  const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [images.length]);
+    const iv = setInterval(() => setIdx((i) => (i + 1) % images.length), 3000);
+    return () => clearInterval(iv);
+  }, [images]);
 
   return (
     <motion.div
-      className="bg-white bg-opacity-80 backdrop-blur-md shadow-xl rounded-lg overflow-hidden transform hover:scale-105"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.3 }}
+      className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl overflow-hidden transform hover:scale-105 transition-transform duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
     >
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative h-56">
         <Image
-          src={images[currentIndex]}
-          alt={moodboard.title}
+          src={images[idx]}
+          alt={title}
           fill
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: "cover" }}
+          priority={idx === 0}
         />
       </div>
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">
-          {moodboard.title}
-        </h2>
-        <p className="text-gray-600 mb-4">{moodboard.description}</p>
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">{title}</h2>
+        <p className="text-gray-600 mb-4">{description}</p>
         <div className="flex gap-2">
-          {moodboard.colors.map((color, idx) => (
-            <div
-              key={idx}
-              style={{ backgroundColor: color }}
-              className="w-6 h-6 rounded-full border border-gray-200"
-            ></div>
+          {colors.map((c, i) => (
+            <span
+              key={i}
+              className="w-8 h-8 rounded-full border border-gray-300"
+              style={{ backgroundColor: c }}
+            />
           ))}
         </div>
       </div>
     </motion.div>
   );
-};
-
-// Floating icons array (from remote)
-const floatingIcons = [
-  { emoji: '🌐', label: 'Global' },
-  { emoji: '📸', label: 'Photos' },
-  { emoji: '🎥', label: 'Videos' },
-  { emoji: '🍲', label: 'Recipes' },
-  { emoji: '🧘‍♀️', label: 'Wellness' },
-  { emoji: '🏃‍♂️', label: 'Fitness' },
-  { emoji: '🧬', label: 'Science' },
-  { emoji: '🌱', label: 'Eco-Friendly' },
-  { emoji: '🎨', label: 'Design' },
-  { emoji: '📚', label: 'Education' },
-  { emoji: '📰', label: 'News' },
-  { emoji: '🌌', label: 'Space' },
-  { emoji: '👠', label: 'Fashion' },
-  { emoji: '⚖️', label: 'Justice' },
-];
+}
 
 export default function Home() {
-  // State for moodboard navigation (from HEAD)
-  const [currentMoodboard, setCurrentMoodboard] = useState(0);
-  const nextMoodboard = () =>
-    setCurrentMoodboard((prev) => (prev + 1) % moodboards.length);
-  const prevMoodboard = () =>
-    setCurrentMoodboard((prev) => (prev - 1 + moodboards.length) % moodboards.length);
-
   return (
-    <div>
-      {/* Welcome / Dashboard Section (from remote) */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gray-100">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
-          Welcome to <span className="text-purple-600">LISTO</span>
+    <div className="bg-gradient-to-r from-blue-900 to-teal-600 min-h-screen">
+      <section className="flex flex-col items-center justify-center text-center p-10">
+        <h1 className="text-5xl font-extrabold text-white drop-shadow-lg">
+          Welcome to <span className="text-yellow-400">LISTO</span>
         </h1>
-        <p className="mt-4 text-center text-gray-600 max-w-xl">
+        <p className="mt-4 text-gray-100 text-lg max-w-xl">
           Your personalized dashboard for dreaming, doing, and dominating.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3 justify-center z-10">
-          <Link href="/vision-board">
-            <button className="p-2 px-4 border rounded-xl bg-orange-100 hover:bg-orange-200">
-              ✨ Enter Your Vision Board
-            </button>
-          </Link>
-          <Link href="/explore">
-            <button className="p-2 px-4 border rounded-xl bg-blue-100 hover:bg-blue-200">
-              🌐 Explore Articles & News
-            </button>
-          </Link>
-        </div>
-        {floatingIcons.map((item, index) => (
-          <motion.div
-            key={item.label}
-            initial={{ y: 0 }}
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 4 + index, repeat: Infinity }}
-            className="absolute text-2xl md:text-4xl"
-            style={{
-              left: `${Math.random() * 90}%`,
-              top: `${Math.random() * 90}%`,
-              zIndex: 0,
-              pointerEvents: 'none',
-            }}
+        <div className="mt-6 flex flex-wrap gap-6 justify-center">
+          <MotionLink
+            href="/vision-board"
+            whileHover={{ scale: 1.1 }}
+            className="inline-block px-6 py-3 bg-yellow-400 text-black font-bold rounded-lg shadow-lg hover:bg-yellow-500"
           >
-            <span title={item.label}>{item.emoji}</span>
-          </motion.div>
-        ))}
+            ✨ Enter Your Vision Board
+          </MotionLink>
+          <MotionLink
+            href="/explore"
+            whileHover={{ scale: 1.1 }}
+            className="inline-block px-6 py-3 bg-blue-400 text-white font-bold rounded-lg shadow-lg hover:bg-blue-500"
+          >
+            🌐 Explore Articles & News
+          </MotionLink>
+        </div>
       </section>
 
-      {/* Moodboards Section (from HEAD) */}
-      <section className="min-h-screen flex flex-col">
-        <header className="w-full py-12 bg-gradient-to-r from-blue-900 to-teal-500">
-          <h1 className="text-5xl font-extrabold text-center text-white">
+      <section className="py-16">
+        <header className="w-full py-12 bg-gradient-to-r from-indigo-800 to-purple-700 text-center">
+          <h2 className="text-4xl font-extrabold text-white">
             LISTO Vision Board
-          </h1>
+          </h2>
         </header>
-        <main className="flex-grow p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-              {moodboards.map((mb, idx) => (
-                <div key={idx} className="break-inside">
-                  <AnimatedMoodboardCard moodboard={mb} index={idx} />
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-around mt-8">
-              <button
-                onClick={prevMoodboard}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
-              >
-                Prev
-              </button>
-              <button
-                onClick={nextMoodboard}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+        <main className="max-w-7xl mx-auto px-8 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {moodboards.map((mb, i) => (
+            <AnimatedMoodboardCard key={i} {...mb} />
+          ))}
         </main>
       </section>
     </div>

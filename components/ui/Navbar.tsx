@@ -4,8 +4,11 @@ import { Home as HomeIcon, User as UserIcon, LogOut, LayoutGrid } from "lucide-r
 import { useAuth } from "../../context/AuthContext";
 import { auth } from "../../lib/firebase";
 import { signOut } from "firebase/auth";
+import React from "react";
 
-export default function Navbar() {
+type Props = { theme: string };
+
+export default function Navbar({ theme }: Props) {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -15,44 +18,58 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center bg-white shadow py-4 px-6">
-      {/* Left: Home and Vision Board */}
-      <div className="flex items-center gap-4">
-        <Link href="/" passHref>
-          <HomeIcon className="w-6 h-6 text-[#46675B] hover:text-[#36574B] cursor-pointer" />
-        </Link>
-        <Link href="/vision-board" passHref>
-          <button className="flex items-center px-3 py-1 rounded bg-[#46675B] text-white hover:bg-[#36574B]">
-            <LayoutGrid className="w-5 h-5 mr-1" />
-            Vision Board
-          </button>
-        </Link>
-      </div>
+    <nav
+      className={`w-full py-4 px-6 flex justify-between items-center z-30 relative
+        ${theme === "dark"
+          ? "bg-[#181824]/80 border-b border-fuchsia-400/20 shadow-lg"
+          : "bg-white/80 border-b border-cyan-400/20 shadow-lg"
+        }
+        backdrop-blur-xl transition-all duration-300`}
+    >
+      {/* Logo & Brand */}
+      <Link href="/" className="flex items-center gap-2 group">
+        <LayoutGrid className="h-7 w-7 text-pink-500 group-hover:rotate-12 transition-transform duration-300" />
+        <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-neon">
+          LISTO
+        </span>
+      </Link>
 
-      {/* Center: App Title */}
-      <h1 className="text-xl font-bold text-[#46675B]">LISTO</h1>
-
-      {/* Right: Profile/Login/Sign Out */}
-      {user ? (
-        <div className="flex items-center space-x-4">
-          <Link href="/profile" passHref>
-            <UserIcon className="w-6 h-6 text-[#46675B] hover:text-[#36574B] cursor-pointer" />
+      {/* Navigation Links */}
+      <div className="flex items-center gap-6">
+        <Link href="/" className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+          <HomeIcon className="h-5 w-5" />
+          <span className="hidden sm:inline">Home</span>
+        </Link>
+        {user && (
+          <Link href="/dashboard" className="flex items-center gap-1 hover:text-purple-500 transition-colors">
+            <LayoutGrid className="h-5 w-5" />
+            <span className="hidden sm:inline">Dashboard</span>
           </Link>
-          <button
-            onClick={handleSignOut}
-            className="flex items-center space-x-1 text-red-500 hover:text-red-700"
+        )}
+        {user ? (
+          <>
+            <Link href="/profile" className="flex items-center gap-1 hover:text-pink-500 transition-colors">
+              <UserIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Profile</span>
+            </Link>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-pink-500 to-blue-500 text-white shadow-neon hover:scale-105 transition-all"
+              title="Sign out"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          </>
+        ) : (
+          <Link
+            href="/login"
+            className="px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 to-pink-500 text-white shadow-neon hover:scale-105 transition-all"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm">Sign Out</span>
-          </button>
-        </div>
-      ) : (
-        <Link href="/login" passHref>
-          <button className="px-4 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
             Login
-          </button>
-        </Link>
-      )}
+          </Link>
+        )}
+      </div>
     </nav>
   );
 }

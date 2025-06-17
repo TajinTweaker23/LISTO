@@ -186,3 +186,15 @@ body::-webkit-scrollbar { display: none; }
 @media (min-width: 600px) { .sm\:grid-2 { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 900px) { .md\:grid-3 { grid-template-columns: 1fr 1fr 1fr; } }
 @media (min-width: 1200px) { .lg\:grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+
+@layer utilities {
+  .shadow-neon {
+    box-shadow: 0 0 24px 4px #a21caf55, 0 0 8px 2px #38bdf8aa;
+  }
+  .drop-shadow-neon {
+    filter: drop-shadow(0 0 8px #a21cafcc);
+  }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
