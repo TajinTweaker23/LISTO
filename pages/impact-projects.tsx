@@ -61,7 +61,7 @@ export default function ImpactProjects() {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
-      <Navbar theme="light" />
+      <Navbar theme={theme} />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         <h2 className="text-2xl font-semibold mb-4">Impact Projects</h2>

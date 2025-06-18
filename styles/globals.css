@@ -198,3 +198,53 @@ body::-webkit-scrollbar { display: none; }
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.95);}
+  to { opacity: 1; transform: scale(1);}
+}
+.animate-fade-in {
+  animation: fade-in 1s ease;
+}
+.animate-fade-in-scale {
+  animation: fade-in-scale 1s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0);}
+  50% { transform: translateY(-30px);}
+}
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+@keyframes text-pop {
+  0% { transform: scale(0.8); opacity: 0;}
+  80% { transform: scale(1.1); opacity: 1;}
+  100% { transform: scale(1); opacity: 1;}
+}
+.animate-text-pop {
+  animation: text-pop 1.1s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fade-in-delay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in-delay {
+  animation: fade-in-delay 1s 0.7s both;
+}
+.animate-fade-in-delay2 {
+  animation: fade-in-delay 1s 1.2s both;
+}

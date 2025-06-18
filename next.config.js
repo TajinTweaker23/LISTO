@@ -6,24 +6,11 @@ const withPWA = require("next-pwa")({
   skipWaiting: true,
 });
 
-const nextConfig = withPWA({
+const nextConfig = {
   reactStrictMode: true,
   images: {
-    // Drop `domains` when using remotePatterns, and be explicit:
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        port: "",
-        // allow any path under images.unsplash.com
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "picsum.photos",
-        port: "",
-        pathname: "/**",
-      },
+    domains: [
+      "images.unsplash.com"
     ],
   },
   compiler: {
@@ -32,6 +19,6 @@ const nextConfig = withPWA({
   experimental: {
     scrollRestoration: true,
   },
-});
+};
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig);
