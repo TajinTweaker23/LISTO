@@ -235,7 +235,8 @@ export default function Profile() {
           <div className="bg-white rounded shadow p-4 mb-4">
             <h2 className="text-xl font-semibold mb-2">Customize Your Avatar</h2>
             <AvatarPicker
-              onComplete={setAvatar}
+              value={avatar}
+              onChange={setAvatar}
               aria-label="Avatar customization"
             />
             <div className="flex flex-wrap gap-4 mt-4 justify-center">

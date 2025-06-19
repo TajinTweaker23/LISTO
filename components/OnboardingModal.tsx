@@ -17,6 +17,99 @@ const steps = [
   { key: "finish" },
 ];
 
+// --- Seasonal/Easter Egg Vortex Themes ---
+function getSeasonalVortexImages() {
+  const now = new Date();
+  const month = now.getMonth();
+  const day = now.getDate();
+  // Halloween
+  if (month === 9 && day >= 25 || month === 9 && day <= 31) {
+    return ["🎃", "👻", "🦇", "🍬", "🕸️", "🧙‍♂️", "🧛‍♂️"];
+  }
+  // Christmas
+  if (month === 11) {
+    return ["🎄", "🎅", "🤶", "⛄", "❄️", "🦌", "🧦", "🎁"];
+  }
+  // New Year
+  if (month === 0 && day <= 7) {
+    return ["🎆", "🎉", "🥂", "🕛", "✨", "🎊"];
+  }
+  // Default/Brand
+  return [
+    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#fbbf24"/><text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">🚀</text></svg>,
+    <svg width="48" height="48" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1"/><text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">🎨</text></svg>,
+    "🪐", "🌟", "✨", "🧠", "💡", "🎵", "📚", "🎲", "🦄", "🌈"
+  ];
+}
+
+// --- Vortex Background with Gamified Progress & Accessibility ---
+function VortexBackground({ step, finished, reduceMotion }: { step: number; finished: boolean; reduceMotion: boolean }) {
+  const [tick, setTick] = useState(0);
+  const [burst, setBurst] = useState(false);
+  const vortexImages = getSeasonalVortexImages();
+
+  // Gamified: More images as you progress
+  const imagesToShow = finished ? vortexImages.length : Math.max(3, Math.floor(((step + 1) / steps.length) * vortexImages.length));
+
+  useEffect(() => {
+    if (finished) {
+      setBurst(true);
+      setTimeout(() => setBurst(false), 1200);
+    }
+  }, [finished]);
+
+  useEffect(() => {
+    if (!reduceMotion) {
+      const interval = setInterval(() => setTick(t => t + 1), 40);
+      return () => clearInterval(interval);
+    }
+  }, [reduceMotion]);
+
+  if (reduceMotion) return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-40 overflow-hidden"
+      style={{ filter: "blur(0.5px)" }}
+    >
+      {vortexImages.slice(0, imagesToShow).map((img, i) => {
+        const t = (tick + i * 20) / 60;
+        const angle = t + (i / vortexImages.length) * 2 * Math.PI;
+        const radius = burst
+          ? 320 + 120 * Math.sin(t + i)
+          : 180 + 60 * Math.sin(t + i);
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        const scale = burst
+          ? 1.5 + 0.7 * Math.sin(t + i)
+          : 1 + 0.4 * Math.sin(t + i);
+        const blur = 1 + 2 * Math.abs(Math.cos(angle));
+        return (
+          <motion.div
+            key={i}
+            style={{
+              position: "absolute",
+              left: `calc(50vw + ${x}px - 32px)`,
+              top: `calc(50vh + ${y}px - 32px)`,
+              fontSize: 64 + (i % 3) * 12,
+              opacity: 0.13 + 0.07 * Math.sin(t + i),
+              filter: `blur(${blur}px)`,
+              transform: `scale(${scale})`,
+              zIndex: 0,
+              userSelect: "none",
+              pointerEvents: "none",
+              transition: "filter 0.2s, opacity 0.2s, transform 0.2s"
+            }}
+          >
+            {img}
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function OnboardingModal({
   onClose,
   onComplete,
@@ -30,8 +123,16 @@ export default function OnboardingModal({
   const [avatar, setAvatar] = useState<any>(null);
   const [theme, setTheme] = useState("bg-gradient-to-r from-blue-900 to-teal-600");
   const [finished, setFinished] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Show only once: check localStorage
+  useEffect(() => {
+    if (localStorage.getItem("seenOnboarding") === "true") {
+      onClose();
+    }
+  }, [onClose]);
 
   // Accessibility: focus management
   useEffect(() => {
@@ -40,11 +141,11 @@ export default function OnboardingModal({
 
   // Sound on finish
   useEffect(() => {
-    if (finished) {
+    if (finished && !reduceMotion) {
       playSound();
       setTimeout(() => setFinished(false), 1800);
     }
-  }, [finished]);
+  }, [finished, reduceMotion]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -123,32 +224,30 @@ export default function OnboardingModal({
 
   return (
     <div
-      className="fixed inset-0 bg-gradient-to-br from-blue-100 via-white to-pink-100 bg-opacity-80 flex items-center justify-center z-50 font-sans"
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
       aria-modal="true"
       role="dialog"
       tabIndex={-1}
-      aria-labelledby="onboarding-title"
-      aria-describedby="onboarding-desc"
     >
-      <div
+      {/* Vortex background */}
+      <VortexBackground step={step} finished={finished} reduceMotion={reduceMotion} />
+
+      <motion.div
         ref={modalRef}
-        className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-10 animate-fade-in-scale relative overflow-hidden font-sans"
+        className="bg-white rounded-2xl shadow-2xl max-w-md w-full px-10 py-8 flex flex-col items-center relative z-50"
         role="document"
+        initial={{ opacity: 0, scale: 0.92, y: 60 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 60 }}
+        transition={{ type: "spring", duration: 0.7 }}
       >
-        {/* Progress Bar */}
-        <div className="absolute top-0 left-0 w-full h-2" aria-hidden="true">
-          <div
-            className="h-full bg-gradient-to-r from-blue-400 to-pink-400 rounded-t-2xl transition-all duration-500"
-            style={{ width: finished ? "100%" : `${progress}%` }}
-          />
-        </div>
-        {/* Close Button */}
+        {/* Accessibility Toggle */}
         <button
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl focus:outline-none"
-          onClick={onClose}
-          aria-label="Close onboarding"
+          className="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 rounded shadow text-xs hover:bg-gray-200 transition"
+          onClick={() => setReduceMotion(r => !r)}
+          aria-label={reduceMotion ? "Enable animations" : "Reduce motion / disable vortex"}
         >
-          &times;
+          {reduceMotion ? "Enable Animations" : "Reduce Motion"}
         </button>
         <AnimatePresence mode="wait">
           {/* Welcome Step */}
@@ -175,20 +274,22 @@ export default function OnboardingModal({
               >
                 Let’s get you set up for your journey.
               </p>
-              <button
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                onClick={handleNext}
-                aria-label="Start onboarding"
-              >
-                Get Started
-              </button>
-              <button
-                className="ml-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                onClick={handleSkip}
-                aria-label="Skip onboarding"
-              >
-                Skip
-              </button>
+              <div className="flex gap-4 w-full justify-center mb-4">
+                <button
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold text-lg"
+                  onClick={handleNext}
+                  aria-label="Start onboarding"
+                >
+                  Get Started
+                </button>
+                <button
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg shadow hover:bg-gray-200 transition font-semibold text-lg"
+                  onClick={handleSkip}
+                  aria-label="Skip onboarding"
+                >
+                  Skip
+                </button>
+              </div>
             </motion.div>
           )}
           {/* Name Step */}
@@ -269,7 +370,7 @@ export default function OnboardingModal({
                     <span className="text-gray-500 font-normal">(optional)</span>
                   </p>
                   <div className="w-full flex flex-col items-center">
-                    <AvatarPicker onComplete={setAvatar} />
+                    <AvatarPicker value={avatar} onChange={setAvatar} />
                     {!avatar && (
                       <div className="text-center text-gray-400 text-sm mt-4">
                         <span className="text-3xl block mb-2">🙂</span>
@@ -416,7 +517,7 @@ export default function OnboardingModal({
           )}
         </AnimatePresence>
         {/* Confetti overlay (optional, for visual delight) */}
-        {finished && (
+        {finished && !reduceMotion && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -427,7 +528,7 @@ export default function OnboardingModal({
             <span className="text-6xl animate-bounce">🎉</span>
           </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

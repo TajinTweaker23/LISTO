@@ -1,72 +1,251 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function OnboardingModal({
-  onComplete,
-}: {
-  onComplete: (avatar: any | null) => void;
-}) {
-  const [avatar, setAvatar] = useState<any>(null);
+const skinTones = ["#f9dcc4", "#e0ac69", "#8d5524", "#c68642", "#b0b0b0"];
+const hairColors = ["#222", "#ffe066", "#d2691e", "#b0b0b0", "#8d5524"];
+const eyeColors = ["#222", "#1976d2", "#43a047", "#d84315"];
+const vibes = [
+  { label: "Happy", value: "happy", emoji: "😃" },
+  { label: "Cool", value: "cool", emoji: "😎" },
+  { label: "Sassy", value: "sassy", emoji: "😏" },
+  { label: "Surprised", value: "surprised", emoji: "😮" },
+  { label: "Edgy", value: "edgy", emoji: "😈" },
+];
+const accessories = [
+  { label: "None", value: "" },
+  { label: "Glasses", value: "glasses", emoji: "🕶️" },
+  { label: "Headphones", value: "headphones", emoji: "🎧" },
+  { label: "Hat", value: "hat", emoji: "🧢" },
+  { label: "Mustache", value: "mustache", emoji: "🦸" },
+];
 
+export function getAvatarSVG(avatar: any) {
+  const vibe = avatar?.vibe || "happy";
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-2">Create Your Avatar (Optional)</h2>
-      <p className="mb-4 text-gray-600">
-        You can personalize your avatar now or skip and do it later.
-      </p>
-      <AvatarPicker value={avatar} onChange={setAvatar} />
-      <div className="flex gap-4 mt-6 justify-end">
-        <button
-          className="px-4 py-2 bg-gray-300 rounded"
-          onClick={() => onComplete(null)}
-        >
-          Skip for now
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-          onClick={() => onComplete(avatar)}
-        >
-          Continue
-        </button>
-      </div>
-      <div className="mt-4 flex flex-col items-center">
-        {!avatar && (
-          <div className="text-center text-gray-500 text-sm mt-4">
-            <span className="text-3xl block mb-2">🙂</span>
-            <span>
-              No avatar yet. You can always create one later from your profile
-              page!
-            </span>
-          </div>
-        )}
-        {avatar && (
-          <div className="mt-4">
-            <span className="text-3xl block mb-2">
-              {getAvatarSVG(avatar)}
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
+    <svg width="110" height="110" viewBox="0 0 110 110">
+      <defs>
+        {/* Face gradients */}
+        <radialGradient id="faceGrad" cx="50%" cy="38%" r="65%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
+          <stop offset="55%" stopColor={avatar?.skin || "#f9dcc4"} />
+          <stop offset="100%" stopColor="#bfa77a" />
+        </radialGradient>
+        <radialGradient id="faceShadow" cx="50%" cy="80%" r="60%">
+          <stop offset="0%" stopColor="#000" stopOpacity="0.10" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+        {/* Hair gradients */}
+        <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={avatar?.hair || "#222"} />
+          <stop offset="60%" stopColor="#fff" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#222" stopOpacity="0.7" />
+        </linearGradient>
+        <radialGradient id="hairHighlight" cx="30%" cy="30%" r="60%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+        {/* Cheek gradients */}
+        <radialGradient id="cheekGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#f8bbd0" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#f8bbd0" stopOpacity="0" />
+        </radialGradient>
+        {/* Eye gloss */}
+        <radialGradient id="eyeGloss" cx="60%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+        {/* Lip gloss */}
+        <linearGradient id="lipGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="transparent" />
+        </linearGradient>
+        {/* Shadow under face */}
+        <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#000" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {/* Drop shadow */}
+      <ellipse cx="55" cy="98" rx="32" ry="10" fill="url(#shadowGrad)" />
+      {/* Face */}
+      <ellipse cx="55" cy="56" rx="38" ry="40" fill="url(#faceGrad)" />
+      {/* Face shadow (bottom) */}
+      <ellipse cx="55" cy="72" rx="28" ry="12" fill="url(#faceShadow)" />
+      {/* Face highlight */}
+      <ellipse cx="45" cy="45" rx="13" ry="8" fill="#fff" opacity="0.13" />
+      {/* Hair */}
+      {avatar?.hairStyle !== "bald" && (
+        <>
+          <ellipse
+            cx="55"
+            cy="32"
+            rx="36"
+            ry="20"
+            fill="url(#hairGrad)"
+            style={{ filter: "drop-shadow(0 4px 8px #2223)" }}
+          />
+          {/* Hair highlight */}
+          <ellipse
+            cx="45"
+            cy="28"
+            rx="15"
+            ry="7"
+            fill="url(#hairHighlight)"
+            opacity="0.7"
+          />
+        </>
+      )}
+      {/* Cheeks */}
+      <ellipse cx="35" cy="75" rx="7" ry="4" fill="url(#cheekGrad)" />
+      <ellipse cx="75" cy="75" rx="7" ry="4" fill="url(#cheekGrad)" />
+      {/* Nose (subtle 3D) */}
+      <ellipse cx="55" cy="62" rx="3.5" ry="6" fill="#e0bfa0" opacity="0.25" />
+      {/* Eyes */}
+      <AnimatePresence>
+        {(() => {
+          switch (vibe) {
+            case "happy":
+              return (
+                <>
+                  {/* Eye whites */}
+                  <ellipse cx="43" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="67" cy="60" rx="6" ry="8" fill="#fff" />
+                  {/* Iris */}
+                  <ellipse cx="43" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="67" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  {/* Eye gloss */}
+                  <ellipse cx="41" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                  <ellipse cx="65" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                </>
+              );
+            case "cool":
+              return (
+                <>
+                  <rect x="37" y="60" width="12" height="5" rx="2.5" fill="#222" />
+                  <rect x="61" y="60" width="12" height="5" rx="2.5" fill="#222" />
+                  {/* Sunglass gloss */}
+                  <ellipse cx="43" cy="62" rx="4" ry="2" fill="url(#eyeGloss)" opacity="0.5" />
+                  <ellipse cx="67" cy="62" rx="4" ry="2" fill="url(#eyeGloss)" opacity="0.5" />
+                </>
+              );
+            case "sassy":
+              return (
+                <>
+                  <ellipse cx="43" cy="60" rx="6" ry="4" fill="#fff" />
+                  <ellipse cx="43" cy="60" rx="3" ry="2" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="67" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="67" cy="60" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="41" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                  <ellipse cx="65" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                </>
+              );
+            case "surprised":
+              return (
+                <>
+                  <ellipse cx="43" cy="60" rx="4" ry="7" fill="#fff" />
+                  <ellipse cx="43" cy="60" rx="2" ry="3.5" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="67" cy="60" rx="4" ry="7" fill="#fff" />
+                  <ellipse cx="67" cy="60" rx="2" ry="3.5" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="41" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                  <ellipse cx="65" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                </>
+              );
+            case "edgy":
+              return (
+                <>
+                  <ellipse cx="43" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="43" cy="60" rx="2.5" ry="3" fill="#222" />
+                  <ellipse cx="67" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="67" cy="60" rx="2.5" ry="3" fill="#222" />
+                  {/* Edgy eyebrow */}
+                  <rect x="36" y="54" width="12" height="2" rx="1" fill="#222" transform="rotate(-15 42 55)" />
+                  <rect x="60" y="54" width="12" height="2" rx="1" fill="#222" transform="rotate(15 66 55)" />
+                </>
+              );
+            default:
+              return null;
+          }
+        })()}
+      </AnimatePresence>
+      {/* Mouth */}
+      <AnimatePresence>
+        {(() => {
+          switch (vibe) {
+            case "happy":
+              return <path d="M36 62 Q45 70 54 62" stroke="#d84315" strokeWidth="3" fill="none" />;
+            case "cool":
+              return <rect x="41" y="62" width="8" height="3" rx="1.5" fill="#222" />;
+            case "sassy":
+              return <path d="M40 62 Q45 66 50 62" stroke="#d84315" strokeWidth="2" fill="none" />;
+            case "surprised":
+              return <ellipse cx="45" cy="65" rx="4" ry="4" fill="#d84315" />;
+            case "edgy":
+              return <path d="M38 65 Q45 60 52 65" stroke="#222" strokeWidth="2" fill="none" />;
+            default:
+              return null;
+          }
+        })()}
+      </AnimatePresence>
+      {/* Cheeks with highlight */}
+      <ellipse cx="32" cy="60" rx="4" ry="2" fill="#f8bbd0" opacity="0.7" />
+      <ellipse cx="58" cy="60" rx="4" ry="2" fill="#f8bbd0" opacity="0.7" />
+      <ellipse cx="32" cy="59" rx="1.2" ry="0.7" fill="#fff" opacity="0.7" />
+      <ellipse cx="58" cy="59" rx="1.2" ry="0.7" fill="#fff" opacity="0.7" />
+      {/* Accessories (animated) */}
+      <AnimatePresence>
+        {(() => {
+          switch (avatar?.accessory) {
+            case "glasses":
+              return (
+                <motion.g initial={{ scale: 0 }} animate={{ scale: 1.1 }} transition={{ type: "spring" }}>
+                  <ellipse cx="34" cy="50" rx="7" ry="6" fill="none" stroke="#555" strokeWidth="2.5" />
+                  <ellipse cx="56" cy="50" rx="7" ry="6" fill="none" stroke="#555" strokeWidth="2.5" />
+                  <rect x="41" y="50" width="8" height="2" fill="#555" />
+                </motion.g>
+              );
+            case "headphones":
+              return (
+                <motion.g initial={{ y: -15, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: "spring" }}>
+                  <rect x="18" y="38" width="6" height="22" rx="3" fill="#1976d2" />
+                  <rect x="66" y="38" width="6" height="22" rx="3" fill="#1976d2" />
+                  <rect x="24" y="32" width="42" height="10" rx="5" fill="#1976d2" />
+                </motion.g>
+              );
+            case "hat":
+              return (
+                <motion.ellipse
+                  cx="55"
+                  cy="18"
+                  rx="24"
+                  ry="8"
+                  fill="#43a047"
+                  initial={{ rotate: -20, y: -10, scale: 0.7 }}
+                  animate={{ rotate: 0, y: 0, scale: 1 }}
+                  transition={{ type: "spring" }}
+                />
+              );
+            case "mustache":
+              return (
+                <motion.path
+                  d="M38 70 Q45 74 52 70"
+                  stroke="#222"
+                  strokeWidth="3"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.5 }}
+                />
+              );
+            default:
+              return null;
+          }
+        })()}
+      </AnimatePresence>
+    </svg>
   );
 }
 
-const skinTones = [
-  "#f9dcc4", "#e0ac69", "#8d5524", "#c68642", "#b0b0b0"
-];
-const hairColors = [
-  "#222", "#ffe066", "#d2691e", "#b0b0b0", "#8d5524"
-];
-const hairStyles = [
-  { label: "Short", value: "short" },
-  { label: "Long", value: "long" },
-  { label: "Curly", value: "curly" },
-  { label: "Bald", value: "bald" }
-];
-const vibes = [
-  "optimist", "chill", "bookworm", "artist", "gamer", "preppy"
-];
-
-export function AvatarPicker({
+export default function AvatarPicker({
   value,
   onChange,
 }: {
@@ -74,12 +253,39 @@ export function AvatarPicker({
   onChange: (val: any) => void;
 }) {
   const avatar = value || {};
+  const [animVibe, setAnimVibe] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col gap-4 items-center w-full">
-      {/* Live Preview */}
+    <div className="flex flex-col gap-3 items-center w-full">
       <div className="mb-2">
         {getAvatarSVG(avatar)}
+      </div>
+      {/* Vibe/Expression Picker */}
+      <div className="flex gap-2 items-center">
+        <span className="text-xs text-gray-600">Vibe:</span>
+        {vibes.map((v) => (
+          <motion.button
+            key={v.value}
+            className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 ${
+              avatar.vibe === v.value
+                ? "bg-pink-500 text-white scale-110 shadow"
+                : "bg-gray-100 text-gray-700"
+            }`}
+            onClick={() => {
+              setAnimVibe(v.value);
+              onChange({ ...avatar, vibe: v.value });
+              setTimeout(() => setAnimVibe(null), 400);
+            }}
+            aria-label={v.label}
+            tabIndex={0}
+            whileTap={{ scale: 1.2, rotate: v.value === "edgy" ? 10 : 0 }}
+            animate={animVibe === v.value ? { scale: 1.3, rotate: v.value === "edgy" ? 10 : 0 } : {}}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <span>{v.emoji}</span>
+            {v.label}
+          </motion.button>
+        ))}
       </div>
       {/* Skin Tone */}
       <div className="flex gap-2 items-center">
@@ -87,10 +293,11 @@ export function AvatarPicker({
         {skinTones.map((color) => (
           <button
             key={color}
-            className={`w-7 h-7 rounded-full border-2 transition-all duration-200 ${avatar.skin === color ? "border-blue-500 scale-110" : "border-gray-200"}`}
+            className={`w-6 h-6 rounded-full border-2 ${avatar.skin === color ? "border-blue-500 scale-110" : "border-gray-200"}`}
             style={{ background: color }}
             aria-label={`Skin tone ${color}`}
             onClick={() => onChange({ ...avatar, skin: color })}
+            tabIndex={0}
           />
         ))}
       </div>
@@ -100,66 +307,58 @@ export function AvatarPicker({
         {hairColors.map((color) => (
           <button
             key={color}
-            className={`w-7 h-7 rounded-full border-2 transition-all duration-200 ${avatar.hair === color ? "border-blue-500 scale-110" : "border-gray-200"}`}
+            className={`w-6 h-6 rounded-full border-2 ${avatar.hair === color ? "border-blue-500 scale-110" : "border-gray-200"}`}
             style={{ background: color }}
             aria-label={`Hair color ${color}`}
             onClick={() => onChange({ ...avatar, hair: color })}
+            tabIndex={0}
           />
         ))}
+        <button
+          className={`px-2 py-1 rounded text-xs font-semibold ${avatar.hairStyle === "bald" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+          onClick={() => onChange({ ...avatar, hairStyle: "bald" })}
+          aria-label="Bald"
+          tabIndex={0}
+        >
+          Bald
+        </button>
       </div>
-      {/* Hair Style */}
+      {/* Eye Color */}
       <div className="flex gap-2 items-center">
-        <span className="text-xs text-gray-600">Style:</span>
-        {hairStyles.map((style) => (
+        <span className="text-xs text-gray-600">Eyes:</span>
+        {eyeColors.map((color) => (
           <button
-            key={style.value}
-            className={`px-2 py-1 rounded transition-all duration-200 text-xs font-semibold ${avatar.hairStyle === style.value ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
-            onClick={() => onChange({ ...avatar, hairStyle: style.value })}
-          >
-            {style.label}
-          </button>
-        ))}
-      </div>
-      {/* Vibe */}
-      <div className="flex gap-2 items-center flex-wrap">
-        <span className="text-xs text-gray-600">Vibe:</span>
-        {vibes.map((vibe) => (
-          <button
-            key={vibe}
-            className={`px-2 py-1 rounded transition-all duration-200 text-xs font-semibold ${avatar.vibe === vibe ? "bg-pink-500 text-white" : "bg-gray-100 text-gray-700"}`}
-            onClick={() => onChange({ ...avatar, vibe })}
-          >
-            {vibe.charAt(0).toUpperCase() + vibe.slice(1)}
-          </button>
+            key={color}
+            className={`w-5 h-5 rounded-full border-2 ${avatar.eyeColor === color ? "border-blue-500 scale-110" : "border-gray-200"}`}
+            style={{ background: color }}
+            aria-label={`Eye color ${color}`}
+            onClick={() => onChange({ ...avatar, eyeColor: color })}
+            tabIndex={0}
+          />
         ))}
       </div>
       {/* Accessories */}
       <div className="flex gap-2 items-center">
         <span className="text-xs text-gray-600">Accessory:</span>
-        <button
-          className={`px-2 py-1 rounded ${avatar.accessory === "glasses" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
-          onClick={() =>
-            onChange({
-              ...avatar,
-              accessory: avatar.accessory === "glasses" ? undefined : "glasses",
-            })
-          }
-          title="Toggle Glasses"
-        >
-          👓
-        </button>
-        <button
-          className={`px-2 py-1 rounded ${avatar.hat === "cap" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
-          onClick={() =>
-            onChange({
-              ...avatar,
-              hat: avatar.hat === "cap" ? undefined : "cap",
-            })
-          }
-          title="Toggle Cap"
-        >
-          🧢
-        </button>
+        {accessories.map((a) => (
+          <motion.button
+            key={a.value}
+            className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 ${
+              avatar.accessory === a.value
+                ? "bg-blue-500 text-white scale-110 shadow"
+                : "bg-gray-100 text-gray-700"
+            }`}
+            onClick={() => onChange({ ...avatar, accessory: a.value })}
+            aria-label={a.label}
+            tabIndex={0}
+            whileTap={{ scale: 1.2, rotate: a.value === "hat" ? -10 : 0 }}
+            animate={avatar.accessory === a.value ? { scale: 1.2 } : {}}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <span>{a.emoji}</span>
+            {a.label}
+          </motion.button>
+        ))}
       </div>
       {/* Randomize */}
       <button
@@ -168,55 +367,18 @@ export function AvatarPicker({
           const random = {
             skin: skinTones[Math.floor(Math.random() * skinTones.length)],
             hair: hairColors[Math.floor(Math.random() * hairColors.length)],
-            hairStyle: hairStyles[Math.floor(Math.random() * hairStyles.length)].value,
-            vibe: vibes[Math.floor(Math.random() * vibes.length)],
-            accessory: Math.random() > 0.5 ? "glasses" : undefined,
-            hat: Math.random() > 0.5 ? "cap" : undefined,
+            hairStyle: Math.random() > 0.2 ? "short" : "bald",
+            eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
+            vibe: vibes[Math.floor(Math.random() * vibes.length)].value,
+            accessory: accessories[Math.floor(Math.random() * accessories.length)].value,
           };
           onChange(random);
         }}
+        aria-label="Randomize avatar"
+        tabIndex={0}
       >
-        🎲 Randomize
+        🎲 Randomize All
       </button>
     </div>
-  );
-}
-
-// SVG preview function
-export function getAvatarSVG(avatar: any) {
-  return (
-    <svg width="64" height="64" viewBox="0 0 48 48">
-      {/* Face */}
-      <circle cx="24" cy="24" r="22" fill={avatar?.skin || "#f9dcc4"} stroke="#ccc" strokeWidth="2" />
-      {/* Hair */}
-      {avatar?.hairStyle !== "bald" && (
-        <ellipse
-          cx="24"
-          cy="16"
-          rx="14"
-          ry="8"
-          fill={avatar?.hair || "#222"}
-        />
-      )}
-      {/* Face oval */}
-      <ellipse cx="24" cy="28" rx="10" ry="12" fill={avatar?.skin || "#f9dcc4"} />
-      {/* Smile */}
-      <path d="M18 32 Q24 38 30 32" stroke="#333" strokeWidth="2" fill="none" />
-      {/* Eyes */}
-      <circle cx="20" cy="28" r="2" fill="#222" />
-      <circle cx="28" cy="28" r="2" fill="#222" />
-      {/* Glasses */}
-      {avatar?.accessory === "glasses" && (
-        <>
-          <circle cx="20" cy="28" r="4" fill="none" stroke="#555" strokeWidth="1.5" />
-          <circle cx="28" cy="28" r="4" fill="none" stroke="#555" strokeWidth="1.5" />
-          <rect x="22" y="27" width="4" height="2" fill="#555" />
-        </>
-      )}
-      {/* Cap */}
-      {avatar?.hat === "cap" && (
-        <ellipse cx="24" cy="10" rx="13" ry="5" fill="#1976d2" />
-      )}
-    </svg>
   );
 }
