@@ -1,3 +1,14 @@
+// Instead of mockProjects, fetch real data:
+useEffect(() => {
+  async function fetchEcoSuggestions() {
+    if (userLocation) {
+      const res = await fetch(`/api/eco-suggestions?lat=${userLocation.lat}&lng=${userLocation.lng}`);
+      const data = await res.json();
+      setEcoSuggestions(data.suggestions);
+    }
+  }
+  fetchEcoSuggestions();
+}, [userLocation]);
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
