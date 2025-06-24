@@ -1,6 +1,7 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 // 1. ✅ Firebase configuration with safer environment handling
 const firebaseConfig = {
@@ -10,7 +11,10 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? "",
 };
+
+console.log("FIREBASE CONFIG:", firebaseConfig);
 
 // 2. ✅ Ensure Firebase is initialized only once
 const app: FirebaseApp = !getApps().length
@@ -19,6 +23,17 @@ const app: FirebaseApp = !getApps().length
 
 const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
+const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
 
 // 3. ✅ Export Firebase services
-export { app, auth, db };
+export { app, auth, db, analytics };
+
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if true;
+//     }
+//   }
+// }
+
+// npm run dev

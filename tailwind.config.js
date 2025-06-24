@@ -1,5 +1,6 @@
 // tailwind.config.js
 module.exports = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
@@ -18,11 +19,7 @@ module.exports = {
       },
     },
   },
-<<<<<<< HEAD
-  plugins: [],
-=======
   plugins: [
     require("@tailwindcss/line-clamp"),
   ],
->>>>>>> 8812129db5155387019d3569abcf2765ce933592
 };

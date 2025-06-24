@@ -15,7 +15,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { app as firebaseApp } from "../firebase";
+import { app as firebaseApp, auth, db } from "../lib/firebase";
 import { getAvatarSVG } from "../components/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
 
