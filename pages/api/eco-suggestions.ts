@@ -1,5 +1,5 @@
 // pages/api/eco-suggestions.ts
-const [ecoSuggestions, setEcoSuggestions] = useState<LocalProject[]>([]);
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Example static data; replace with real API or DB queries as needed
@@ -11,12 +11,14 @@ const ALL_PROJECTS = [
     lng: -111.8910,
     img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=500&q=80",
   },
-  // ...add more real opportunities, or fetch dynamically!
+  // Add more real opportunities or fetch dynamically!
 ];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { lat, lng } = req.query;
-  if (!lat || !lng) return res.status(400).json({ error: "Missing lat/lng" });
+  if (!lat || !lng) {
+    return res.status(400).json({ error: "Missing lat/lng" });
+  }
 
   // Basic "nearby" filter
   const suggestions = ALL_PROJECTS.sort((a, b) => {
