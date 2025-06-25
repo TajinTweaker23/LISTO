@@ -64,3 +64,6 @@ export default async function handler(
     return res.status(500).json({ error: err.message || "Unknown error" });
   }
 }
+
+// Remove the following JSX code from this API route file.
+// If you want to use the motion.button component, place it in a React component file (e.g., inside a page or component in /pages or /components).

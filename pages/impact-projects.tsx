@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar";
 import { db } from "../lib/firebase"; // ← correct path to lib/firebase.ts
 import { collection, addDoc, getDocs } from "firebase/firestore";
+import { motion } from "framer-motion";
 
 interface Project {
   id: string;
@@ -102,7 +103,20 @@ export default function ImpactProjects() {
             ))}
           </ul>
         )}
+
+        {/* Floating Action Button */}
+        <motion.button
+          className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
+          whileHover={{ scale: 1.15, rotate: 8 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{ y: [0, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          aria-label="Quick Action"
+        >
+          +
+        </motion.button>
       </main>
     </div>
   );
 }
+

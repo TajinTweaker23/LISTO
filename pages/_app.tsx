@@ -6,9 +6,16 @@ import { AuthProvider } from "../context/AuthContext";
 import Layout from "../components/Layout";
 import OnboardingModal from "../components/OnboardingModal";
 import "../styles/globals.css";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import { app as firebaseApp, auth, db } from "../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+// Remove the problematic import and initialize auth and db here
+import { app as firebaseApp } from "../lib/firebase";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { motion } from "framer-motion";
+
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -52,10 +59,26 @@ function MyApp({ Component, pageProps }: AppProps) {
     );
   }
 
+  // Example: Add darkMode state (default: false)
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
     <AuthProvider>
       <Layout>
-        <Component {...pageProps} />
+        <div className={`${darkMode ? "dark" : ""} font-sans transition-all duration-300`} style={{ fontFamily: "'Quicksand', sans-serif" }}>
+          <Component {...pageProps} />
+          {/* Add this near the end of your main layout or each page */}
+          <motion.button
+            className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
+            whileHover={{ scale: 1.15, rotate: 8 }}
+            whileTap={{ scale: 0.95 }}
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            aria-label="Quick Action"
+          >
+            +
+          </motion.button>
+        </div>
       </Layout>
     </AuthProvider>
   );

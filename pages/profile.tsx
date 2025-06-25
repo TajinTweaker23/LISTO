@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import AvatarPicker, { getAvatarSVG } from "../components/AvatarPicker";
 import { toPng } from "html-to-image";
+import { motion } from "framer-motion";
 
 // Add more diverse preset avatars
 const presetAvatars = [
@@ -370,6 +371,17 @@ export default function Profile() {
           </button>
         </div>
       </main>
+      {/* Floating Action Button */}
+      <motion.button
+        className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
+        whileHover={{ scale: 1.15, rotate: 8 }}
+        whileTap={{ scale: 0.95 }}
+        animate={{ y: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+        aria-label="Quick Action"
+      >
+        +
+      </motion.button>
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getAvatarSVG } from "./AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
-import { app as firebaseApp, auth, db } from "../lib/firebase";
 
 const navLinks = [
   { href: "/explore", label: "Explore", icon: "🧭" },
@@ -135,6 +134,43 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </svg>
       </motion.div>
 
+      {/* Kawaii Floating Stars & Blobs */}
+      <motion.div
+        className="absolute top-10 right-10 w-16 h-16 z-0 pointer-events-none"
+        initial={{ opacity: 0, scale: 0.7, rotate: -20 }}
+        animate={{ opacity: 0.4, scale: 1, rotate: 10 }}
+        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+      >
+        <svg viewBox="0 0 64 64" fill="none">
+          <path
+            d="M32 4 L39 24 H60 L42 38 L49 58 L32 46 L15 58 L22 38 L4 24 H25 Z"
+            fill="#fbbf24"
+            opacity="0.7"
+          />
+        </svg>
+      </motion.div>
+      <motion.div
+        className="absolute bottom-20 left-10 w-12 h-12 z-0 pointer-events-none"
+        initial={{ opacity: 0, scale: 0.7, rotate: 10 }}
+        animate={{ opacity: 0.3, scale: 1, rotate: -10 }}
+        transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse" }}
+      >
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" fill="#a5b4fc" opacity="0.6" />
+        </svg>
+      </motion.div>
+      <motion.div
+        className="absolute top-1/2 left-1/2 w-10 h-10 z-0 pointer-events-none"
+        style={{ translate: "-50% -50%" }}
+        initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
+        animate={{ opacity: 0.25, scale: 1, rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, repeatType: "loop", ease: "linear" }}
+      >
+        <svg viewBox="0 0 64 64" fill="none">
+          <ellipse cx="32" cy="32" rx="24" ry="12" fill="#f472b6" opacity="0.4" />
+        </svg>
+      </motion.div>
+
       {/* Animated Header */}
       <motion.header
         className={`sticky top-0 z-30 bg-white/30 dark:bg-blue-900/80 backdrop-blur-md text-blue-900 dark:text-white p-4 flex items-center justify-between shadow transition-shadow ${
@@ -150,20 +186,40 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           initial="initial"
           animate="animate"
         >
-          {/* Animated Logo */}
+          {/* Animated Logo with Sparkle */}
           <motion.span
-            className="bg-yellow-400 text-blue-900 font-extrabold rounded-full w-10 h-10 flex items-center justify-center text-2xl shadow-neon ring-4 ring-yellow-300 animate-pulse"
+            className="bg-yellow-400 text-blue-900 font-extrabold rounded-full w-10 h-10 flex items-center justify-center text-2xl shadow-neon ring-4 ring-yellow-300 animate-pulse relative"
             whileHover={{ scale: 1.1, rotate: 6 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             L
+            {/* Sparkle */}
+            <motion.span
+              className="absolute -top-2 -right-2"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 0.7] }}
+              transition={{ repeat: Infinity, duration: 2, delay: 0.7 }}
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 0 L10.5 7.5 L18 9 L10.5 10.5 L9 18 L7.5 10.5 L0 9 L7.5 7.5 Z" fill="#fbbf24" />
+              </svg>
+            </motion.span>
           </motion.span>
-          <span className="font-bold text-2xl tracking-tight drop-shadow-lg">
+          <span className="font-bold text-2xl tracking-tight drop-shadow-lg" style={{ fontFamily: "'Quicksand', 'Baloo 2', sans-serif" }}>
             LISTO
           </span>
           <span className="ml-2 text-sm text-teal-700 dark:text-teal-200 italic hidden sm:inline">
             Dream. Do. Dominate.
           </span>
+          {/* Kawaii badge */}
+          <motion.span
+            className="ml-2 px-2 py-0.5 rounded-full bg-pink-200 text-pink-700 text-xs font-bold shadow hidden sm:inline-block"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1.2, type: "spring" }}
+          >
+            ✨ New!
+          </motion.span>
         </motion.div>
         {/* Desktop Nav */}
         <nav
@@ -212,10 +268,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-yellow-400 shadow-lg hover:shadow-yellow-300/80 hover:scale-105 transition cursor-pointer ring-2 ring-yellow-200 relative"
             title={userName ? `Logged in as ${userName}` : "Guest"}
+            style={{
+              boxShadow: theme === "dark"
+                ? "0 0 0 4px #38bdf8, 0 2px 8px #0002"
+                : "0 0 0 4px #fbbf24, 0 2px 8px #0001"
+            }}
           >
             {getAvatarSVG(avatar)}
-            {/* Online status dot */}
-            <span className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white animate-pulse"></span>
+            {/* Animated Online status dot */}
+            <motion.span
+              className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white"
+              animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+              transition={{ repeat: Infinity, duration: 1.2 }}
+            />
           </div>
           <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-black/80 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition">
             {userName ? userName : "Guest"}
@@ -275,12 +340,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Main Content */}
+      {/* Glassmorphism Card for Main Content */}
       <main className="flex-1 w-full max-w-6xl mx-auto px-2 sm:px-6 py-6 z-10">
-        {children}
+        <div className="rounded-3xl bg-white/60 dark:bg-blue-900/60 shadow-xl p-6 backdrop-blur-md border border-blue-100 dark:border-blue-800">
+          {children}
+        </div>
       </main>
-      {/* Animated Footer with SVG Wave */}
+      {/* Animated Footer with SVG Wave and Extra Layer */}
       <footer className="relative bg-white/30 dark:bg-blue-900/80 backdrop-blur-md text-center p-2 text-xs text-gray-700 dark:text-gray-300 overflow-hidden">
+        {/* Main Wave */}
         <motion.svg
           className="absolute left-0 bottom-full w-full h-8"
           viewBox="0 0 1440 80"
@@ -307,6 +375,34 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }}
           />
         </motion.svg>
+        {/* Extra lighter wave for depth */}
+        <motion.svg
+          className="absolute left-0 bottom-[calc(100%-8px)] w-full h-8"
+          viewBox="0 0 1440 80"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          initial={{ y: 30 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 1.5, type: "spring" }}
+        >
+          <motion.path
+            d="M0 50 Q 360 90 720 50 T 1440 50 V80H0V50Z"
+            fill={theme === "dark" ? "#fbbf24" : "#f472b6"}
+            opacity="0.3"
+            animate={{
+              d: [
+                "M0 50 Q 360 90 720 50 T 1440 50 V80H0V50Z",
+                "M0 40 Q 360 70 720 40 T 1440 40 V80H0V40Z",
+                "M0 50 Q 360 90 720 50 T 1440 50 V80H0V50Z",
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 10,
+              ease: "easeInOut",
+            }}
+          />
+        </motion.svg>
         <span className="relative z-10">
           © {new Date().getFullYear()} LISTO &mdash; Dream. Do. Dominate.
         </span>
@@ -314,3 +410,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+/* Import Google Fonts in your global CSS file (e.g., styles/globals.css) */

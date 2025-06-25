@@ -10,6 +10,7 @@ const vibes = [
   { label: "Sassy", value: "sassy", emoji: "😏" },
   { label: "Surprised", value: "surprised", emoji: "😮" },
   { label: "Edgy", value: "edgy", emoji: "😈" },
+  { label: "Bad Boy", value: "badboy", emoji: "🦹" }, // Disney bad boy
 ];
 const accessories = [
   { label: "None", value: "" },
@@ -24,24 +25,23 @@ export function getAvatarSVG(avatar: any) {
   return (
     <svg width="110" height="110" viewBox="0 0 110 110">
       <defs>
-        {/* Face gradients */}
+        {/* Enhanced gradients for 3D look */}
         <radialGradient id="faceGrad" cx="50%" cy="38%" r="65%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
-          <stop offset="55%" stopColor={avatar?.skin || "#f9dcc4"} />
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.98" />
+          <stop offset="40%" stopColor={avatar?.skin || "#f9dcc4"} />
           <stop offset="100%" stopColor="#bfa77a" />
         </radialGradient>
         <radialGradient id="faceShadow" cx="50%" cy="80%" r="60%">
-          <stop offset="0%" stopColor="#000" stopOpacity="0.10" />
+          <stop offset="0%" stopColor="#000" stopOpacity="0.18" />
           <stop offset="100%" stopColor="transparent" />
         </radialGradient>
-        {/* Hair gradients */}
         <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor={avatar?.hair || "#222"} />
-          <stop offset="60%" stopColor="#fff" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#222" stopOpacity="0.7" />
+          <stop offset="60%" stopColor="#fff" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#222" stopOpacity="0.9" />
         </linearGradient>
-        <radialGradient id="hairHighlight" cx="30%" cy="30%" r="60%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.3" />
+        <radialGradient id="shine" cx="60%" cy="30%" r="60%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.35" />
           <stop offset="100%" stopColor="transparent" />
         </radialGradient>
         {/* Cheek gradients */}
@@ -56,24 +56,43 @@ export function getAvatarSVG(avatar: any) {
         </radialGradient>
         {/* Lip gloss */}
         <linearGradient id="lipGloss" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.5" />
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.7" />
           <stop offset="100%" stopColor="transparent" />
         </linearGradient>
         {/* Shadow under face */}
         <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#000" stopOpacity="0.18" />
+          <stop offset="0%" stopColor="#000" stopOpacity="0.22" />
           <stop offset="100%" stopColor="#000" stopOpacity="0" />
         </radialGradient>
+        {/* New: subtle skin texture */}
+        <radialGradient id="freckleGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#bfa77a" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
       </defs>
-      {/* Drop shadow */}
+      {/* Stronger drop shadow */}
       <ellipse cx="55" cy="98" rx="32" ry="10" fill="url(#shadowGrad)" />
-      {/* Face */}
-      <ellipse cx="55" cy="56" rx="38" ry="40" fill="url(#faceGrad)" />
+      {/* Face base */}
+      <ellipse cx="55" cy="56" rx="38" ry="40" fill="url(#faceGrad)" filter="url(#shadow)" />
+      {/* Subtle facial contour (jaw/cheek) */}
+      <ellipse cx="55" cy="70" rx="26" ry="10" fill="#000" opacity="0.07" />
+      {/* Forehead highlight */}
+      <ellipse cx="55" cy="38" rx="18" ry="6" fill="#fff" opacity="0.12" />
+      {/* Skin texture (freckles/blush) */}
+      <ellipse cx="45" cy="68" rx="2" ry="1" fill="url(#freckleGrad)" />
+      <ellipse cx="65" cy="68" rx="1.5" ry="0.8" fill="url(#freckleGrad)" />
+      {/* Ears with inner detail */}
+      <g>
+        <ellipse cx="20" cy="60" rx="5" ry="10" fill={avatar?.skin || "#f9dcc4"} opacity="0.95" />
+        <ellipse cx="90" cy="60" rx="5" ry="10" fill={avatar?.skin || "#f9dcc4"} opacity="0.95" />
+        <ellipse cx="20" cy="62" rx="2" ry="4" fill="#bfa77a" opacity="0.25" />
+        <ellipse cx="90" cy="62" rx="2" ry="4" fill="#bfa77a" opacity="0.25" />
+      </g>
       {/* Face shadow (bottom) */}
       <ellipse cx="55" cy="72" rx="28" ry="12" fill="url(#faceShadow)" />
-      {/* Face highlight */}
-      <ellipse cx="45" cy="45" rx="13" ry="8" fill="#fff" opacity="0.13" />
-      {/* Hair */}
+      {/* Face shine */}
+      <ellipse cx="45" cy="40" rx="15" ry="8" fill="url(#shine)" />
+      {/* Hair with layered highlights */}
       {avatar?.hairStyle !== "bald" && (
         <>
           <ellipse
@@ -82,7 +101,7 @@ export function getAvatarSVG(avatar: any) {
             rx="36"
             ry="20"
             fill="url(#hairGrad)"
-            style={{ filter: "drop-shadow(0 4px 8px #2223)" }}
+            style={{ filter: "drop-shadow(0 6px 16px #2227)" }}
           />
           {/* Hair highlight */}
           <ellipse
@@ -90,32 +109,51 @@ export function getAvatarSVG(avatar: any) {
             cy="28"
             rx="15"
             ry="7"
-            fill="url(#hairHighlight)"
-            opacity="0.7"
+            fill="url(#shine)"
+            opacity="0.8"
+          />
+          {/* Hair shadow */}
+          <ellipse
+            cx="65"
+            cy="38"
+            rx="10"
+            ry="4"
+            fill="#000"
+            opacity="0.08"
           />
         </>
       )}
       {/* Cheeks */}
       <ellipse cx="35" cy="75" rx="7" ry="4" fill="url(#cheekGrad)" />
       <ellipse cx="75" cy="75" rx="7" ry="4" fill="url(#cheekGrad)" />
-      {/* Nose (subtle 3D) */}
-      <ellipse cx="55" cy="62" rx="3.5" ry="6" fill="#e0bfa0" opacity="0.25" />
-      {/* Eyes */}
+      {/* Nose with nostrils and bridge */}
+      <g>
+        <ellipse cx="55" cy="62" rx="3.5" ry="6" fill="#e0bfa0" opacity="0.28" />
+        <ellipse cx="53" cy="66" rx="0.7" ry="1.2" fill="#bfa77a" opacity="0.4" />
+        <ellipse cx="57" cy="66" rx="0.7" ry="1.2" fill="#bfa77a" opacity="0.4" />
+        <rect x="54" y="58" width="2" height="6" rx="1" fill="#fff" opacity="0.13" />
+      </g>
+      {/* Eyes, mouth, and extras */}
       <AnimatePresence>
         {(() => {
           switch (vibe) {
             case "happy":
               return (
                 <>
-                  {/* Eye whites */}
+                  {/* Upper eyelid */}
                   <ellipse cx="43" cy="60" rx="6" ry="8" fill="#fff" />
                   <ellipse cx="67" cy="60" rx="6" ry="8" fill="#fff" />
-                  {/* Iris */}
+                  {/* Iris & pupil */}
                   <ellipse cx="43" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
                   <ellipse cx="67" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="43" cy="63" rx="1.2" ry="1.5" fill="#111" opacity="0.7" />
+                  <ellipse cx="67" cy="63" rx="1.2" ry="1.5" fill="#111" opacity="0.7" />
                   {/* Eye gloss */}
                   <ellipse cx="41" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
                   <ellipse cx="65" cy="59" rx="1.2" ry="1.5" fill="url(#eyeGloss)" />
+                  {/* Lower eyelid */}
+                  <ellipse cx="43" cy="66" rx="4" ry="1" fill="#bfa77a" opacity="0.13" />
+                  <ellipse cx="67" cy="66" rx="4" ry="1" fill="#bfa77a" opacity="0.13" />
                 </>
               );
             case "cool":
@@ -162,30 +200,55 @@ export function getAvatarSVG(avatar: any) {
                   <rect x="60" y="54" width="12" height="2" rx="1" fill="#222" transform="rotate(15 66 55)" />
                 </>
               );
+            case "badboy":
+              return (
+                <>
+                  {/* Eyes: sharper, more intense */}
+                  <ellipse cx="43" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="67" cy="60" rx="6" ry="8" fill="#fff" />
+                  <ellipse cx="43" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="67" cy="62" rx="3" ry="4" fill={avatar?.eyeColor || "#222"} />
+                  <ellipse cx="43" cy="63" rx="1.2" ry="1.5" fill="#111" opacity="0.7" />
+                  <ellipse cx="67" cy="63" rx="1.2" ry="1.5" fill="#111" opacity="0.7" />
+                  {/* Angled, thick eyebrows */}
+                  <rect x="37" y="54" width="12" height="3" rx="1.5" fill="#222" transform="rotate(-25 43 55)" />
+                  <rect x="61" y="54" width="12" height="3" rx="1.5" fill="#222" transform="rotate(25 67 55)" />
+                  {/* Scar under left eye */}
+                  <rect x="40" y="70" width="1.5" height="7" rx="0.7" fill="#b91c1c" transform="rotate(-20 40 70)" />
+                  {/* Earring */}
+                  <circle cx="80" cy="90" r="2.2" fill="#fbbf24" stroke="#222" strokeWidth="0.7" />
+                  {/* Smirk with lip gloss */}
+                  <path d="M45 72 Q55 80 65 72" stroke="#222" strokeWidth="2.5" fill="none" />
+                  <path d="M50 75 Q55 78 60 75" stroke="url(#lipGloss)" strokeWidth="1.5" fill="none" />
+                  {/* Book with guns (hidden, peeking out) */}
+                  <g>
+                    {/* Book */}
+                    <rect x="30" y="85" width="18" height="10" rx="2" fill="#ffe066" stroke="#bfa77a" strokeWidth="1.5" />
+                    <rect x="32" y="87" width="14" height="6" rx="1" fill="#fff" opacity="0.7" />
+                    {/* Gun handles peeking out */}
+                    <rect x="33" y="83" width="3" height="8" rx="1" fill="#222" />
+                    <rect x="43" y="83" width="3" height="8" rx="1" fill="#222" />
+                  </g>
+                  {/* Speech bubble with cuss (cartoon style) */}
+                  <g>
+                    <ellipse cx="80" cy="80" rx="12" ry="7" fill="#fff" stroke="#222" strokeWidth="1" />
+                    <text x="74" y="83" fontSize="10" fontWeight="bold" fill="#d84315" fontFamily="monospace">#@%!</text>
+                  </g>
+                  {/* Subtle shadow under book */}
+                  <ellipse cx="39" cy="97" rx="10" ry="2" fill="#000" opacity="0.18" />
+                </>
+              );
             default:
               return null;
           }
         })()}
       </AnimatePresence>
-      {/* Mouth */}
-      <AnimatePresence>
-        {(() => {
-          switch (vibe) {
-            case "happy":
-              return <path d="M36 62 Q45 70 54 62" stroke="#d84315" strokeWidth="3" fill="none" />;
-            case "cool":
-              return <rect x="41" y="62" width="8" height="3" rx="1.5" fill="#222" />;
-            case "sassy":
-              return <path d="M40 62 Q45 66 50 62" stroke="#d84315" strokeWidth="2" fill="none" />;
-            case "surprised":
-              return <ellipse cx="45" cy="65" rx="4" ry="4" fill="#d84315" />;
-            case "edgy":
-              return <path d="M38 65 Q45 60 52 65" stroke="#222" strokeWidth="2" fill="none" />;
-            default:
-              return null;
-          }
-        })()}
-      </AnimatePresence>
+      {/* Lips with upper/lower separation and gloss */}
+      <g>
+        <ellipse cx="55" cy="76" rx="8" ry="3" fill="#d84315" opacity="0.7" />
+        <ellipse cx="55" cy="77" rx="7" ry="2" fill="#fff" opacity="0.13" />
+        <ellipse cx="55" cy="75" rx="8" ry="2" fill="#b91c1c" opacity="0.18" />
+      </g>
       {/* Cheeks with highlight */}
       <ellipse cx="32" cy="60" rx="4" ry="2" fill="#f8bbd0" opacity="0.7" />
       <ellipse cx="58" cy="60" rx="4" ry="2" fill="#f8bbd0" opacity="0.7" />
