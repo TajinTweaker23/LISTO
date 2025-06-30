@@ -313,7 +313,6 @@ export default function Explore() {
   // Eco marker icon (kawaii pastel pin)
   const ecoIcon = useMemo(() => {
     if (typeof window === "undefined") return undefined;
-    // Import leaflet only on the client
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const L = require("leaflet");
     return new L.Icon({
