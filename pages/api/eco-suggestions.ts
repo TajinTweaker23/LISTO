@@ -6,6 +6,7 @@ interface LocalProject {
   lng: number;
   img: string;
 }
+
 const ecoSuggestions: LocalProject[] = [
   {
     title: "Local Food Bank",
@@ -18,8 +19,6 @@ const ecoSuggestions: LocalProject[] = [
 ];
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { motion } from "framer-motion";
-import { useState } from "react";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { lat, lng } = req.query;
