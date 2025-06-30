@@ -35,3 +35,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   res.status(200).json({ suggestions });
 }
+
+// Remove unrelated React component code from this API route file.
+// Move Mascot and SomeComponent to their own files in the components/ui directory.

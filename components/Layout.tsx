@@ -412,3 +412,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 
 /* Import Google Fonts in your global CSS file (e.g., styles/globals.css) */
+
+/* Example for app/layout.tsx */
+export const metadata = {
+  icons: {
+    icon: '/favicon.png',
+  },
+};

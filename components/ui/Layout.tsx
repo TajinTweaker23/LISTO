@@ -11,8 +11,7 @@ import CustomizationPanel from "./CustomizationPanel";
 import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
 import { Howl } from "howler";
-import Lottie from "lottie-react";
-import mascotData from "../../public/mascot.json"; // Place your mascot Lottie JSON here
+import Mascot from "./Mascot";
 
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
@@ -306,22 +305,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {/* Mascot */}
       <div className="fixed bottom-32 right-10 z-40 flex flex-col items-center">
-        <div className="w-32 h-32 pointer-events-none select-none">
-          <Lottie
-            lottieRef={mascotRef}
-            animationData={mascotData}
-            loop={mascotAction === "idle"}
-            autoplay
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
-        <div className="text-xs text-gray-500 dark:text-gray-300 mt-1">
-          {mascotAction === "party"
-            ? "Party Mode! 🎉"
-            : mascotAction === "cheer"
-            ? "Nice work!"
-            : "Ready to help!"}
-        </div>
+        <Mascot />
       </div>
 
       <Navbar theme={theme} />
