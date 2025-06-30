@@ -211,6 +211,7 @@ const localImages = [
 
 // --- Main Component
 export default function Explore() {
+  // ✅ All hooks go here, at the top level of the function
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<SearchItem[]>([]);
   const [loading, setLoading] = useState(false);
