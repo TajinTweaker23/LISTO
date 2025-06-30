@@ -3,9 +3,6 @@ import { Calendar, CloudSun, Globe2, Users, PartyPopper, Sparkle, HomeIcon, Sun,
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import type { LatLngExpression } from "leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
 // Dynamically import MapContainer to avoid SSR issues
 const MapContainer = dynamic<any>(
@@ -315,6 +312,9 @@ export default function Explore() {
   // Eco marker icon (kawaii pastel pin)
   const ecoIcon = useMemo(() => {
     if (typeof window === "undefined") return undefined;
+    // Import leaflet only on the client
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const L = require("leaflet");
     return new L.Icon({
       iconUrl: "https://cdn-icons-png.flaticon.com/512/616/616408.png",
       iconSize: [36, 36],
