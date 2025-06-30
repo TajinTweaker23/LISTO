@@ -1,5 +1,4 @@
 // pages/api/eco-suggestions.ts
-<<<<<<< HEAD
 interface LocalProject {
   title: string;
   desc: string;
@@ -7,16 +6,7 @@ interface LocalProject {
   lng: number;
   img: string;
 }
-const [ecoSuggestions, setEcoSuggestions] = useState<LocalProject[]>([]);
-=======
-
->>>>>>> 8df89d2bc80e9e2044fd245a0f679c0376fadb67
-import type { NextApiRequest, NextApiResponse } from "next";
-import { motion } from "framer-motion";
-import { useState } from "react";
-
-// Example static data; replace with real API or DB queries as needed
-const ALL_PROJECTS = [
+const ecoSuggestions: LocalProject[] = [
   {
     title: "Local Food Bank",
     desc: "Donate or volunteer to fight hunger.",
@@ -27,6 +17,10 @@ const ALL_PROJECTS = [
   // Add more real opportunities or fetch dynamically!
 ];
 
+import type { NextApiRequest, NextApiResponse } from "next";
+import { motion } from "framer-motion";
+import { useState } from "react";
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { lat, lng } = req.query;
   if (!lat || !lng) {
@@ -34,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Basic "nearby" filter
-  const suggestions = ALL_PROJECTS.sort((a, b) => {
+  const suggestions = ecoSuggestions.sort((a, b) => {
     const da = Math.abs(a.lat - Number(lat)) + Math.abs(a.lng - Number(lng));
     const db = Math.abs(b.lat - Number(lat)) + Math.abs(b.lng - Number(lng));
     return da - db;
