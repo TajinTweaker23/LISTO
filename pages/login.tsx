@@ -6,10 +6,10 @@ import {
   createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { app, db } from "../lib/firebase"; // ✅ Import your app instance
+import app, { db } from "../lib/firebase";
 import { motion } from "framer-motion";
 
-const auth = getAuth(app); // ✅ Initialize auth correctly
+const auth = getAuth(app);
 
 export default function LoginPage() {
   const router = useRouter();
