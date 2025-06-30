@@ -8,8 +8,7 @@ import OnboardingModal from "../components/OnboardingModal";
 import "../styles/globals.css";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-// Remove the problematic import and initialize auth and db here
-import { app as firebaseApp } from "../lib/firebase";
+import firebaseApp from "../lib/firebase";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { motion } from "framer-motion";
