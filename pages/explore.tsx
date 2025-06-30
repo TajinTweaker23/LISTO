@@ -503,7 +503,7 @@ export default function Explore() {
                 </h2>
                 {userLocation && (
                   <MapContainer
-                    center={[userLocation.lat, userLocation.lng] as LatLngExpression}
+                    center={[userLocation.lat, userLocation.lng]}
                     zoom={13}
                     style={{ height: "350px", width: "100%", borderRadius: "1rem", boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}
                     scrollWheelZoom={false}
