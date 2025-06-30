@@ -35,5 +35,3 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   res.status(200).json({ suggestions });
 }
-
-// Add this near the end of your main layout or each page (move this JSX to a React component, not an API route)
