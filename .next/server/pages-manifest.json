@@ -1,15 +1,6 @@
 {
+  "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/api/search": "pages/api/search.js",
-  "/impact-projects": "pages/impact-projects.html",
-  "/api/eco-suggestions": "pages/api/eco-suggestions.js",
-  "/login": "pages/login.html",
-  "/api/groq-test": "pages/api/groq-test.js",
-  "/explore": "pages/explore.html",
-  "/": "pages/index.html",
-  "/vision-board": "pages/vision-board.html",
-  "/profile": "pages/profile.html",
-  "/_app": "pages/_app.js",
-  "/404": "pages/404.html"
+  "/": "pages/index.js"
 }

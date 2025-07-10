@@ -1,67 +1,31 @@
 {
   "polyfillFiles": [
-    "static/chunks/polyfills-78c92fac7aa8fdd8.js"
+    "static/chunks/polyfills.js"
   ],
-  "devFiles": [],
+  "devFiles": [
+    "static/chunks/react-refresh.js"
+  ],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/ZNQcmbqLBTSdquc35F3R-/_buildManifest.js",
-    "static/ZNQcmbqLBTSdquc35F3R-/_ssgManifest.js"
+    "static/development/_buildManifest.js",
+    "static/development/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
     "/": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/pages/index-6c12e27b838cf083.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/index.js"
     ],
     "/_app": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/css/0a7a0d87cecb5d7d.css",
-      "static/chunks/pages/_app-39620ad1681570e9.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/_app.js"
     ],
     "/_error": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/pages/_error-4afcb85b7c260fd3.js"
-    ],
-    "/explore": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/bee240a3-33ffdfd55dcd29b5.js",
-      "static/chunks/0b7b90cd-b3b26a53b6f92b09.js",
-      "static/chunks/953-4f999ee05b2d49db.js",
-      "static/chunks/pages/explore-11a8a4dc1655f1ff.js"
-    ],
-    "/impact-projects": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/pages/impact-projects-4e698016013e5a9c.js"
-    ],
-    "/login": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/pages/login-39b62a633c1d4e9f.js"
-    ],
-    "/profile": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/741-3e16437741132659.js",
-      "static/chunks/pages/profile-3da55e501bec2a2b.js"
-    ],
-    "/vision-board": [
-      "static/chunks/webpack-b5dec5edbca1f35a.js",
-      "static/chunks/framework-7a7e500878b44665.js",
-      "static/chunks/main-c617f05fcb452d3e.js",
-      "static/chunks/pages/vision-board-8c00df08810fe00c.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/_error.js"
     ]
   },
   "ampFirstPages": []

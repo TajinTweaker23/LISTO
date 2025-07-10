@@ -1,20 +1,14 @@
 {
   "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
-    "id": 1249,
+    "id": "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app",
     "files": [
-      "static/chunks/249.84d1a3fa9f3db97d.js"
+      "static/chunks/node_modules_next_dist_pages__app_js.js"
     ]
   },
   "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
-    "id": 6698,
+    "id": "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error",
     "files": [
-      "static/chunks/698.6343bfd066c936de.js"
-    ]
-  },
-  "explore.tsx -> react-leaflet": {
-    "id": 7378,
-    "files": [
-      "static/chunks/378.12aa49752e0b4c3a.js"
+      "static/chunks/node_modules_next_dist_pages__error_js.js"
     ]
   }
 }

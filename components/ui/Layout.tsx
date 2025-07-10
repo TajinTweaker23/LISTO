@@ -22,6 +22,12 @@ const soundscapes = [
   { label: "Forest", file: "/sounds/forest.mp3" },
 ];
 
+type LayoutProps = {
+  children: ReactNode;
+  theme: string;
+  setTheme: (theme: string) => void;
+};
+
 function Toast({ message, show }: { message: string; show: boolean }) {
   return (
     <AnimatePresence>
@@ -118,8 +124,7 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
   );
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState("light");
+export default function Layout({ children, theme, setTheme }: LayoutProps) {
   const [settings, setSettings] = useState({
     fontFamily: "Space Grotesk, sans-serif",
     fontColor: "#e4e6fb",
@@ -308,7 +313,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Mascot />
       </div>
 
-      <Navbar theme={theme} />
+      {/* Pass theme and setTheme to Navbar */}
+      <Navbar theme={theme} setTheme={setTheme} />
 
       {/* Animated, layered, glowing background shapes with parallax */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
@@ -325,6 +331,8 @@ export default function Layout({ children }: { children: ReactNode }) {
           style={{ x: parallax.x / 2, y: parallax.y / 2 }}
         />
       </div>
+
+      {/* ThemeToggle with theme and setTheme props */}
       <ThemeToggle theme={theme} setTheme={setTheme} />
 
       {/* Focus Mode Toggle Button */}
