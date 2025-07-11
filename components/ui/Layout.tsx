@@ -2,7 +2,6 @@ import { Roboto_Mono } from "next/font/google";
 import React, { ReactNode, useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import { Dialog, Combobox } from "@headlessui/react";
-import "./globals.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
@@ -12,6 +11,7 @@ import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
 import { Howl } from "howler";
 import Mascot from "./Mascot";
+import "../styles/globals.css";
 
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
@@ -22,7 +22,7 @@ const soundscapes = [
   { label: "Forest", file: "/sounds/forest.mp3" },
 ];
 
-type LayoutProps = {
+export type LayoutProps = {
   children: ReactNode;
   theme: string;
   setTheme: (theme: string) => void;
@@ -46,7 +46,6 @@ function Toast({ message, show }: { message: string; show: boolean }) {
   );
 }
 
-// Emoji Rain Celebration
 function EmojiRain({ show }: { show: boolean }) {
   const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
   return (
@@ -73,7 +72,6 @@ function EmojiRain({ show }: { show: boolean }) {
   );
 }
 
-// Focus Timer Progress Bar
 function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -99,7 +97,6 @@ function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
   );
 }
 
-// Reading Ruler
 function ReadingRuler({ enabled }: { enabled: boolean }) {
   const [y, setY] = useState(0);
   useEffect(() => {
@@ -124,7 +121,7 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
   );
 }
 
-export default function Layout({ children, theme, setTheme }: LayoutProps) {
+const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const [settings, setSettings] = useState({
     fontFamily: "Space Grotesk, sans-serif",
     fontColor: "#e4e6fb",
@@ -154,7 +151,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
   const mascotRef = useRef<any>(null);
   const [mascotAction, setMascotAction] = useState<"idle" | "cheer" | "party">("idle");
 
-  // Personalized greeting
   useEffect(() => {
     const hour = new Date().getHours();
     let greet = "Welcome";
@@ -165,25 +161,21 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     setGreeting(greet);
   }, []);
 
-  // Confetti trigger
   const triggerConfetti = () => {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 2000);
   };
 
-  // Toast trigger
   const triggerToast = (message: string) => {
     setToast({ message, show: true });
     setTimeout(() => setToast({ message: "", show: false }), 1800);
   };
 
-  // Celebration trigger
   const triggerEmojiRain = () => {
     setShowEmojiRain(true);
     setTimeout(() => setShowEmojiRain(false), 2200);
   };
 
-  // Update shape/table handlers to trigger confetti, toast, mascot, and emoji rain
   const handleInsertShape = (shape: string) => {
     setShapes([...shapes, shape]);
     triggerConfetti();
@@ -199,7 +191,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     if ((tables.length + 1) % 5 === 0) triggerEmojiRain();
   };
 
-  // Command palette actions (with party mode easter egg)
   const actions = [
     { name: "Toggle Focus Mode", action: () => setFocusMode(f => !f) },
     { name: "Insert Circle", action: () => handleInsertShape("circle") },
@@ -208,14 +199,13 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     { name: "Insert Table", action: () => handleInsertTable(2, 2) },
     { name: "Toggle Theme", action: () => setTheme(theme === "dark" ? "light" : "dark") },
     { name: "Open Settings", action: () => setShowSettings(true) },
-    { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); triggerToast("🎉 Party Mode!"); } }, // Easter egg
+    { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); triggerToast("🎉 Party Mode!"); } },
     { name: "Start Focus Timer", action: () => setShowFocusTimer(true) },
     { name: "Toggle Reading Ruler", action: () => setReadingRuler(r => !r) },
   ];
   const [query, setQuery] = useState("");
   const filteredActions = actions.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
 
-  // Theme Scheduler
   useEffect(() => {
     const schedule = JSON.parse(localStorage.getItem("themeSchedule") || "{}");
     if (schedule.enabled) {
@@ -226,7 +216,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     }
   }, []);
 
-  // Soundscape logic
   useEffect(() => {
     if (sound) {
       sound.stop();
@@ -243,7 +232,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     // eslint-disable-next-line
   }, [soundscape]);
 
-  // Parallax effect for background shapes
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -256,7 +244,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Keyboard shortcut for command palette
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -268,7 +255,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // Focus timer end
   const handleFocusTimerEnd = () => {
     setShowFocusTimer(false);
     triggerToast("Focus session complete!");
@@ -276,13 +262,11 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
     triggerEmojiRain();
   };
 
-  // Futuristic gradient backgrounds with parallax
   const bgGradient =
     theme === "dark"
       ? "bg-gradient-to-br from-[#171824] via-[#24305e] to-[#0f2027]"
       : "bg-gradient-to-br from-[#e0eafc] via-[#cfdef3] to-[#f8f9f3]";
 
-  // Glassmorphism card style for main content
   const glassCard =
     "backdrop-blur-2xl bg-white/10 dark:bg-[#232946]/60 rounded-[2.5rem] shadow-2xl border border-cyan-400/20 dark:border-fuchsia-400/30 ring-2 ring-blue-400/20 dark:ring-pink-400/10";
 
@@ -295,28 +279,23 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
           : {}
       }
     >
-      {/* Confetti & Emoji Rain */}
       {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <EmojiRain show={showEmojiRain} />
       <Toast message={toast.message} show={toast.show} />
       <FocusTimer show={showFocusTimer} onEnd={handleFocusTimerEnd} />
       <ReadingRuler enabled={readingRuler} />
 
-      {/* Personalized greeting */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 mt-4 flex items-center gap-3 bg-white/70 dark:bg-black/60 px-6 py-2 rounded-full shadow-lg border border-blue-400/10 text-lg font-bold text-gray-700 dark:text-gray-100 backdrop-blur-lg animate-fade-in">
         <span role="img" aria-label="wave">👋</span>
         {greeting}, <span className="text-blue-500">LISTO User!</span>
       </div>
 
-      {/* Mascot */}
       <div className="fixed bottom-32 right-10 z-40 flex flex-col items-center">
         <Mascot />
       </div>
 
-      {/* Pass theme and setTheme to Navbar */}
       <Navbar theme={theme} setTheme={setTheme} />
 
-      {/* Animated, layered, glowing background shapes with parallax */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
         <motion.div
           className="absolute top-[-80px] left-[-80px] w-[320px] h-[320px] bg-gradient-to-br from-indigo-500 via-purple-700 to-pink-500 opacity-40 rounded-full blur-3xl animate-pulse"
@@ -331,11 +310,8 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
           style={{ x: parallax.x / 2, y: parallax.y / 2 }}
         />
       </div>
-
-      {/* ThemeToggle with theme and setTheme props */}
       <ThemeToggle theme={theme} setTheme={setTheme} />
 
-      {/* Focus Mode Toggle Button */}
       <button
         onClick={() => setFocusMode(f => !f)}
         className="fixed top-8 left-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
@@ -346,7 +322,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
         <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[F]</span>
       </button>
 
-      {/* Command Palette (Ctrl+K to open) */}
       <button
         onClick={() => setCommandOpen(true)}
         className="fixed top-8 right-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-fuchsia-500 text-white font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
@@ -380,7 +355,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
         </div>
       </Dialog>
 
-      {/* Floating Settings Button */}
       <button
         onClick={() => setShowSettings(s => !s)}
         className="fixed bottom-10 left-10 p-5 bg-gradient-to-br from-gray-200 via-blue-200 to-pink-200 dark:from-gray-800 dark:via-blue-900 dark:to-pink-900 text-blue-700 dark:text-pink-200 rounded-full shadow-xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-blue-400/10 focus:outline-none group"
@@ -407,7 +381,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
               onClick={e => e.stopPropagation()}
             >
               <CustomizationPanel settings={settings} onChange={setSettings} />
-              {/* Soundscape Picker */}
               <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Ambient Soundscape</label>
                 <select
@@ -420,7 +393,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
                   ))}
                 </select>
               </div>
-              {/* Theme Scheduler */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Theme Scheduler</label>
                 <div className="flex gap-2 items-center">
@@ -517,7 +489,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
         {children}
       </motion.main>
 
-      {/* Futuristic floating action button with neon glow */}
       <motion.button
         type="button"
         className="fixed bottom-10 right-10 p-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-pink-400/30 focus:outline-none focus:ring-8 focus:ring-blue-400/40 animate-fab-pulse"
@@ -545,7 +516,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
         </span>
       </motion.button>
 
-      {/* Sleek, minimal footer */}
       <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2">
         <span className="animate-pulse text-blue-400">✨</span>
         <span>
@@ -577,4 +547,6 @@ export default function Layout({ children, theme, setTheme }: LayoutProps) {
       `}</style>
     </div>
   );
-}
+};
+
+export default Layout;

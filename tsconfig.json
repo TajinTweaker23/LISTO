@@ -11,7 +11,7 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true, // Skip type checking of declaration files (e.g. for @dnd-kit/* packages)
+    "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
@@ -32,6 +32,7 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "functions"
   ]
 }
