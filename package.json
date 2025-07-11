@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "firebase": "^11.9.1",
     "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.3.2",
     "framer-motion": "^12.19.1",
     "groq-sdk": "^0.25.0",
     "howler": "^2.2.4",
