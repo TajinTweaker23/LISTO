@@ -31,12 +31,28 @@ export default function Home() {
   const [quickAdd, setQuickAdd] = useState("");
   const [quickAddType, setQuickAddType] = useState("goal");
   const [quickAddSuccess, setQuickAddSuccess] = useState(false);
+  const [weatherGreeting, setWeatherGreeting] = useState<string>("");
+  const [motivationQuote, setMotivationQuote] = useState<string>("The future depends on what you do today. — Mahatma Gandhi");
   const quickAddInputRef = useRef<HTMLInputElement>(null);
+
+  // Quotes for the widget
+  const quotes = [
+    "The future depends on what you do today. — Mahatma Gandhi",
+    "You are the sky. Everything else is just the weather. — Pema Chödrön",
+    "Don't watch the clock; do what it does. Keep going. — Sam Levenson",
+    "I'm not a businessman, I'm a business, man. — Jay-Z",
+    "I am deliberate and afraid of nothing. — Audre Lorde",
+    "Today’s grind is tomorrow’s shine. — LISTO",
+    "You’re closer than you think. — LISTO",
+    "Let your hustle be louder than your doubts. — LISTO",
+    "One day or day one. You decide. — LISTO"
+  ];
 
   useEffect(() => {
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
     const user = auth.currentUser;
+
     if (user) {
       // User Profile
       const userRef = doc(db, "users", user.uid);
@@ -86,6 +102,51 @@ export default function Home() {
         setLoading(false);
       });
 
+      // Weather + motivational greeting/quote
+      const hour = new Date().getHours();
+      const baseGreeting =
+        hour < 12 ? "Good morning" :
+        hour < 18 ? "Good afternoon" :
+        "Good evening";
+
+      // Weather API
+      async function fetchWeather() {
+        try {
+          // Salt Lake City default. (Change lat/lon for your city)
+          const response = await fetch(
+            "https://api.openweathermap.org/data/2.5/weather?lat=40.7608&lon=-111.8910&units=imperial&appid=abffd9926f11af59e8cea4b63b40e3d7"
+          );
+          const data = await response.json();
+          const weather = data.weather?.[0]?.main;
+          const temp = Math.round(data.main?.temp);
+          let weatherMsg = "";
+          if (weather === "Rain") {
+            weatherMsg = "Stay cozy, perfect day to reflect 🌧️";
+          } else if (weather === "Clear") {
+            weatherMsg = "Let’s make it a bright one ☀️";
+          } else if (weather === "Clouds") {
+            weatherMsg = "A calm day to dream ☁️";
+          } else if (weather === "Snow") {
+            weatherMsg = "Bundle up and build big dreams ❄️";
+          } else if (weather === "Thunderstorm") {
+            weatherMsg = "Channel the energy! ⚡";
+          } else {
+            weatherMsg = "Let’s make it count 🌟";
+          }
+          setWeatherGreeting(`${baseGreeting}, ${userName}! ${weatherMsg} (${temp}°F)`);
+        } catch {
+          setWeatherGreeting(`${baseGreeting}, ${userName}!`);
+        }
+      }
+      fetchWeather();
+
+      // Rotating motivational quote widget (different each day)
+      const dateSeed = new Date().toDateString();
+      const hash = dateSeed
+        .split("")
+        .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      setMotivationQuote(quotes[hash % quotes.length]);
+
       return () => {
         unsubMood();
         unsubEvents();
@@ -93,7 +154,8 @@ export default function Home() {
         unsubAch();
       };
     }
-  }, []);
+  // include userName in deps so weather greeting updates
+  }, [userName]);
 
   // Animations
   const fadeIn = {
@@ -106,12 +168,6 @@ export default function Home() {
   if (loading) return <div className="text-center py-20">Loading...</div>;
 
   const dailyFocus = "Finish onboarding UI & plan next week’s goals!";
-  const quote = "The future depends on what you do today. — Mahatma Gandhi";
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" :
-    hour < 18 ? "Good afternoon" :
-    "Good evening";
 
   // Quick Add Logic
   const handleQuickAdd = async (e: React.FormEvent) => {
@@ -188,9 +244,11 @@ export default function Home() {
           )}
         </motion.div>
         <motion.h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 z-10" {...fadeIn}>
-          {greeting},{" "}
-          <span className="text-blue-600">{userName}</span>!
+          {weatherGreeting ? weatherGreeting : `Good day, ${userName}!`}
         </motion.h1>
+        <motion.p className="text-lg text-gray-600 mb-2 z-10 font-medium" {...fadeIn}>
+          {motivationQuote}
+        </motion.p>
         <motion.p className="text-lg text-gray-600 mb-6 z-10" {...fadeIn}>
           Dream. Do. Dominate. What’s your focus today?
         </motion.p>
@@ -437,7 +495,7 @@ export default function Home() {
         {/* Motivational Quote Card */}
         <motion.section className="bg-gradient-to-r from-pink-200 via-yellow-100 to-blue-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center col-span-1 md:col-span-2" {...fadeIn}>
           <blockquote className="text-xl italic text-gray-700 text-center mb-2">
-            “{quote}”
+            “{motivationQuote}”
           </blockquote>
           <span className="text-sm text-gray-500">— LISTO Motivation</span>
         </motion.section>

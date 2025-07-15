@@ -1,18 +1,20 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Adjust the environment variable name below to match your actual Vercel env var name:
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // optional, if you use analytics
+  apiKey: "AIzaSyCRleusZM0M2tpA8JoS8NyEElntli8aadw",
+  authDomain: "listo-listo.firebaseapp.com",
+  projectId: "listo-listo",
+  storageBucket: "listo-listo.firebasestorage.app", // <--- THIS IS CORRECT!
+  messagingSenderId: "70588131341",
+  appId: "1:70588131341:web:f75739f617781be275cd44",
+  measurementId: "G-DBP3FC85KC"
 };
 
-const app = initializeApp(firebaseConfig);
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
