@@ -109,8 +109,8 @@ export default function Home() {
         hour < 18 ? "Good afternoon" :
         "Good evening";
 
-      // Weather API
-      async function fetchWeather() {
+      // Weather API — FIXED AS AN EXPRESSION!
+      const fetchWeather = async () => {
         try {
           // Salt Lake City default. (Change lat/lon for your city)
           const response = await fetch(
@@ -137,7 +137,7 @@ export default function Home() {
         } catch {
           setWeatherGreeting(`${baseGreeting}, ${userName}!`);
         }
-      }
+      };
       fetchWeather();
 
       // Rotating motivational quote widget (different each day)
@@ -154,7 +154,7 @@ export default function Home() {
         unsubAch();
       };
     }
-  // include userName in deps so weather greeting updates
+    // include userName in deps so weather greeting updates
   }, [userName]);
 
   // Animations
