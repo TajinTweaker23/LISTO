@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import AvatarPicker, { getAvatarSVG } from "./AvatarPicker";
-import { AnimatePresence, motion } from "framer-motion";
+import AvatarPicker, { defaultAvatar } from "../components/AvatarPicker";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Sound effect (put a short mp3 in /public/sounds/success.mp3)
 const playSound = () => {
@@ -120,7 +120,7 @@ export default function OnboardingModal({
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [avatar, setAvatar] = useState<any>(null);
+  const [avatar, setAvatar] = useState(defaultAvatar);
   const [theme, setTheme] = useState("bg-gradient-to-r from-blue-900 to-teal-600");
   const [finished, setFinished] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);

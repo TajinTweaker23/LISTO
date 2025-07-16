@@ -1,31 +1,73 @@
 {
-  "name": "functions",
+  "name": "listo",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
-  "engines": {
-    "node": "22"
-  },
-  "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^12.6.0",
-    "firebase-functions": "^6.0.1"
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
+    "@headlessui/react": "^2.2.4",
+    "@react-spring/web": "^10.0.1",
+    "archiver": "^7.0.1",
+    "axios": "^1.9.0",
+    "canvas": "^3.1.1",
+    "canvas-confetti": "^1.9.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "firebase": "^11.9.1",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.3.2",
+    "framer-motion": "^12.19.1",
+    "groq-sdk": "^0.25.0",
+    "howler": "^2.2.4",
+    "html-to-image": "^1.11.13",
+    "leaflet": "^1.9.4",
+    "lottie-react": "^2.4.1",
+    "lucide-react": "^0.263.1",
+    "next": "^13.4.12",
+    "next-pwa": "^5.6.0",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-confetti": "^6.4.0",
+    "react-dom": "18.2.0",
+    "react-leaflet": "^4.2.1",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
-    "eslint": "^8.9.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-plugin-import": "^2.25.4",
-    "firebase-functions-test": "^3.1.0",
-    "typescript": "^5.7.3"
+    "@tailwindcss/postcss": "^4.1.8",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "autoprefixer": "^10.4.21",
+    "jest": "^30.0.2",
+    "jest-environment-jsdom": "^30.0.2",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.3.3"
   },
-  "private": true
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TajinTweaker23/LISTO.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TajinTweaker23/LISTO/issues"
+  },
+  "homepage": "https://github.com/TajinTweaker23/LISTO#readme",
+  "description": ""
 }
