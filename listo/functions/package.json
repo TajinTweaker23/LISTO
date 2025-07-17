@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@genkit-ai/firebase": "^1.14.0",
-    "@genkit-ai/vertexai": "^1.14.1",
+    "@genkit-ai/vertexai": "^1.15.0",
     "express": "^5.1.0",
     "firebase-admin": "^12.6.0",
     "firebase-functions": "^6.3.2",
-    "genkit": "^1.14.1",
+    "genkit": "^1.15.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
