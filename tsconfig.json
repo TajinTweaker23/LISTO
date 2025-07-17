@@ -33,6 +33,6 @@
   ],
   "exclude": [
     "node_modules",
-    "functions"
+    "functions"  // This line ensures your Cloud Functions are not built by Next.js!
   ]
 }
