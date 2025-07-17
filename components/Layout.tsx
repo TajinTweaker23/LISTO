@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getAvatarSVG } from "./AvatarPicker";
+import { getAvatarSVG } from "../components/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -45,7 +45,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setAvatar(stored ? JSON.parse(stored) : null);
     // Theme from localStorage
     const storedTheme = localStorage.getItem("listoTheme");
-    if (storedTheme === "light" || storedTheme === "dark") setTheme(storedTheme);
+    if (storedTheme === "light" || storedTheme === "dark")
+      setTheme(storedTheme);
   }, []);
 
   // Example: Show a toast when userName is set
@@ -78,7 +79,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     animate: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: 0.15 + i * 0.07, type: "spring" as const, stiffness: 300 },
+      transition: {
+        delay: 0.15 + i * 0.07,
+        type: "spring" as const,
+        stiffness: 300,
+      },
     }),
   };
 
@@ -164,10 +169,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         style={{ translate: "-50% -50%" }}
         initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
         animate={{ opacity: 0.25, scale: 1, rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, repeatType: "loop", ease: "linear" }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          repeatType: "loop",
+          ease: "linear",
+        }}
       >
         <svg viewBox="0 0 64 64" fill="none">
-          <ellipse cx="32" cy="32" rx="24" ry="12" fill="#f472b6" opacity="0.4" />
+          <ellipse
+            cx="32"
+            cy="32"
+            rx="24"
+            ry="12"
+            fill="#f472b6"
+            opacity="0.4"
+          />
         </svg>
       </motion.div>
 
@@ -192,8 +209,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             whileHover={{ scale: 1.1, rotate: 6 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            L
-            {/* Sparkle */}
+            L{/* Sparkle */}
             <motion.span
               className="absolute -top-2 -right-2"
               initial={{ scale: 0, opacity: 0 }}
@@ -201,11 +217,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               transition={{ repeat: Infinity, duration: 2, delay: 0.7 }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M9 0 L10.5 7.5 L18 9 L10.5 10.5 L9 18 L7.5 10.5 L0 9 L7.5 7.5 Z" fill="#fbbf24" />
+                <path
+                  d="M9 0 L10.5 7.5 L18 9 L10.5 10.5 L9 18 L7.5 10.5 L0 9 L7.5 7.5 Z"
+                  fill="#fbbf24"
+                />
               </svg>
             </motion.span>
           </motion.span>
-          <span className="font-bold text-2xl tracking-tight drop-shadow-lg" style={{ fontFamily: "'Quicksand', 'Baloo 2', sans-serif" }}>
+          <span
+            className="font-bold text-2xl tracking-tight drop-shadow-lg"
+            style={{ fontFamily: "'Quicksand', 'Baloo 2', sans-serif" }}
+          >
             LISTO
           </span>
           <span className="ml-2 text-sm text-teal-700 dark:text-teal-200 italic hidden sm:inline">
@@ -222,10 +244,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </motion.span>
         </motion.div>
         {/* Desktop Nav */}
-        <nav
-          className="space-x-2 hidden md:block"
-          aria-label="Main navigation"
-        >
+        <nav className="space-x-2 hidden md:block" aria-label="Main navigation">
           {navLinks.map((link, i) => (
             <motion.div
               key={link.href}
@@ -269,9 +288,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-2 border-yellow-400 shadow-lg hover:shadow-yellow-300/80 hover:scale-105 transition cursor-pointer ring-2 ring-yellow-200 relative"
             title={userName ? `Logged in as ${userName}` : "Guest"}
             style={{
-              boxShadow: theme === "dark"
-                ? "0 0 0 4px #38bdf8, 0 2px 8px #0002"
-                : "0 0 0 4px #fbbf24, 0 2px 8px #0001"
+              boxShadow:
+                theme === "dark"
+                  ? "0 0 0 4px #38bdf8, 0 2px 8px #0002"
+                  : "0 0 0 4px #fbbf24, 0 2px 8px #0001",
             }}
           >
             {getAvatarSVG(avatar)}
@@ -416,6 +436,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 /* Example for app/layout.tsx */
 export const metadata = {
   icons: {
-    icon: '/favicon.png',
+    icon: "/favicon.png",
   },
 };
