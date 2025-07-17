@@ -10,7 +10,7 @@ const vibes = [
   { label: "Sassy", value: "sassy", emoji: "😏" },
   { label: "Surprised", value: "surprised", emoji: "😮" },
   { label: "Edgy", value: "edgy", emoji: "😈" },
-  { label: "Bad Boy", value: "badboy", emoji: "🦹" }, // Disney bad boy
+  { label: "Bad Boy", value: "badboy", emoji: "🦹" },
 ];
 const accessories = [
   { label: "None", value: "" },
@@ -70,7 +70,6 @@ export default function AvatarPicker({
         event.data.startsWith("v1.avatar.exported")
       ) {
         const url = event.data.split("|")[1];
-        // setAvatarUrl(url);
         onChange({ ...value, avatarUrl: url });
         setShowReadyPlayer(false);
       }
@@ -105,9 +104,9 @@ export default function AvatarPicker({
     <div className="flex flex-col gap-3 items-center w-full">
       {/* Avatar Preview */}
       <div className="mb-2">
-        {avatarUrl && showReadyPlayer ? (
+        {value?.avatarUrl && showReadyPlayer ? (
           <img
-            src={avatarUrl}
+            src={value.avatarUrl}
             alt="Your 3D Avatar"
             style={{
               width: 128,
@@ -120,9 +119,7 @@ export default function AvatarPicker({
             }}
           />
         ) : (
-          getAvatarSVG(
-            value && Object.keys(value).length > 0 ? value : defaultAvatar
-          )
+          getAvatarSVG(avatar)
         )}
       </div>
 
@@ -189,19 +186,14 @@ export default function AvatarPicker({
               <motion.button
                 key={v.value}
                 className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 ${
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).vibe === v.value
+                  avatar.vibe === v.value
                     ? "bg-pink-500 text-white scale-110 shadow"
                     : "bg-gray-100 text-gray-700"
                 }`}
                 onClick={() => {
                   setAnimVibe(v.value);
                   onChange({
-                    ...(value && Object.keys(value).length > 0
-                      ? value
-                      : defaultAvatar),
+                    ...avatar,
                     vibe: v.value,
                   });
                   setTimeout(() => setAnimVibe(null), 400);
@@ -228,10 +220,7 @@ export default function AvatarPicker({
               <button
                 key={color}
                 className={`w-6 h-6 rounded-full border-2 ${
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).skin === color
+                  avatar.skin === color
                     ? "border-blue-500 scale-110"
                     : "border-gray-200"
                 }`}
@@ -239,9 +228,7 @@ export default function AvatarPicker({
                 aria-label={`Skin tone ${color}`}
                 onClick={() =>
                   onChange({
-                    ...(value && Object.keys(value).length > 0
-                      ? value
-                      : defaultAvatar),
+                    ...avatar,
                     skin: color,
                   })
                 }
@@ -256,10 +243,7 @@ export default function AvatarPicker({
               <button
                 key={color}
                 className={`w-6 h-6 rounded-full border-2 ${
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).hair === color
+                  avatar.hair === color
                     ? "border-blue-500 scale-110"
                     : "border-gray-200"
                 }`}
@@ -267,9 +251,7 @@ export default function AvatarPicker({
                 aria-label={`Hair color ${color}`}
                 onClick={() =>
                   onChange({
-                    ...(value && Object.keys(value).length > 0
-                      ? value
-                      : defaultAvatar),
+                    ...avatar,
                     hair: color,
                   })
                 }
@@ -278,16 +260,13 @@ export default function AvatarPicker({
             ))}
             <button
               className={`px-2 py-1 rounded text-xs font-semibold ${
-                (value && Object.keys(value).length > 0 ? value : defaultAvatar)
-                  .hairStyle === "bald"
+                avatar.hairStyle === "bald"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 text-gray-700"
               }`}
               onClick={() =>
                 onChange({
-                  ...(value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar),
+                  ...avatar,
                   hairStyle: "bald",
                 })
               }
@@ -304,10 +283,7 @@ export default function AvatarPicker({
               <button
                 key={color}
                 className={`w-5 h-5 rounded-full border-2 ${
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).eyeColor === color
+                  avatar.eyeColor === color
                     ? "border-blue-500 scale-110"
                     : "border-gray-200"
                 }`}
@@ -315,9 +291,7 @@ export default function AvatarPicker({
                 aria-label={`Eye color ${color}`}
                 onClick={() =>
                   onChange({
-                    ...(value && Object.keys(value).length > 0
-                      ? value
-                      : defaultAvatar),
+                    ...avatar,
                     eyeColor: color,
                   })
                 }
@@ -332,32 +306,20 @@ export default function AvatarPicker({
               <motion.button
                 key={a.value}
                 className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 ${
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).accessory === a.value
+                  avatar.accessory === a.value
                     ? "bg-blue-500 text-white scale-110 shadow"
                     : "bg-gray-100 text-gray-700"
                 }`}
                 onClick={() =>
                   onChange({
-                    ...(value && Object.keys(value).length > 0
-                      ? value
-                      : defaultAvatar),
+                    ...avatar,
                     accessory: a.value,
                   })
                 }
                 aria-label={a.label}
                 tabIndex={0}
                 whileTap={{ scale: 1.2, rotate: a.value === "hat" ? -10 : 0 }}
-                animate={
-                  (value && Object.keys(value).length > 0
-                    ? value
-                    : defaultAvatar
-                  ).accessory === a.value
-                    ? { scale: 1.2 }
-                    : {}
-                }
+                animate={avatar.accessory === a.value ? { scale: 1.2 } : {}}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <span>{a.emoji}</span>
