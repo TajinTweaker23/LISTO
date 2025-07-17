@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import AvatarPicker, { defaultAvatar } from "../components/AvatarPicker";
+import { getAvatarSVG } from "../components/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Sound effect (put a short mp3 in /public/sounds/success.mp3)
@@ -23,7 +24,7 @@ function getSeasonalVortexImages() {
   const month = now.getMonth();
   const day = now.getDate();
   // Halloween
-  if (month === 9 && day >= 25 || month === 9 && day <= 31) {
+  if ((month === 9 && day >= 25) || (month === 9 && day <= 31)) {
     return ["🎃", "👻", "🦇", "🍬", "🕸️", "🧙‍♂️", "🧛‍♂️"];
   }
   // Christmas
@@ -36,20 +37,52 @@ function getSeasonalVortexImages() {
   }
   // Default/Brand
   return [
-    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#fbbf24"/><text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">🚀</text></svg>,
-    <svg width="48" height="48" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1"/><text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">🎨</text></svg>,
-    "🪐", "🌟", "✨", "🧠", "💡", "🎵", "📚", "🎲", "🦄", "🌈"
+    <svg width="48" height="48" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="#fbbf24" />
+      <text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">
+        🚀
+      </text>
+    </svg>,
+    <svg width="48" height="48" viewBox="0 0 48 48">
+      <rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1" />
+      <text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">
+        🎨
+      </text>
+    </svg>,
+    "🪐",
+    "🌟",
+    "✨",
+    "🧠",
+    "💡",
+    "🎵",
+    "📚",
+    "🎲",
+    "🦄",
+    "🌈",
   ];
 }
 
 // --- Vortex Background with Gamified Progress & Accessibility ---
-function VortexBackground({ step, finished, reduceMotion }: { step: number; finished: boolean; reduceMotion: boolean }) {
+function VortexBackground({
+  step,
+  finished,
+  reduceMotion,
+}: {
+  step: number;
+  finished: boolean;
+  reduceMotion: boolean;
+}) {
   const [tick, setTick] = useState(0);
   const [burst, setBurst] = useState(false);
   const vortexImages = getSeasonalVortexImages();
 
   // Gamified: More images as you progress
-  const imagesToShow = finished ? vortexImages.length : Math.max(3, Math.floor(((step + 1) / steps.length) * vortexImages.length));
+  const imagesToShow = finished
+    ? vortexImages.length
+    : Math.max(
+        3,
+        Math.floor(((step + 1) / steps.length) * vortexImages.length)
+      );
 
   useEffect(() => {
     if (finished) {
@@ -60,7 +93,7 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
 
   useEffect(() => {
     if (!reduceMotion) {
-      const interval = setInterval(() => setTick(t => t + 1), 40);
+      const interval = setInterval(() => setTick((t) => t + 1), 40);
       return () => clearInterval(interval);
     }
   }, [reduceMotion]);
@@ -99,7 +132,7 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
               zIndex: 0,
               userSelect: "none",
               pointerEvents: "none",
-              transition: "filter 0.2s, opacity 0.2s, transform 0.2s"
+              transition: "filter 0.2s, opacity 0.2s, transform 0.2s",
             }}
           >
             {img}
@@ -121,7 +154,9 @@ export default function OnboardingModal({
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [avatar, setAvatar] = useState(defaultAvatar);
-  const [theme, setTheme] = useState("bg-gradient-to-r from-blue-900 to-teal-600");
+  const [theme, setTheme] = useState(
+    "bg-gradient-to-r from-blue-900 to-teal-600"
+  );
   const [finished, setFinished] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -159,13 +194,15 @@ export default function OnboardingModal({
   // Trap focus inside modal
   useEffect(() => {
     const focusableSelectors = [
-      'button:not([disabled])',
-      'input:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
+      "button:not([disabled])",
+      "input:not([disabled])",
+      '[tabindex]:not([tabindex="-1"])',
     ];
     const handleTab = (e: KeyboardEvent) => {
       if (!modalRef.current) return;
-      const focusableEls = modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors.join(','));
+      const focusableEls = modalRef.current.querySelectorAll<HTMLElement>(
+        focusableSelectors.join(",")
+      );
       const first = focusableEls[0];
       const last = focusableEls[focusableEls.length - 1];
       if (e.key === "Tab") {
@@ -230,7 +267,11 @@ export default function OnboardingModal({
       tabIndex={-1}
     >
       {/* Vortex background */}
-      <VortexBackground step={step} finished={finished} reduceMotion={reduceMotion} />
+      <VortexBackground
+        step={step}
+        finished={finished}
+        reduceMotion={reduceMotion}
+      />
 
       <motion.div
         ref={modalRef}
@@ -244,8 +285,12 @@ export default function OnboardingModal({
         {/* Accessibility Toggle */}
         <button
           className="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 rounded shadow text-xs hover:bg-gray-200 transition"
-          onClick={() => setReduceMotion(r => !r)}
-          aria-label={reduceMotion ? "Enable animations" : "Reduce motion / disable vortex"}
+          onClick={() => setReduceMotion((r) => !r)}
+          aria-label={
+            reduceMotion
+              ? "Enable animations"
+              : "Reduce motion / disable vortex"
+          }
         >
           {reduceMotion ? "Enable Animations" : "Reduce Motion"}
         </button>
@@ -321,12 +366,14 @@ export default function OnboardingModal({
                 }}
                 aria-label="Your name"
                 maxLength={32}
-                onKeyDown={e => {
+                onKeyDown={(e) => {
                   if (e.key === "Enter") handleNext();
                 }}
               />
               {error && (
-                <div className="text-red-500 text-sm mt-1 text-center">{error}</div>
+                <div className="text-red-500 text-sm mt-1 text-center">
+                  {error}
+                </div>
               )}
               <div className="flex gap-4 justify-center mt-8">
                 <button
@@ -367,7 +414,9 @@ export default function OnboardingModal({
                 <div className="flex flex-col items-center">
                   <p className="mb-2 font-semibold text-gray-800">
                     Choose your avatar{" "}
-                    <span className="text-gray-500 font-normal">(optional)</span>
+                    <span className="text-gray-500 font-normal">
+                      (optional)
+                    </span>
                   </p>
                   <div className="w-full flex flex-col items-center">
                     <AvatarPicker value={avatar} onChange={setAvatar} />
@@ -375,8 +424,8 @@ export default function OnboardingModal({
                       <div className="text-center text-gray-400 text-sm mt-4">
                         <span className="text-3xl block mb-2">🙂</span>
                         <span>
-                          No avatar yet. You can always create one later from your
-                          profile page!
+                          No avatar yet. You can always create one later from
+                          your profile page!
                         </span>
                       </div>
                     )}
@@ -385,7 +434,9 @@ export default function OnboardingModal({
                         <span className="text-3xl block mb-2">
                           {getAvatarSVG(avatar)}
                         </span>
-                        <span className="text-xs text-gray-500">Looking good!</span>
+                        <span className="text-xs text-gray-500">
+                          Looking good!
+                        </span>
                       </div>
                     )}
                   </div>
@@ -426,31 +477,55 @@ export default function OnboardingModal({
               transition={{ duration: 0.4, type: "spring" }}
               className="mb-6"
             >
-              <h3 className="text-xl font-semibold mb-2 text-center">Pick a Profile Theme</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">
+                Pick a Profile Theme
+              </h3>
               <div className="flex gap-2 flex-wrap justify-center mb-4">
                 <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-blue-900 to-teal-600" ? "bg-blue-600 text-white" : "bg-white text-blue-600"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-blue-900 to-teal-600")}
+                  className={`px-3 py-1 rounded ${
+                    theme === "bg-gradient-to-r from-blue-900 to-teal-600"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-blue-600"
+                  }`}
+                  onClick={() =>
+                    setTheme("bg-gradient-to-r from-blue-900 to-teal-600")
+                  }
                   aria-label="Blue/Teal theme"
                 >
                   Blue/Teal
                 </button>
                 <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-pink-500 to-yellow-300" ? "bg-pink-500 text-white" : "bg-white text-pink-500"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-pink-500 to-yellow-300")}
+                  className={`px-3 py-1 rounded ${
+                    theme === "bg-gradient-to-r from-pink-500 to-yellow-300"
+                      ? "bg-pink-500 text-white"
+                      : "bg-white text-pink-500"
+                  }`}
+                  onClick={() =>
+                    setTheme("bg-gradient-to-r from-pink-500 to-yellow-300")
+                  }
                   aria-label="Pink/Yellow theme"
                 >
                   Pink/Yellow
                 </button>
                 <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-green-400 to-blue-500" ? "bg-green-500 text-white" : "bg-white text-green-500"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-green-400 to-blue-500")}
+                  className={`px-3 py-1 rounded ${
+                    theme === "bg-gradient-to-r from-green-400 to-blue-500"
+                      ? "bg-green-500 text-white"
+                      : "bg-white text-green-500"
+                  }`}
+                  onClick={() =>
+                    setTheme("bg-gradient-to-r from-green-400 to-blue-500")
+                  }
                   aria-label="Green/Blue theme"
                 >
                   Green/Blue
                 </button>
                 <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gray-100" ? "bg-gray-400 text-white" : "bg-white text-gray-600"}`}
+                  className={`px-3 py-1 rounded ${
+                    theme === "bg-gray-100"
+                      ? "bg-gray-400 text-white"
+                      : "bg-white text-gray-600"
+                  }`}
                   onClick={() => setTheme("bg-gray-100")}
                   aria-label="Minimal theme"
                 >
@@ -496,7 +571,11 @@ export default function OnboardingModal({
                 You're all set!
               </h2>
               <p className="mb-4 text-lg text-gray-700 font-medium">
-                Welcome to <span className="font-bold text-blue-700">{name || "friend"}</span>!
+                Welcome to{" "}
+                <span className="font-bold text-blue-700">
+                  {name || "friend"}
+                </span>
+                !
               </p>
               <motion.div
                 initial={{ scale: 0.8 }}
@@ -532,5 +611,3 @@ export default function OnboardingModal({
     </div>
   );
 }
-
-
