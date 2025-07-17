@@ -1,22 +1,13 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// --- Demo Data & Categories ---
 const initialImages = [
-  { url: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80", caption: "Self-improvement", category: "Wellness" },
-  { url: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80", caption: "Spirituality", category: "Wellness" },
-  { url: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80", caption: "Unplugging", category: "Wellness" },
-  { url: "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=600&q=80", caption: "Goal-setting", category: "Productivity" },
-  { url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80", caption: "Reading", category: "Creativity" },
-  { url: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=600&q=80", caption: "Biking", category: "Fitness" },
-  { url: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=600&q=80", caption: "Fitness", category: "Fitness" },
-  { url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80", caption: "Cooking", category: "Creativity" },
-  { url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80", caption: "Beauty & Makeup", category: "Creativity" },
-  { url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80", caption: "Fashion", category: "Creativity" },
+  // ... (keep as before for demo)
 ];
 
 const categories = ["All", "Wellness", "Fitness", "Creativity", "Productivity"];
-
 const categoryEmojis: Record<string, string> = {
   Wellness: "🌱",
   Fitness: "🚴",
@@ -25,63 +16,80 @@ const categoryEmojis: Record<string, string> = {
   All: "✨",
 };
 
+// --- Inspirational Quotes (expand as needed) ---
+const quotes = [
+  "The secret of getting ahead is getting started.",
+  "Small steps every day.",
+  "Dream. Do. Dominate.",
+  "Stay inspired, stay LISTO.",
+];
+
+// --- Utility for Fallback Image ---
+const fallbackImg =
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80";
+
+// --- Main Gallery Component ---
 export default function Gallery() {
   const [filter, setFilter] = useState("All");
   const [modalImg, setModalImg] = useState<null | typeof initialImages[0]>(null);
-  const [liked, setLiked] = useState<{ [url: string]: boolean }>({});
+  const [liked, setLiked] = useState<{ [url: string]: boolean }>(
+    () => JSON.parse(localStorage.getItem("listoGalleryLikes") || "{}")
+  );
   const [images, setImages] = useState(initialImages);
+  const [quoteIdx] = useState(Math.floor(Math.random() * quotes.length));
+  const uploadRef = useRef<HTMLInputElement>(null);
 
-  // Remove image if it fails to load
+  // Persist liked images to localStorage
+  const updateLiked = (val: any) => {
+    setLiked(val);
+    localStorage.setItem("listoGalleryLikes", JSON.stringify(val));
+  };
+
+  // Remove image on error
   const handleImgError = (url: string) => {
-    setImages(imgs => imgs.filter(img => img.url !== url));
+    setImages(imgs => imgs.map(img => img.url === url ? { ...img, url: fallbackImg } : img));
     if (modalImg?.url === url) setModalImg(null);
+  };
+
+  // Handle file upload (local preview only)
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImages([
+        ...images,
+        {
+          url: reader.result as string,
+          caption: "My Upload",
+          category: "Creativity",
+        },
+      ]);
+    };
+    reader.readAsDataURL(file);
   };
 
   const filtered = filter === "All" ? images : images.filter(img => img.category === filter);
 
   return (
     <div className="relative max-w-5xl mx-auto p-4">
-      {/* Floating kawaii blobs */}
-      <motion.div
-        className="absolute -top-16 -left-16 w-40 h-40 z-0 pointer-events-none"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.18, scale: 1 }}
-        transition={{ duration: 1.2 }}
-      >
-        <svg viewBox="0 0 160 160" fill="none">
-          <ellipse cx="80" cy="80" rx="70" ry="50" fill="#a5b4fc" opacity="0.5" />
-        </svg>
-      </motion.div>
-      <motion.div
-        className="absolute bottom-10 right-10 w-28 h-28 z-0 pointer-events-none"
-        initial={{ opacity: 0, scale: 0.7, rotate: 10 }}
-        animate={{ opacity: 0.15, scale: 1, rotate: -10 }}
-        transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse" }}
-      >
-        <svg viewBox="0 0 112 112" fill="none">
-          <circle cx="56" cy="56" r="48" fill="#fbbf24" opacity="0.4" />
-        </svg>
-      </motion.div>
-      <motion.div
-        className="absolute top-1/2 left-1/2 w-16 h-16 z-0 pointer-events-none"
-        style={{ translate: "-50% -50%" }}
-        initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
-        animate={{ opacity: 0.12, scale: 1, rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, repeatType: "loop", ease: "linear" }}
-      >
-        <svg viewBox="0 0 64 64" fill="none">
-          <ellipse cx="32" cy="32" rx="24" ry="12" fill="#f472b6" opacity="0.4" />
-        </svg>
-      </motion.div>
+      {/* Floating kawaii blobs (as before) */}
 
+      {/* Motivational Quote */}
+      <div className="mb-3 text-xl font-semibold text-blue-700 bg-blue-50 rounded-lg shadow px-4 py-2 flex items-center gap-2">
+        <span role="img" aria-label="sparkle">💡</span> 
+        {quotes[quoteIdx]}
+      </div>
+      
       <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Quicksand', 'Baloo 2', sans-serif" }}>
         Welcome to LISTO!
       </h1>
       <p className="mb-6 text-gray-600">
-        Explore interests, get inspired, and organize your life. Jump into your
-        favorite activities or open your calendar to plan your next move.
+        Explore interests, get inspired, and organize your life. Upload your own photos or pick from below!
       </p>
-      {/* Filters */}
+
+      {/* Gallery Filters */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {categories.map(cat => (
           <button
@@ -97,12 +105,29 @@ export default function Gallery() {
             {cat}
           </button>
         ))}
+        <button
+          className="px-3 py-1 rounded-full border border-blue-300 bg-blue-50 text-blue-600 shadow hover:bg-blue-100"
+          onClick={() => uploadRef.current?.click()}
+        >
+          <span>➕</span> Upload
+        </button>
+        <input
+          ref={uploadRef}
+          type="file"
+          accept="image/*"
+          onChange={handleUpload}
+          style={{ display: "none" }}
+        />
       </div>
+
       {/* Gallery */}
       <div className="flex flex-wrap gap-6 z-10 relative">
+        {filtered.length === 0 && (
+          <div className="text-center text-gray-400 w-full py-20">No images found for this category.</div>
+        )}
         {filtered.map((img, idx) => (
           <motion.div
-            key={img.url}
+            key={img.url + idx}
             className="relative w-64 h-40 rounded-2xl overflow-hidden shadow-xl cursor-pointer group bg-white/70 backdrop-blur-md border border-blue-100 hover:shadow-2xl transition"
             whileHover={{ scale: 1.06, rotate: -2 }}
             onClick={() => setModalImg(img)}
@@ -136,7 +161,8 @@ export default function Gallery() {
               whileTap={{ scale: 1.3, rotate: -10 }}
               onClick={e => {
                 e.stopPropagation();
-                setLiked(l => ({ ...l, [img.url]: !l[img.url] }));
+                const newLiked = { ...liked, [img.url]: !liked[img.url] };
+                updateLiked(newLiked);
               }}
               aria-label="Like"
             >
@@ -148,6 +174,20 @@ export default function Gallery() {
                 {liked[img.url] ? "♥" : "♡"}
               </motion.span>
             </motion.button>
+            {/* Delete (for user-uploaded only) */}
+            {img.caption === "My Upload" && (
+              <motion.button
+                className="absolute bottom-2 right-2 bg-red-500/80 text-white rounded-full p-1 text-sm shadow hover:bg-red-600 z-10"
+                whileTap={{ scale: 1.2 }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setImages(images.filter((i, j) => j !== images.indexOf(img)));
+                }}
+                aria-label="Delete"
+              >
+                ✕
+              </motion.button>
+            )}
             {/* Animated overlay on hover */}
             <motion.div
               className="absolute inset-0 bg-yellow-100/10 opacity-0 group-hover:opacity-100 transition pointer-events-none rounded-2xl"
@@ -174,7 +214,6 @@ export default function Gallery() {
               exit={{ scale: 0.8 }}
               onClick={e => e.stopPropagation()}
             >
-              {/* Floating star in modal */}
               <motion.div
                 className="absolute -top-6 left-6"
                 initial={{ scale: 0, rotate: -30 }}

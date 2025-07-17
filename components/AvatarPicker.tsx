@@ -1,18 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Skin, hair, etc. options
+// Modern, real human personality vibes
+const vibes = [
+  { label: "Outgoing", value: "outgoing", emoji: "😃" },
+  { label: "Thoughtful", value: "thoughtful", emoji: "🤔" },
+  { label: "Funny", value: "funny", emoji: "😆" },
+  { label: "Creative", value: "creative", emoji: "🎨" },
+  { label: "Loyal", value: "loyal", emoji: "🦁" },
+  { label: "Adventurous", value: "adventurous", emoji: "🏞️" },
+  { label: "Playful", value: "playful", emoji: "😺" },
+  { label: "Calm", value: "calm", emoji: "😌" },
+  { label: "Analytical", value: "analytical", emoji: "🧠" },
+  { label: "Optimistic", value: "optimistic", emoji: "🌞" },
+  { label: "Compassionate", value: "compassionate", emoji: "🤗" },
+  { label: "Curious", value: "curious", emoji: "🧐" },
+];
+
 const skinTones = ["#f9dcc4", "#e0ac69", "#8d5524", "#c68642", "#b0b0b0"];
 const hairColors = ["#222", "#ffe066", "#d2691e", "#b0b0b0", "#8d5524"];
 const eyeColors = ["#222", "#1976d2", "#43a047", "#d84315"];
-const vibes = [
-  { label: "Happy", value: "happy", emoji: "😃" },
-  { label: "Cool", value: "cool", emoji: "😎" },
-  { label: "Sassy", value: "sassy", emoji: "😏" },
-  { label: "Surprised", value: "surprised", emoji: "😮" },
-  { label: "Edgy", value: "edgy", emoji: "😈" },
-  { label: "Bad Boy", value: "badboy", emoji: "🦹" },
-];
 const accessories = [
   { label: "None", value: "" },
   { label: "Glasses", value: "glasses", emoji: "🕶️" },
@@ -25,7 +32,7 @@ const READY_PLAYER_ME_URL = "https://listo-app.readyplayer.me/avatar";
 
 // ---- EXPORTS! ----
 export const defaultAvatar = {
-  vibe: "happy",
+  vibe: "outgoing",
   skin: "#f9dcc4",
   hair: "#222",
   hairStyle: "short",
@@ -39,7 +46,7 @@ export const getAvatarSVG = (avatar: any) => {
   return (
     <svg width="110" height="110" viewBox="0 0 110 110">
       <ellipse cx="55" cy="56" rx="38" ry="40" fill={v.skin || "#f9dcc4"} />
-      {/* Add more SVG features here if you want */}
+      {/* Hair */}
       <ellipse
         cx="55"
         cy="47"
@@ -48,38 +55,30 @@ export const getAvatarSVG = (avatar: any) => {
         fill={v.hairStyle === "bald" ? v.skin : v.hair}
         opacity={v.hairStyle === "bald" ? 0 : 1}
       />
+      {/* Eyes */}
       <ellipse cx="45" cy="60" rx="5" ry="6" fill={v.eyeColor} />
       <ellipse cx="65" cy="60" rx="5" ry="6" fill={v.eyeColor} />
-      {/* Vibe expression as mouth */}
-      {v.vibe === "happy" ? (
+      {/* Mouth based on vibe */}
+      {["outgoing", "funny", "playful", "optimistic"].includes(v.vibe) ? (
         <path
           d="M44 74 Q55 84 66 74"
           stroke="#d84315"
           strokeWidth="3"
           fill="none"
         />
-      ) : v.vibe === "cool" ? (
-        <rect x="40" y="68" width="30" height="6" rx="3" fill="#222" />
-      ) : v.vibe === "sassy" ? (
-        <path
-          d="M44 74 Q55 70 66 74"
-          stroke="#d84315"
-          strokeWidth="3"
-          fill="none"
-        />
-      ) : v.vibe === "surprised" ? (
+      ) : ["thoughtful", "analytical", "calm", "curious"].includes(v.vibe) ? (
         <ellipse
           cx="55"
           cy="77"
-          rx="6"
-          ry="7"
+          rx="7"
+          ry="3"
           fill="#fff"
           stroke="#d84315"
           strokeWidth="2"
         />
-      ) : v.vibe === "edgy" ? (
+      ) : ["creative", "adventurous", "loyal", "compassionate"].includes(v.vibe) ? (
         <path
-          d="M44 78 Q55 70 66 78"
+          d="M44 74 Q55 78 66 74"
           stroke="#d84315"
           strokeWidth="3"
           fill="none"
@@ -95,7 +94,7 @@ export const getAvatarSVG = (avatar: any) => {
           strokeWidth="2"
         />
       )}
-      {/* Accessory overlay (simplified emoji as example) */}
+      {/* Accessory overlay */}
       {v.accessory === "glasses" && (
         <>
           <ellipse
@@ -196,6 +195,7 @@ function AvatarPicker({
               : "bg-gray-100 text-gray-700"
           }`}
           onClick={() => setShowReadyPlayer(true)}
+          aria-label="Pick a 3D Human Avatar"
         >
           3D Human Avatar
         </button>
@@ -206,6 +206,7 @@ function AvatarPicker({
               : "bg-gray-100 text-gray-700"
           }`}
           onClick={() => setShowReadyPlayer(false)}
+          aria-label="Pick a Cartoon Avatar"
         >
           Cartoon Avatar
         </button>
@@ -245,7 +246,7 @@ function AvatarPicker({
         <div className="flex flex-col gap-3 items-center w-full">
           {/* Vibe/Expression Picker */}
           <div className="flex gap-2 items-center">
-            <span className="text-xs text-gray-600">Vibe:</span>
+            <span className="text-xs text-gray-600">Personality:</span>
             {vibes.map((v) => (
               <motion.button
                 key={v.value}
@@ -264,10 +265,10 @@ function AvatarPicker({
                 }}
                 aria-label={v.label}
                 tabIndex={0}
-                whileTap={{ scale: 1.2, rotate: v.value === "edgy" ? 10 : 0 }}
+                whileTap={{ scale: 1.2 }}
                 animate={
                   animVibe === v.value
-                    ? { scale: 1.3, rotate: v.value === "edgy" ? 10 : 0 }
+                    ? { scale: 1.3 }
                     : {}
                 }
                 transition={{ type: "spring", stiffness: 300 }}
@@ -382,7 +383,7 @@ function AvatarPicker({
                 }
                 aria-label={a.label}
                 tabIndex={0}
-                whileTap={{ scale: 1.2, rotate: a.value === "hat" ? -10 : 0 }}
+                whileTap={{ scale: 1.2 }}
                 animate={avatar.accessory === a.value ? { scale: 1.2 } : {}}
                 transition={{ type: "spring", stiffness: 300 }}
               >
