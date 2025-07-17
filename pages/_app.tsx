@@ -19,6 +19,7 @@ const db = getFirestore(firebaseApp);
 function MyApp({ Component, pageProps }: AppProps) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -58,13 +59,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     );
   }
 
-  // Example: Add darkMode state (default: false)
-  const [darkMode, setDarkMode] = useState(false);
-
   return (
     <AuthProvider>
       <Layout>
-        <div className={`${darkMode ? "dark" : ""} font-sans transition-all duration-300`} style={{ fontFamily: "'Quicksand', sans-serif" }}>
+        <div
+          className={`${
+            darkMode ? "dark" : ""
+          } font-sans transition-all duration-300`}
+          style={{ fontFamily: "'Quicksand', sans-serif" }}
+        >
           <Component {...pageProps} />
           {/* Add this near the end of your main layout or each page */}
           <motion.button
