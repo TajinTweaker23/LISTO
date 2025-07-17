@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Skin, hair, etc. options
 const skinTones = ["#f9dcc4", "#e0ac69", "#8d5524", "#c68642", "#b0b0b0"];
 const hairColors = ["#222", "#ffe066", "#d2691e", "#b0b0b0", "#8d5524"];
 const eyeColors = ["#222", "#1976d2", "#43a047", "#d84315"];
@@ -22,24 +23,8 @@ const accessories = [
 
 const READY_PLAYER_ME_URL = "https://listo-app.readyplayer.me/avatar";
 
-export function getAvatarSVG(avatar: any) {
-  const vibe = avatar?.vibe || "happy";
-  return (
-    <svg width="110" height="110" viewBox="0 0 110 110">
-      {/* [ SVG code omitted for brevity. Paste your existing SVG here if you want full detail. ] */}
-      <ellipse
-        cx="55"
-        cy="56"
-        rx="38"
-        ry="40"
-        fill={avatar?.skin || "#f9dcc4"}
-      />
-      {/* ...rest of your SVG rendering logic... */}
-    </svg>
-  );
-}
-
-const defaultAvatar = {
+// ---- EXPORTS! ----
+export const defaultAvatar = {
   vibe: "happy",
   skin: "#f9dcc4",
   hair: "#222",
@@ -48,14 +33,115 @@ const defaultAvatar = {
   accessory: "",
 };
 
-export default function AvatarPicker({
+// SVG generator: update as needed for your style!
+export const getAvatarSVG = (avatar: any) => {
+  const v = avatar || defaultAvatar;
+  return (
+    <svg width="110" height="110" viewBox="0 0 110 110">
+      <ellipse cx="55" cy="56" rx="38" ry="40" fill={v.skin || "#f9dcc4"} />
+      {/* Add more SVG features here if you want */}
+      <ellipse
+        cx="55"
+        cy="47"
+        rx="16"
+        ry="8"
+        fill={v.hairStyle === "bald" ? v.skin : v.hair}
+        opacity={v.hairStyle === "bald" ? 0 : 1}
+      />
+      <ellipse cx="45" cy="60" rx="5" ry="6" fill={v.eyeColor} />
+      <ellipse cx="65" cy="60" rx="5" ry="6" fill={v.eyeColor} />
+      {/* Vibe expression as mouth */}
+      {v.vibe === "happy" ? (
+        <path
+          d="M44 74 Q55 84 66 74"
+          stroke="#d84315"
+          strokeWidth="3"
+          fill="none"
+        />
+      ) : v.vibe === "cool" ? (
+        <rect x="40" y="68" width="30" height="6" rx="3" fill="#222" />
+      ) : v.vibe === "sassy" ? (
+        <path
+          d="M44 74 Q55 70 66 74"
+          stroke="#d84315"
+          strokeWidth="3"
+          fill="none"
+        />
+      ) : v.vibe === "surprised" ? (
+        <ellipse
+          cx="55"
+          cy="77"
+          rx="6"
+          ry="7"
+          fill="#fff"
+          stroke="#d84315"
+          strokeWidth="2"
+        />
+      ) : v.vibe === "edgy" ? (
+        <path
+          d="M44 78 Q55 70 66 78"
+          stroke="#d84315"
+          strokeWidth="3"
+          fill="none"
+        />
+      ) : (
+        <ellipse
+          cx="55"
+          cy="77"
+          rx="8"
+          ry="4"
+          fill="#fff"
+          stroke="#d84315"
+          strokeWidth="2"
+        />
+      )}
+      {/* Accessory overlay (simplified emoji as example) */}
+      {v.accessory === "glasses" && (
+        <>
+          <ellipse
+            cx="45"
+            cy="60"
+            rx="8"
+            ry="7"
+            fill="none"
+            stroke="#222"
+            strokeWidth="2"
+          />
+          <ellipse
+            cx="65"
+            cy="60"
+            rx="8"
+            ry="7"
+            fill="none"
+            stroke="#222"
+            strokeWidth="2"
+          />
+          <rect x="52" y="60" width="6" height="2" fill="#222" />
+        </>
+      )}
+      {v.accessory === "hat" && (
+        <rect x="32" y="25" width="46" height="14" rx="7" fill="#333" />
+      )}
+      {v.accessory === "headphones" && (
+        <>
+          <rect x="30" y="45" width="8" height="18" rx="4" fill="#222" />
+          <rect x="72" y="45" width="8" height="18" rx="4" fill="#222" />
+        </>
+      )}
+      {v.accessory === "mustache" && (
+        <ellipse cx="55" cy="80" rx="15" ry="4" fill="#8d5524" />
+      )}
+    </svg>
+  );
+};
+
+function AvatarPicker({
   value,
   onChange,
 }: {
   value: any;
   onChange: (val: any) => void;
 }) {
-  // If value is missing or empty, use default
   const [animVibe, setAnimVibe] = useState<string | null>(null);
   const [showReadyPlayer, setShowReadyPlayer] = useState(false);
   const avatar = value && Object.keys(value).length > 0 ? value : defaultAvatar;
@@ -77,28 +163,6 @@ export default function AvatarPicker({
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, [onChange, value]);
-
-  // Cartoon avatar fallback data
-  const cartoonAvatar = {
-    vibe:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar).vibe ||
-      "happy",
-    skin:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar).skin ||
-      "#f9dcc4",
-    hair:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar).hair ||
-      "#222",
-    hairStyle:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar)
-        .hairStyle || "long",
-    eyeColor:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar)
-        .eyeColor || "#222",
-    accessory:
-      (value && Object.keys(value).length > 0 ? value : defaultAvatar)
-        .accessory || "",
-  };
 
   return (
     <div className="flex flex-col gap-3 items-center w-full">
@@ -176,7 +240,7 @@ export default function AvatarPicker({
         )}
       </AnimatePresence>
 
-      {/* Cartoon Avatar Picker Fallback */}
+      {/* Cartoon Avatar Picker */}
       {!showReadyPlayer && (
         <div className="flex flex-col gap-3 items-center w-full">
           {/* Vibe/Expression Picker */}
@@ -354,3 +418,6 @@ export default function AvatarPicker({
     </div>
   );
 }
+
+// --- DEFAULT EXPORT ---
+export default AvatarPicker;
