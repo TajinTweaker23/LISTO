@@ -1,1 +1,0 @@
-import mascotData from "@/assets/mascot.json";

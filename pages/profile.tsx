@@ -1,20 +1,24 @@
-// pages/profile.tsx
-import AvatarPicker, { AvatarPickerProps } from "../components/ui/AvatarPicker";
 import React, { useState, useEffect, useRef } from "react";
+import AvatarPicker, { AvatarPickerProps } from "../components/ui/AvatarPicker";
 import Navbar from "../components/ui/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
-import AvatarPicker from "../components/ui/AvatarPicker";
 import { toPng } from "html-to-image";
 import { motion, AnimatePresence } from "framer-motion";
 
-// (Presets and communityAvatars here, unchanged)
+// ---- Example getAvatarSVG function (add/adjust as needed) ----
+function getAvatarSVG(avatar: any) {
+  // Implement this according to your Avatar system!
+  // Example: return <svg>...</svg>;
+  return avatar ? <img src={avatar.url || ""} alt="Avatar" /> : <span>🧑</span>;
+}
 
+// (Presets and communityAvatars here, unchanged)
 const presetAvatars = [
-  /* ...your presets... */
+  // Add your preset avatar objects here.
 ];
 const communityAvatars = [
-  /* ...your community avatars... */
+  // Add your community avatar objects here.
 ];
 
 export default function Profile() {
@@ -110,7 +114,7 @@ export default function Profile() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <p className="text-gray-700 mb-4">You are not logged in.</p>
-        <Link href="/login" passHref>
+        <Link href="/login" passHref legacyBehavior>
           <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
             Go to Login
           </button>
