@@ -1,5 +1,5 @@
 // pages/profile.tsx
-import type { AvatarPickerProps } from "../components/ui/AvatarPicker";
+import AvatarPicker, { AvatarPickerProps } from "../components/ui/AvatarPicker";
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/ui/Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -166,10 +166,12 @@ export default function Profile() {
                       Update Your Avatar
                     </h2>
                     <AvatarPicker
-                      value={avatar}
-                      onChange={(av) => setAvatar(av)}
-                      aria-label="Avatar customization"
-                      unlocked={unlocked}
+                      {...({
+                        value: avatar,
+                        onChange: (av: any) => setAvatar(av),
+                        unlocked: unlocked,
+                        "aria-label": "Avatar customization",
+                      } as AvatarPickerProps)}
                     />
 
                     <div className="flex gap-4 mt-4">
