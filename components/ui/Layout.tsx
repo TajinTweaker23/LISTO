@@ -1,5 +1,11 @@
 import { Roboto_Mono } from "next/font/google";
-import React, { ReactNode, useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  ReactNode,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import Confetti from "react-confetti";
 import { Dialog, Combobox } from "@headlessui/react";
 import Navbar from "./Navbar";
@@ -11,6 +17,7 @@ import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
 import { Howl } from "howler";
 import Mascot from "./Mascot";
+import { getAvatarSVG } from "./AvatarPicker"; // <-- CORRECTED import!
 import "../styles/globals.css";
 
 // --- Font ---
@@ -134,7 +141,10 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
 }
 
 // --- Error Boundary ---
-class ErrorBoundary extends React.Component<{ children: ReactNode }, { hasError: boolean }> {
+class ErrorBoundary extends React.Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
   constructor(props: any) {
     super(props);
     this.state = { hasError: false };
@@ -178,7 +188,10 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const [showEmojiRain, setShowEmojiRain] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [toast, setToast] = useState<{ message: string; show: boolean }>({ message: "", show: false });
+  const [toast, setToast] = useState<{ message: string; show: boolean }>({
+    message: "",
+    show: false,
+  });
   const [soundscape, setSoundscape] = useState(soundscapes[0].file);
   const [sound, setSound] = useState<Howl | null>(null);
   const [showFocusTimer, setShowFocusTimer] = useState(false);
@@ -190,7 +203,9 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
   // Mascot
   const mascotRef = useRef<any>(null);
-  const [mascotAction, setMascotAction] = useState<"idle" | "cheer" | "party">("idle");
+  const [mascotAction, setMascotAction] = useState<"idle" | "cheer" | "party">(
+    "idle"
+  );
 
   // Greeting
   useEffect(() => {
@@ -235,20 +250,35 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
   // Command Palette actions
   const actions = [
-    { name: "Toggle Focus Mode", action: () => setFocusMode(f => !f) },
+    { name: "Toggle Focus Mode", action: () => setFocusMode((f) => !f) },
     { name: "Insert Circle", action: () => handleInsertShape("circle") },
     { name: "Insert Square", action: () => handleInsertShape("square") },
     { name: "Insert Triangle", action: () => handleInsertShape("triangle") },
     { name: "Insert Table", action: () => handleInsertTable(2, 2) },
-    { name: "Toggle Theme", action: () => setTheme(theme === "dark" ? "light" : "dark") },
+    {
+      name: "Toggle Theme",
+      action: () => setTheme(theme === "dark" ? "light" : "dark"),
+    },
     { name: "Open Settings", action: () => setShowSettings(true) },
-    { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); triggerToast("🎉 Party Mode!"); } },
+    {
+      name: "Party Mode",
+      action: () => {
+        setMascotAction("party");
+        triggerEmojiRain();
+        triggerToast("🎉 Party Mode!");
+      },
+    },
     { name: "Start Focus Timer", action: () => setShowFocusTimer(true) },
-    { name: "Toggle Reading Ruler", action: () => setReadingRuler(r => !r) },
-    { name: muted ? "Unmute Soundscape" : "Mute Soundscape", action: () => setMuted(m => !m) },
+    { name: "Toggle Reading Ruler", action: () => setReadingRuler((r) => !r) },
+    {
+      name: muted ? "Unmute Soundscape" : "Mute Soundscape",
+      action: () => setMuted((m) => !m),
+    },
   ];
   const [query, setQuery] = useState("");
-  const filteredActions = actions.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredActions = actions.filter((a) =>
+    a.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   // Theme scheduler
   useEffect(() => {
@@ -256,7 +286,8 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     if (schedule.enabled) {
       const now = new Date();
       const hour = now.getHours();
-      if (hour >= schedule.nightStart || hour < schedule.dayStart) setTheme("dark");
+      if (hour >= schedule.nightStart || hour < schedule.dayStart)
+        setTheme("dark");
       else setTheme("light");
     }
   }, [setTheme]);
@@ -269,7 +300,11 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     }
     if (soundscape && !muted) {
       try {
-        const newSound = new Howl({ src: [soundscape], loop: true, volume: 0.3 });
+        const newSound = new Howl({
+          src: [soundscape],
+          loop: true,
+          volume: 0.3,
+        });
         newSound.play();
         setSound(newSound);
       } catch (err) {
@@ -321,15 +356,23 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
   // Online/offline
   useEffect(() => {
-    const goOnline = () => { setIsOnline(true); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1200);}
-    const goOffline = () => { setIsOnline(false); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1200);}
+    const goOnline = () => {
+      setIsOnline(true);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1200);
+    };
+    const goOffline = () => {
+      setIsOnline(false);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1200);
+    };
     window.addEventListener("online", goOnline);
     window.addEventListener("offline", goOffline);
     setIsOnline(navigator.onLine);
     return () => {
       window.removeEventListener("online", goOnline);
       window.removeEventListener("offline", goOffline);
-    }
+    };
   }, []);
 
   // Idle detection for focus reminder
@@ -386,9 +429,13 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
       {/* Greeting Bar */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 mt-4 flex items-center gap-3 bg-white/70 dark:bg-black/60 px-6 py-2 rounded-full shadow-lg border border-blue-400/10 text-lg font-bold text-gray-700 dark:text-gray-100 backdrop-blur-lg animate-fade-in">
-        <span role="img" aria-label="wave">👋</span>
+        <span role="img" aria-label="wave">
+          👋
+        </span>
         {greeting}, <span className="text-blue-500">LISTO User!</span>
-        {!isOnline && <span className="ml-2 text-red-600 text-base">[Offline]</span>}
+        {!isOnline && (
+          <span className="ml-2 text-red-600 text-base">[Offline]</span>
+        )}
       </div>
 
       {/* Mascot */}
@@ -420,13 +467,15 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
       {/* Focus Mode Button */}
       <button
-        onClick={() => setFocusMode(f => !f)}
+        onClick={() => setFocusMode((f) => !f)}
         className="fixed top-8 left-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
         aria-label="Toggle Focus Mode"
       >
         <span className="mr-2">🧘</span>
         {focusMode ? "Exit Focus Mode" : "Focus Mode"}
-        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[F]</span>
+        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">
+          [F]
+        </span>
       </button>
 
       {/* Command Palette Button */}
@@ -436,16 +485,31 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         aria-label="Open Command Palette"
       >
         ⌨️ Command Palette
-        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[Ctrl+K]</span>
+        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">
+          [Ctrl+K]
+        </span>
       </button>
-      <Dialog open={commandOpen} onClose={() => setCommandOpen(false)} className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+      <Dialog
+        open={commandOpen}
+        onClose={() => setCommandOpen(false)}
+        className="fixed inset-0 z-50 flex items-center justify-center"
+      >
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+          aria-hidden="true"
+        />
         <div className="relative bg-white dark:bg-[#1a1b23] rounded-2xl shadow-2xl p-7 w-full max-w-xl mx-auto border border-sky-400/20">
-          <Combobox value={null} onChange={a => { a.action(); setCommandOpen(false); }}>
+          <Combobox
+            value={null}
+            onChange={(a) => {
+              a.action();
+              setCommandOpen(false);
+            }}
+          >
             <Combobox.Input
               className="w-full p-3 border-none rounded-xl mb-4 bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-blue-400 text-gray-800 dark:text-gray-100 outline-none text-lg"
               placeholder="Type a command..."
-              onChange={e => setQuery(e.target.value)}
+              onChange={(e) => setQuery(e.target.value)}
               autoFocus
             />
             <Combobox.Options>
@@ -465,7 +529,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
       {/* Settings Button */}
       <button
-        onClick={() => setShowSettings(s => !s)}
+        onClick={() => setShowSettings((s) => !s)}
         className="fixed bottom-10 left-10 p-5 bg-gradient-to-br from-gray-200 via-blue-200 to-pink-200 dark:from-gray-800 dark:via-blue-900 dark:to-pink-900 text-blue-700 dark:text-pink-200 rounded-full shadow-xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-blue-400/10 focus:outline-none group"
         aria-label="Open Settings"
         tabIndex={0}
@@ -487,42 +551,60 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           >
             <div
               className="bg-white dark:bg-[#232946] rounded-2xl shadow-2xl p-8 border border-blue-400/20"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <CustomizationPanel settings={settings} onChange={setSettings} />
               <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Ambient Soundscape</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                  Ambient Soundscape
+                </label>
                 <select
                   value={soundscape}
-                  onChange={e => setSoundscape(e.target.value)}
+                  onChange={(e) => setSoundscape(e.target.value)}
                   className="w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-400 transition"
                 >
-                  {soundscapes.map(s => (
-                    <option key={s.file} value={s.file}>{s.label}</option>
+                  {soundscapes.map((s) => (
+                    <option key={s.file} value={s.file}>
+                      {s.label}
+                    </option>
                   ))}
                 </select>
                 <button
                   className="mt-2 px-3 py-1 rounded bg-pink-500 text-white"
-                  onClick={() => setMuted(m => !m)}
+                  onClick={() => setMuted((m) => !m)}
                   aria-label={muted ? "Unmute Soundscape" : "Mute Soundscape"}
                 >
                   {muted ? "Unmute" : "Mute"}
                 </button>
               </div>
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Theme Scheduler</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                  Theme Scheduler
+                </label>
                 <div className="flex gap-2 items-center">
                   <input
                     type="checkbox"
                     id="theme-scheduler"
-                    onChange={e => {
+                    onChange={(e) => {
                       const enabled = e.target.checked;
-                      const dayStart = parseInt(prompt("Day mode starts at hour (0-23)?", "7") || "7", 10);
-                      const nightStart = parseInt(prompt("Night mode starts at hour (0-23)?", "19") || "19", 10);
-                      localStorage.setItem("themeSchedule", JSON.stringify({ enabled, dayStart, nightStart }));
+                      const dayStart = parseInt(
+                        prompt("Day mode starts at hour (0-23)?", "7") || "7",
+                        10
+                      );
+                      const nightStart = parseInt(
+                        prompt("Night mode starts at hour (0-23)?", "19") ||
+                          "19",
+                        10
+                      );
+                      localStorage.setItem(
+                        "themeSchedule",
+                        JSON.stringify({ enabled, dayStart, nightStart })
+                      );
                     }}
                   />
-                  <label htmlFor="theme-scheduler" className="text-xs">Enable automatic theme switching</label>
+                  <label htmlFor="theme-scheduler" className="text-xs">
+                    Enable automatic theme switching
+                  </label>
                 </div>
               </div>
             </div>
@@ -537,7 +619,8 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`flex-1 container mx-auto px-4 py-12 z-10 ${glassCard} shadow-neon`}
         style={{
-          boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 0 40px 4px #a21caf33, 0 0 60px 8px #0ff1ce22",
+          boxShadow:
+            "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 0 40px 4px #a21caf33, 0 0 60px 8px #0ff1ce22",
           border: "1.5px solid rgba(255,255,255,0.18)",
         }}
       >
@@ -640,7 +723,8 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2">
         <span className="animate-pulse text-blue-400">✨</span>
         <span>
-          © {new Date().getFullYear()} <span className="font-bold tracking-wide">LISTO</span>
+          © {new Date().getFullYear()}{" "}
+          <span className="font-bold tracking-wide">LISTO</span>
         </span>
         <span className="animate-pulse text-pink-400">✨</span>
       </footer>
