@@ -1,14 +1,30 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
 
-export default function Mascot() {
+type MascotProps = {
+  action: "idle" | "cheer" | "party";
+  // ...any other props
+};
+
+const Mascot = forwardRef<any, MascotProps>(({ action }, ref) => {
+  const localRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    cheer: () => {
+      // Mascot cheer action (if you want to call from parent)
+    },
+    party: () => {
+      // Mascot party action
+    },
+    // ...add other actions if needed
+  }));
+
   return (
-    <video
-      src="/assets/Cat mascot.webm" // Change to your preferred mascot
-      autoPlay
-      loop
-      muted
-      playsInline
-      style={{ width: 200, height: 200 }}
-    />
+    <div ref={localRef}>
+      {/* Your mascot JSX here. Render based on 'action' */}
+      {action === "cheer" ? "🎉" : action === "party" ? "🥳" : "🙂"}
+    </div>
   );
-}
+});
+
+Mascot.displayName = "Mascot";
+export default Mascot;

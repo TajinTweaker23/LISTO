@@ -1,5 +1,5 @@
 import { Roboto_Mono } from "next/font/google";
-import React, { ReactNode, useState, useEffect, useRef } from "react";
+import React, { ReactNode, useState, useEffect, useRef, useCallback } from "react";
 import Confetti from "react-confetti";
 import { Dialog, Combobox } from "@headlessui/react";
 import Navbar from "./Navbar";
@@ -13,8 +13,10 @@ import { Howl } from "howler";
 import Mascot from "./Mascot";
 import "../styles/globals.css";
 
+// --- Font ---
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
+// --- Soundscapes ---
 const soundscapes = [
   { label: "None", file: "" },
   { label: "Rain", file: "/sounds/rain.mp3" },
@@ -28,6 +30,7 @@ export type LayoutProps = {
   setTheme: (theme: string) => void;
 };
 
+// --- Toast ---
 function Toast({ message, show }: { message: string; show: boolean }) {
   return (
     <AnimatePresence>
@@ -46,6 +49,7 @@ function Toast({ message, show }: { message: string; show: boolean }) {
   );
 }
 
+// --- Emoji Rain ---
 function EmojiRain({ show }: { show: boolean }) {
   const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
   return (
@@ -57,7 +61,10 @@ function EmojiRain({ show }: { show: boolean }) {
             initial={{ y: -60, opacity: 0 }}
             animate={{ y: "100vh", opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2 + Math.random(), delay: Math.random() * 0.5 }}
+            transition={{
+              duration: 2 + Math.random(),
+              delay: Math.random() * 0.5,
+            }}
             className="fixed left-0 pointer-events-none z-[99]"
             style={{
               left: `${Math.random() * 100}%`,
@@ -72,6 +79,7 @@ function EmojiRain({ show }: { show: boolean }) {
   );
 }
 
+// --- Focus Timer ---
 function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -92,11 +100,15 @@ function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
   if (!show) return null;
   return (
     <div className="fixed top-0 left-0 w-full z-[99]">
-      <div className="h-2 bg-gradient-to-r from-blue-400 via-pink-400 to-yellow-400 rounded-b-full shadow-lg transition-all" style={{ width: `${progress}%` }} />
+      <div
+        className="h-2 bg-gradient-to-r from-blue-400 via-pink-400 to-yellow-400 rounded-b-full shadow-lg transition-all"
+        style={{ width: `${progress}%` }}
+      />
     </div>
   );
 }
 
+// --- Reading Ruler ---
 function ReadingRuler({ enabled }: { enabled: boolean }) {
   const [y, setY] = useState(0);
   useEffect(() => {
@@ -119,6 +131,32 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
       }}
     />
   );
+}
+
+// --- Error Boundary ---
+class ErrorBoundary extends React.Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(_: any) {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, info: any) {
+    // Log error for analytics/reporting if needed
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="text-6xl mb-2">🚨</div>
+          <div className="text-2xl font-bold">Something went wrong.</div>
+          <div className="text-gray-600">Try refreshing the page.</div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
@@ -146,11 +184,15 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const [showFocusTimer, setShowFocusTimer] = useState(false);
   const [readingRuler, setReadingRuler] = useState(false);
   const [greeting, setGreeting] = useState("");
+  const [isOnline, setIsOnline] = useState(true);
+  const [showNetworkToast, setShowNetworkToast] = useState(false);
+  const [muted, setMuted] = useState(false);
 
-  // Mascot reactions
+  // Mascot
   const mascotRef = useRef<any>(null);
   const [mascotAction, setMascotAction] = useState<"idle" | "cheer" | "party">("idle");
 
+  // Greeting
   useEffect(() => {
     const hour = new Date().getHours();
     let greet = "Welcome";
@@ -161,21 +203,21 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     setGreeting(greet);
   }, []);
 
+  // --- Error handling for children (now covered by ErrorBoundary) ---
+
+  // Confetti/Toast/Emoji triggers
   const triggerConfetti = () => {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 2000);
   };
-
   const triggerToast = (message: string) => {
     setToast({ message, show: true });
     setTimeout(() => setToast({ message: "", show: false }), 1800);
   };
-
   const triggerEmojiRain = () => {
     setShowEmojiRain(true);
     setTimeout(() => setShowEmojiRain(false), 2200);
   };
-
   const handleInsertShape = (shape: string) => {
     setShapes([...shapes, shape]);
     triggerConfetti();
@@ -191,6 +233,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     if ((tables.length + 1) % 5 === 0) triggerEmojiRain();
   };
 
+  // Command Palette actions
   const actions = [
     { name: "Toggle Focus Mode", action: () => setFocusMode(f => !f) },
     { name: "Insert Circle", action: () => handleInsertShape("circle") },
@@ -202,10 +245,12 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); triggerToast("🎉 Party Mode!"); } },
     { name: "Start Focus Timer", action: () => setShowFocusTimer(true) },
     { name: "Toggle Reading Ruler", action: () => setReadingRuler(r => !r) },
+    { name: muted ? "Unmute Soundscape" : "Mute Soundscape", action: () => setMuted(m => !m) },
   ];
   const [query, setQuery] = useState("");
   const filteredActions = actions.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
 
+  // Theme scheduler
   useEffect(() => {
     const schedule = JSON.parse(localStorage.getItem("themeSchedule") || "{}");
     if (schedule.enabled) {
@@ -214,24 +259,30 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       if (hour >= schedule.nightStart || hour < schedule.dayStart) setTheme("dark");
       else setTheme("light");
     }
-  }, []);
+  }, [setTheme]);
 
+  // Soundscape
   useEffect(() => {
     if (sound) {
       sound.stop();
       setSound(null);
     }
-    if (soundscape) {
-      const newSound = new Howl({ src: [soundscape], loop: true, volume: 0.3 });
-      newSound.play();
-      setSound(newSound);
+    if (soundscape && !muted) {
+      try {
+        const newSound = new Howl({ src: [soundscape], loop: true, volume: 0.3 });
+        newSound.play();
+        setSound(newSound);
+      } catch (err) {
+        triggerToast("Couldn't load soundscape.");
+      }
     }
     return () => {
       if (sound) sound.stop();
     };
     // eslint-disable-next-line
-  }, [soundscape]);
+  }, [soundscape, muted]);
 
+  // Parallax
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -244,23 +295,61 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // Command palette shortcut and theme toggle shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setCommandOpen(true);
       }
+      if (e.key.toLowerCase() === "t" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        setTheme(theme === "dark" ? "light" : "dark");
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [theme, setTheme]);
 
+  // Focus timer finish
   const handleFocusTimerEnd = () => {
     setShowFocusTimer(false);
     triggerToast("Focus session complete!");
     setMascotAction("cheer");
     triggerEmojiRain();
   };
+
+  // Online/offline
+  useEffect(() => {
+    const goOnline = () => { setIsOnline(true); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1200);}
+    const goOffline = () => { setIsOnline(false); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1200);}
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    setIsOnline(navigator.onLine);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    }
+  }, []);
+
+  // Idle detection for focus reminder
+  useEffect(() => {
+    let idleTimeout: any = null;
+    const resetIdle = () => {
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        if (!focusMode) triggerToast("Take a stretch break?");
+      }, 10 * 60 * 1000); // 10 minutes idle
+    };
+    window.addEventListener("mousemove", resetIdle);
+    window.addEventListener("keydown", resetIdle);
+    resetIdle();
+    return () => {
+      window.removeEventListener("mousemove", resetIdle);
+      window.removeEventListener("keydown", resetIdle);
+      if (idleTimeout) clearTimeout(idleTimeout);
+    };
+  }, [focusMode]);
 
   const bgGradient =
     theme === "dark"
@@ -278,24 +367,39 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           ? { filter: "blur(2.5px) brightness(0.6) grayscale(0.3)" }
           : {}
       }
+      aria-live="polite"
     >
-      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+      {/* Confetti/Emoji/Toast */}
+      {showConfetti && typeof window !== "undefined" && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
       <EmojiRain show={showEmojiRain} />
       <Toast message={toast.message} show={toast.show} />
       <FocusTimer show={showFocusTimer} onEnd={handleFocusTimerEnd} />
       <ReadingRuler enabled={readingRuler} />
 
+      {/* Network Status Toast */}
+      <Toast
+        message={isOnline ? "Back online!" : "You're offline."}
+        show={showNetworkToast}
+      />
+
+      {/* Greeting Bar */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 mt-4 flex items-center gap-3 bg-white/70 dark:bg-black/60 px-6 py-2 rounded-full shadow-lg border border-blue-400/10 text-lg font-bold text-gray-700 dark:text-gray-100 backdrop-blur-lg animate-fade-in">
         <span role="img" aria-label="wave">👋</span>
         {greeting}, <span className="text-blue-500">LISTO User!</span>
+        {!isOnline && <span className="ml-2 text-red-600 text-base">[Offline]</span>}
       </div>
 
+      {/* Mascot */}
       <div className="fixed bottom-32 right-10 z-40 flex flex-col items-center">
-        <Mascot />
+        <Mascot ref={mascotRef} action={mascotAction} />
       </div>
 
+      {/* Navbar */}
       <Navbar theme={theme} setTheme={setTheme} />
 
+      {/* Animated Blobs */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
         <motion.div
           className="absolute top-[-80px] left-[-80px] w-[320px] h-[320px] bg-gradient-to-br from-indigo-500 via-purple-700 to-pink-500 opacity-40 rounded-full blur-3xl animate-pulse"
@@ -310,8 +414,11 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           style={{ x: parallax.x / 2, y: parallax.y / 2 }}
         />
       </div>
+
+      {/* Theme Toggle */}
       <ThemeToggle theme={theme} setTheme={setTheme} />
 
+      {/* Focus Mode Button */}
       <button
         onClick={() => setFocusMode(f => !f)}
         className="fixed top-8 left-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
@@ -322,6 +429,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[F]</span>
       </button>
 
+      {/* Command Palette Button */}
       <button
         onClick={() => setCommandOpen(true)}
         className="fixed top-8 right-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-fuchsia-500 text-white font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
@@ -355,6 +463,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         </div>
       </Dialog>
 
+      {/* Settings Button */}
       <button
         onClick={() => setShowSettings(s => !s)}
         className="fixed bottom-10 left-10 p-5 bg-gradient-to-br from-gray-200 via-blue-200 to-pink-200 dark:from-gray-800 dark:via-blue-900 dark:to-pink-900 text-blue-700 dark:text-pink-200 rounded-full shadow-xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-blue-400/10 focus:outline-none group"
@@ -392,6 +501,13 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
                     <option key={s.file} value={s.file}>{s.label}</option>
                   ))}
                 </select>
+                <button
+                  className="mt-2 px-3 py-1 rounded bg-pink-500 text-white"
+                  onClick={() => setMuted(m => !m)}
+                  aria-label={muted ? "Unmute Soundscape" : "Mute Soundscape"}
+                >
+                  {muted ? "Unmute" : "Mute"}
+                </button>
               </div>
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Theme Scheduler</label>
@@ -414,6 +530,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         )}
       </AnimatePresence>
 
+      {/* Main Content */}
       <motion.main
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -424,71 +541,73 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           border: "1.5px solid rgba(255,255,255,0.18)",
         }}
       >
-        <ShapeInsert onInsert={handleInsertShape} />
-        <TableInsert onInsert={handleInsertTable} />
-
-        <div className="my-6 flex gap-6 flex-wrap justify-center">
-          <AnimatePresence>
-            {shapes.map((shape, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="transition-transform hover:scale-110"
-              >
-                {shape === "circle" && (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 via-fuchsia-500 to-cyan-400 shadow-lg border-2 border-white/30" />
-                )}
-                {shape === "square" && (
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-green-400 via-blue-400 to-pink-400 shadow-lg border-2 border-white/30" />
-                )}
-                {shape === "triangle" && (
-                  <div
-                    style={{
-                      width: 0,
-                      height: 0,
-                      borderLeft: "40px solid transparent",
-                      borderRight: "40px solid transparent",
-                      borderBottom: "70px solid #facc15",
-                      filter: "drop-shadow(0 0 16px #facc15cc)",
-                    }}
-                  />
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          <AnimatePresence>
-            {tables.map((table, idx) => (
-              <motion.table
-                key={idx}
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="border-separate border-spacing-1 border border-sky-400/60 bg-white/30 dark:bg-[#232946]/40 rounded-xl shadow-lg mx-4 animate-fade-in"
-                style={{ minWidth: 90 }}
-              >
-                <tbody>
-                  {Array.from({ length: table.rows }).map((_, r) => (
-                    <tr key={r}>
-                      {Array.from({ length: table.cols }).map((_, c) => (
-                        <td
-                          key={c}
-                          className="border border-sky-400/40 w-10 h-10 rounded-lg bg-white/60 dark:bg-[#2d2f4a]/60 shadow-inner"
-                        ></td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </motion.table>
-            ))}
-          </AnimatePresence>
-        </div>
-        {children}
+        <ErrorBoundary>
+          <ShapeInsert onInsert={handleInsertShape} />
+          <TableInsert onInsert={handleInsertTable} />
+          <div className="my-6 flex gap-6 flex-wrap justify-center">
+            <AnimatePresence>
+              {shapes.map((shape, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.7, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="transition-transform hover:scale-110"
+                >
+                  {shape === "circle" && (
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 via-fuchsia-500 to-cyan-400 shadow-lg border-2 border-white/30" />
+                  )}
+                  {shape === "square" && (
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-green-400 via-blue-400 to-pink-400 shadow-lg border-2 border-white/30" />
+                  )}
+                  {shape === "triangle" && (
+                    <div
+                      style={{
+                        width: 0,
+                        height: 0,
+                        borderLeft: "40px solid transparent",
+                        borderRight: "40px solid transparent",
+                        borderBottom: "70px solid #facc15",
+                        filter: "drop-shadow(0 0 16px #facc15cc)",
+                      }}
+                    />
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+            <AnimatePresence>
+              {tables.map((table, idx) => (
+                <motion.table
+                  key={idx}
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.7, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="border-separate border-spacing-1 border border-sky-400/60 bg-white/30 dark:bg-[#232946]/40 rounded-xl shadow-lg mx-4 animate-fade-in"
+                  style={{ minWidth: 90 }}
+                >
+                  <tbody>
+                    {Array.from({ length: table.rows }).map((_, r) => (
+                      <tr key={r}>
+                        {Array.from({ length: table.cols }).map((_, c) => (
+                          <td
+                            key={c}
+                            className="border border-sky-400/40 w-10 h-10 rounded-lg bg-white/60 dark:bg-[#2d2f4a]/60 shadow-inner"
+                          ></td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </motion.table>
+              ))}
+            </AnimatePresence>
+          </div>
+          {children}
+        </ErrorBoundary>
       </motion.main>
 
+      {/* Quick Add Floating Action Button */}
       <motion.button
         type="button"
         className="fixed bottom-10 right-10 p-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-pink-400/30 focus:outline-none focus:ring-8 focus:ring-blue-400/40 animate-fab-pulse"
@@ -496,6 +615,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         tabIndex={0}
         whileHover={{ scale: 1.13, boxShadow: "0 0 32px #f472b6" }}
         whileTap={{ scale: 0.95 }}
+        onClick={() => triggerToast("Quick Add coming soon!")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -516,6 +636,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         </span>
       </motion.button>
 
+      {/* Footer */}
       <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2">
         <span className="animate-pulse text-blue-400">✨</span>
         <span>
