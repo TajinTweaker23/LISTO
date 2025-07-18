@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/ui/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
-import AvatarPicker, { getAvatarSVG } from "../components/AvatarPicker";
+import AvatarPicker, { getAvatarSVG } from "../components/ui/AvatarPicker";
 import { toPng } from "html-to-image";
 import { motion, AnimatePresence } from "framer-motion";
 
