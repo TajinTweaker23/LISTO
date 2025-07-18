@@ -31,7 +31,7 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": [
+  "exclude": ["functions", "functions/**/*"]
     "node_modules",
     "functions"  // This line ensures your Cloud Functions are not built by Next.js!
   ]
