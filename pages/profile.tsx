@@ -1,5 +1,5 @@
 // pages/profile.tsx
-
+import type { AvatarPickerProps } from "../components/ui/AvatarPicker";
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/ui/Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -170,8 +170,8 @@ export default function Profile() {
                       onChange={(av) => setAvatar(av)}
                       aria-label="Avatar customization"
                       unlocked={unlocked}
-                      /> as React.ComponentType<import('../components/ui/AvatarPicker').AvatarPickerProps>
-                  
+                    />
+
                     <div className="flex gap-4 mt-4">
                       <button
                         className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition"
