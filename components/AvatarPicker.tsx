@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface AvatarPickerProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: any;
+  onChange: (val: any) => void;
+  unlocked?: string[];
+}
+
 // Modern, real human personality vibes
 const vibes = [
   { label: "Outgoing", value: "outgoing", emoji: "😃" },
@@ -30,7 +36,6 @@ const accessories = [
 
 const READY_PLAYER_ME_URL = "https://listo-app.readyplayer.me/avatar";
 
-// ---- EXPORTS! ----
 export const defaultAvatar = {
   vibe: "outgoing",
   skin: "#f9dcc4",
@@ -40,12 +45,12 @@ export const defaultAvatar = {
   accessory: "",
 };
 
-// SVG generator: update as needed for your style!
 export const getAvatarSVG = (avatar: any) => {
   const v = avatar || defaultAvatar;
   return (
     <svg width="110" height="110" viewBox="0 0 110 110">
       <ellipse cx="55" cy="56" rx="38" ry="40" fill={v.skin || "#f9dcc4"} />
+
       {/* Hair */}
       <ellipse
         cx="55"
@@ -55,9 +60,11 @@ export const getAvatarSVG = (avatar: any) => {
         fill={v.hairStyle === "bald" ? v.skin : v.hair}
         opacity={v.hairStyle === "bald" ? 0 : 1}
       />
+
       {/* Eyes */}
       <ellipse cx="45" cy="60" rx="5" ry="6" fill={v.eyeColor} />
       <ellipse cx="65" cy="60" rx="5" ry="6" fill={v.eyeColor} />
+
       {/* Mouth based on vibe */}
       {["outgoing", "funny", "playful", "optimistic"].includes(v.vibe) ? (
         <path
@@ -76,7 +83,9 @@ export const getAvatarSVG = (avatar: any) => {
           stroke="#d84315"
           strokeWidth="2"
         />
-      ) : ["creative", "adventurous", "loyal", "compassionate"].includes(v.vibe) ? (
+      ) : ["creative", "adventurous", "loyal", "compassionate"].includes(
+          v.vibe
+        ) ? (
         <path
           d="M44 74 Q55 78 66 74"
           stroke="#d84315"
@@ -94,6 +103,7 @@ export const getAvatarSVG = (avatar: any) => {
           strokeWidth="2"
         />
       )}
+
       {/* Accessory overlay */}
       {v.accessory === "glasses" && (
         <>
@@ -134,15 +144,12 @@ export const getAvatarSVG = (avatar: any) => {
   );
 };
 
-function AvatarPicker({
+const AvatarPicker: React.FC<AvatarPickerProps> = ({
   value,
   onChange,
-  unlocked, // <-- Add this line
-}: {
-  value: any;
-  onChange: (val: any) => void;
-  unlocked?: string[]; // <-- Add this line (optional if not always used)
-}) {
+  unlocked,
+  ...htmlProps
+}) => {
   const [animVibe, setAnimVibe] = useState<string | null>(null);
   const [showReadyPlayer, setShowReadyPlayer] = useState(false);
   const avatar = value && Object.keys(value).length > 0 ? value : defaultAvatar;
@@ -166,7 +173,7 @@ function AvatarPicker({
   }, [onChange, value]);
 
   return (
-    <div className="flex flex-col gap-3 items-center w-full">
+    <div className="flex flex-col gap-3 items-center w-full" {...htmlProps}>
       {/* Avatar Preview */}
       <div className="mb-2">
         {value?.avatarUrl && showReadyPlayer ? (
@@ -238,7 +245,7 @@ function AvatarPicker({
                 background: "#fff",
               }}
               allow="camera *; microphone *"
-            ></iframe>
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -259,20 +266,13 @@ function AvatarPicker({
                 }`}
                 onClick={() => {
                   setAnimVibe(v.value);
-                  onChange({
-                    ...avatar,
-                    vibe: v.value,
-                  });
+                  onChange({ ...avatar, vibe: v.value });
                   setTimeout(() => setAnimVibe(null), 400);
                 }}
                 aria-label={v.label}
                 tabIndex={0}
                 whileTap={{ scale: 1.2 }}
-                animate={
-                  animVibe === v.value
-                    ? { scale: 1.3 }
-                    : {}
-                }
+                animate={animVibe === v.value ? { scale: 1.3 } : {}}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <span>{v.emoji}</span>
@@ -280,6 +280,7 @@ function AvatarPicker({
               </motion.button>
             ))}
           </div>
+
           {/* Skin Tone */}
           <div className="flex gap-2 items-center">
             <span className="text-xs text-gray-600">Skin:</span>
@@ -293,16 +294,12 @@ function AvatarPicker({
                 }`}
                 style={{ background: color }}
                 aria-label={`Skin tone ${color}`}
-                onClick={() =>
-                  onChange({
-                    ...avatar,
-                    skin: color,
-                  })
-                }
+                onClick={() => onChange({ ...avatar, skin: color })}
                 tabIndex={0}
               />
             ))}
           </div>
+
           {/* Hair Color */}
           <div className="flex gap-2 items-center">
             <span className="text-xs text-gray-600">Hair:</span>
@@ -316,12 +313,7 @@ function AvatarPicker({
                 }`}
                 style={{ background: color }}
                 aria-label={`Hair color ${color}`}
-                onClick={() =>
-                  onChange({
-                    ...avatar,
-                    hair: color,
-                  })
-                }
+                onClick={() => onChange({ ...avatar, hair: color })}
                 tabIndex={0}
               />
             ))}
@@ -331,18 +323,14 @@ function AvatarPicker({
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 text-gray-700"
               }`}
-              onClick={() =>
-                onChange({
-                  ...avatar,
-                  hairStyle: "bald",
-                })
-              }
+              onClick={() => onChange({ ...avatar, hairStyle: "bald" })}
               aria-label="Bald"
               tabIndex={0}
             >
               Bald
             </button>
           </div>
+
           {/* Eye Color */}
           <div className="flex gap-2 items-center">
             <span className="text-xs text-gray-600">Eyes:</span>
@@ -356,16 +344,12 @@ function AvatarPicker({
                 }`}
                 style={{ background: color }}
                 aria-label={`Eye color ${color}`}
-                onClick={() =>
-                  onChange({
-                    ...avatar,
-                    eyeColor: color,
-                  })
-                }
+                onClick={() => onChange({ ...avatar, eyeColor: color })}
                 tabIndex={0}
               />
             ))}
           </div>
+
           {/* Accessories */}
           <div className="flex gap-2 items-center">
             <span className="text-xs text-gray-600">Accessory:</span>
@@ -377,12 +361,7 @@ function AvatarPicker({
                     ? "bg-blue-500 text-white scale-110 shadow"
                     : "bg-gray-100 text-gray-700"
                 }`}
-                onClick={() =>
-                  onChange({
-                    ...avatar,
-                    accessory: a.value,
-                  })
-                }
+                onClick={() => onChange({ ...avatar, accessory: a.value })}
                 aria-label={a.label}
                 tabIndex={0}
                 whileTap={{ scale: 1.2 }}
@@ -394,20 +373,24 @@ function AvatarPicker({
               </motion.button>
             ))}
           </div>
+
           {/* Randomize */}
           <button
             className="mt-2 px-3 py-1 bg-pink-500 text-white rounded text-xs"
             onClick={() => {
               const random = {
                 skin: skinTones[Math.floor(Math.random() * skinTones.length)],
-                hair: hairColors[Math.floor(Math.random() * hairColors.length)],
+                hair: hairColors[
+                  Math.floor(Math.random() * hairColors.length)
+                ],
                 hairStyle: Math.random() > 0.2 ? "short" : "bald",
                 eyeColor:
                   eyeColors[Math.floor(Math.random() * eyeColors.length)],
                 vibe: vibes[Math.floor(Math.random() * vibes.length)].value,
                 accessory:
-                  accessories[Math.floor(Math.random() * accessories.length)]
-                    .value,
+                  accessories[
+                    Math.floor(Math.random() * accessories.length)
+                  ].value,
               };
               onChange(random);
             }}
@@ -420,7 +403,6 @@ function AvatarPicker({
       )}
     </div>
   );
-}
+};
 
-// --- DEFAULT EXPORT ---
 export default AvatarPicker;
