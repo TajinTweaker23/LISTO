@@ -50,7 +50,6 @@ export const getAvatarSVG = (avatar: any) => {
   return (
     <svg width="110" height="110" viewBox="0 0 110 110">
       <ellipse cx="55" cy="56" rx="38" ry="40" fill={v.skin || "#f9dcc4"} />
-
       {/* Hair */}
       <ellipse
         cx="55"
@@ -60,19 +59,12 @@ export const getAvatarSVG = (avatar: any) => {
         fill={v.hairStyle === "bald" ? v.skin : v.hair}
         opacity={v.hairStyle === "bald" ? 0 : 1}
       />
-
       {/* Eyes */}
       <ellipse cx="45" cy="60" rx="5" ry="6" fill={v.eyeColor} />
       <ellipse cx="65" cy="60" rx="5" ry="6" fill={v.eyeColor} />
-
       {/* Mouth based on vibe */}
       {["outgoing", "funny", "playful", "optimistic"].includes(v.vibe) ? (
-        <path
-          d="M44 74 Q55 84 66 74"
-          stroke="#d84315"
-          strokeWidth="3"
-          fill="none"
-        />
+        <path d="M44 74 Q55 84 66 74" stroke="#d84315" strokeWidth="3" fill="none" />
       ) : ["thoughtful", "analytical", "calm", "curious"].includes(v.vibe) ? (
         <ellipse
           cx="55"
@@ -83,15 +75,8 @@ export const getAvatarSVG = (avatar: any) => {
           stroke="#d84315"
           strokeWidth="2"
         />
-      ) : ["creative", "adventurous", "loyal", "compassionate"].includes(
-          v.vibe
-        ) ? (
-        <path
-          d="M44 74 Q55 78 66 74"
-          stroke="#d84315"
-          strokeWidth="3"
-          fill="none"
-        />
+      ) : ["creative", "adventurous", "loyal", "compassionate"].includes(v.vibe) ? (
+        <path d="M44 74 Q55 78 66 74" stroke="#d84315" strokeWidth="3" fill="none" />
       ) : (
         <ellipse
           cx="55"
@@ -103,28 +88,11 @@ export const getAvatarSVG = (avatar: any) => {
           strokeWidth="2"
         />
       )}
-
       {/* Accessory overlay */}
       {v.accessory === "glasses" && (
         <>
-          <ellipse
-            cx="45"
-            cy="60"
-            rx="8"
-            ry="7"
-            fill="none"
-            stroke="#222"
-            strokeWidth="2"
-          />
-          <ellipse
-            cx="65"
-            cy="60"
-            rx="8"
-            ry="7"
-            fill="none"
-            stroke="#222"
-            strokeWidth="2"
-          />
+          <ellipse cx="45" cy="60" rx="8" ry="7" fill="none" stroke="#222" strokeWidth="2" />
+          <ellipse cx="65" cy="60" rx="8" ry="7" fill="none" stroke="#222" strokeWidth="2" />
           <rect x="52" y="60" width="6" height="2" fill="#222" />
         </>
       )}
@@ -155,7 +123,6 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
   const avatar = value && Object.keys(value).length > 0 ? value : defaultAvatar;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Listen for Ready Player Me avatar export
   useEffect(() => {
     const handleMessage = (event: any) => {
       if (
@@ -380,17 +347,11 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({
             onClick={() => {
               const random = {
                 skin: skinTones[Math.floor(Math.random() * skinTones.length)],
-                hair: hairColors[
-                  Math.floor(Math.random() * hairColors.length)
-                ],
+                hair: hairColors[Math.floor(Math.random() * hairColors.length)],
                 hairStyle: Math.random() > 0.2 ? "short" : "bald",
-                eyeColor:
-                  eyeColors[Math.floor(Math.random() * eyeColors.length)],
+                eyeColor: eyeColors[Math.floor(Math.random() * eyeColors.length)],
                 vibe: vibes[Math.floor(Math.random() * vibes.length)].value,
-                accessory:
-                  accessories[
-                    Math.floor(Math.random() * accessories.length)
-                  ].value,
+                accessory: accessories[Math.floor(Math.random() * accessories.length)].value,
               };
               onChange(random);
             }}
