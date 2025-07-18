@@ -4,14 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/ui/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
-import AvatarPicker, { getAvatarSVG } from "../components/AvatarPicker";
+import AvatarPicker from "../components/ui/AvatarPicker";
 import { toPng } from "html-to-image";
 import { motion, AnimatePresence } from "framer-motion";
 
 // (Presets and communityAvatars here, unchanged)
 
-const presetAvatars = [/* ...your presets... */];
-const communityAvatars = [/* ...your community avatars... */];
+const presetAvatars = [
+  /* ...your presets... */
+];
+const communityAvatars = [
+  /* ...your community avatars... */
+];
 
 export default function Profile() {
   const { user } = useAuth();
@@ -23,7 +27,9 @@ export default function Profile() {
   const [editingBio, setEditingBio] = useState(false);
   const [social, setSocial] = useState({ twitter: "", instagram: "" });
   const [unlocked, setUnlocked] = useState<string[]>(["cap", "beanie"]);
-  const [theme, setTheme] = useState("bg-gradient-to-r from-blue-900 to-teal-600");
+  const [theme, setTheme] = useState(
+    "bg-gradient-to-r from-blue-900 to-teal-600"
+  );
   const avatarRef = useRef<HTMLDivElement>(null);
 
   // ---- NEW STATE ----
@@ -43,7 +49,10 @@ export default function Profile() {
     setPendingAvatar(stored ? JSON.parse(stored) : null);
     const unlockedItems = localStorage.getItem("listoUnlocked");
     if (unlockedItems) setUnlocked(JSON.parse(unlockedItems));
-    setTheme(localStorage.getItem("listoTheme") || "bg-gradient-to-r from-blue-900 to-teal-600");
+    setTheme(
+      localStorage.getItem("listoTheme") ||
+        "bg-gradient-to-r from-blue-900 to-teal-600"
+    );
   }, []);
 
   const handleSave = () => {
@@ -85,11 +94,15 @@ export default function Profile() {
         title: "Check out my LISTO avatar!",
         text: "This is my custom avatar from LISTO.",
         files: [
-          new File([await (await fetch(dataUrl)).blob()], "avatar.png", { type: "image/png" }),
+          new File([await (await fetch(dataUrl)).blob()], "avatar.png", {
+            type: "image/png",
+          }),
         ],
       });
     } else {
-      alert("Sharing is not supported on this device. Please download instead.");
+      alert(
+        "Sharing is not supported on this device. Please download instead."
+      );
     }
   };
 
@@ -149,18 +162,25 @@ export default function Profile() {
                   exit={{ opacity: 0 }}
                 >
                   <div className="bg-white rounded-2xl p-8 shadow-lg max-w-lg w-full flex flex-col items-center">
-                    <h2 className="text-xl font-bold mb-2">Update Your Avatar</h2>
+                    <h2 className="text-xl font-bold mb-2">
+                      Update Your Avatar
+                    </h2>
                     <AvatarPicker
                       value={avatar}
-                      onChange={setAvatar}
+                      onChange={(av) => setAvatar(av)}
                       aria-label="Avatar customization"
-                    />
+                      unlocked={unlocked}
+                      /> as React.ComponentType<import('../components/ui/AvatarPicker').AvatarPickerProps>
+                  
                     <div className="flex gap-4 mt-4">
                       <button
                         className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition"
                         onClick={() => {
                           setAvatar(pendingAvatar);
-                          localStorage.setItem("listoAvatar", JSON.stringify(pendingAvatar));
+                          localStorage.setItem(
+                            "listoAvatar",
+                            JSON.stringify(pendingAvatar)
+                          );
                           setShowAvatarEditor(false);
                         }}
                       >
@@ -184,7 +204,7 @@ export default function Profile() {
                   <input
                     className="border rounded px-2 py-1"
                     value={newName}
-                    onChange={e => setNewName(e.target.value)}
+                    onChange={(e) => setNewName(e.target.value)}
                     aria-label="Edit name"
                   />
                   <button
@@ -220,7 +240,7 @@ export default function Profile() {
                   <textarea
                     className="border rounded px-2 py-1 w-full"
                     value={bio}
-                    onChange={e => setBio(e.target.value)}
+                    onChange={(e) => setBio(e.target.value)}
                     aria-label="Edit bio"
                   />
                   <button
@@ -255,14 +275,18 @@ export default function Profile() {
                 className="border rounded px-2 py-1"
                 placeholder="Twitter handle"
                 value={social.twitter}
-                onChange={e => setSocial(s => ({ ...s, twitter: e.target.value }))}
+                onChange={(e) =>
+                  setSocial((s) => ({ ...s, twitter: e.target.value }))
+                }
                 aria-label="Twitter"
               />
               <input
                 className="border rounded px-2 py-1"
                 placeholder="Instagram handle"
                 value={social.instagram}
-                onChange={e => setSocial(s => ({ ...s, instagram: e.target.value }))}
+                onChange={(e) =>
+                  setSocial((s) => ({ ...s, instagram: e.target.value }))
+                }
                 aria-label="Instagram"
               />
             </div>
@@ -278,7 +302,9 @@ export default function Profile() {
                   onClick={() => setAvatar(preset.avatar)}
                   aria-label={`Use preset avatar: ${preset.name}`}
                 >
-                  <div style={{ width: 48, height: 72 }}>{getAvatarSVG(preset.avatar)}</div>
+                  <div style={{ width: 48, height: 72 }}>
+                    {getAvatarSVG(preset.avatar)}
+                  </div>
                   <span className="text-xs mt-1">{preset.name}</span>
                 </button>
               ))}
@@ -286,7 +312,9 @@ export default function Profile() {
           </div>
           {/* Avatar Export/Share */}
           <div className="bg-white rounded shadow p-4 mb-4">
-            <h2 className="text-xl font-semibold mb-2">Download or Share Your Avatar</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              Download or Share Your Avatar
+            </h2>
             <div className="flex flex-wrap gap-4 mt-4 justify-center">
               <button
                 className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700 transition"
@@ -317,9 +345,13 @@ export default function Profile() {
                   className="flex flex-col items-center border rounded p-2 bg-gray-50"
                   aria-label={`Community avatar: ${entry.user}`}
                 >
-                  <div style={{ width: 48, height: 72 }}>{getAvatarSVG(entry.avatar)}</div>
+                  <div style={{ width: 48, height: 72 }}>
+                    {getAvatarSVG(entry.avatar)}
+                  </div>
                   <span className="text-xs mt-1">{entry.user}</span>
-                  <span className="text-xs text-gray-500">{entry.avatar.vibe}</span>
+                  <span className="text-xs text-gray-500">
+                    {entry.avatar.vibe}
+                  </span>
                 </div>
               ))}
             </div>
@@ -332,25 +364,47 @@ export default function Profile() {
             <h2 className="text-lg font-semibold mb-2">Profile Theme</h2>
             <div className="flex gap-2 flex-wrap">
               <button
-                className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-blue-900 to-teal-600" ? "bg-blue-600 text-white" : "bg-white text-blue-600"}`}
-                onClick={() => setTheme("bg-gradient-to-r from-blue-900 to-teal-600")}
+                className={`px-3 py-1 rounded ${
+                  theme === "bg-gradient-to-r from-blue-900 to-teal-600"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-blue-600"
+                }`}
+                onClick={() =>
+                  setTheme("bg-gradient-to-r from-blue-900 to-teal-600")
+                }
               >
                 Blue/Teal
               </button>
               <button
-                className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-pink-500 to-yellow-300" ? "bg-pink-500 text-white" : "bg-white text-pink-500"}`}
-                onClick={() => setTheme("bg-gradient-to-r from-pink-500 to-yellow-300")}
+                className={`px-3 py-1 rounded ${
+                  theme === "bg-gradient-to-r from-pink-500 to-yellow-300"
+                    ? "bg-pink-500 text-white"
+                    : "bg-white text-pink-500"
+                }`}
+                onClick={() =>
+                  setTheme("bg-gradient-to-r from-pink-500 to-yellow-300")
+                }
               >
                 Pink/Yellow
               </button>
               <button
-                className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-green-400 to-blue-500" ? "bg-green-500 text-white" : "bg-white text-green-500"}`}
-                onClick={() => setTheme("bg-gradient-to-r from-green-400 to-blue-500")}
+                className={`px-3 py-1 rounded ${
+                  theme === "bg-gradient-to-r from-green-400 to-blue-500"
+                    ? "bg-green-500 text-white"
+                    : "bg-white text-green-500"
+                }`}
+                onClick={() =>
+                  setTheme("bg-gradient-to-r from-green-400 to-blue-500")
+                }
               >
                 Green/Blue
               </button>
               <button
-                className={`px-3 py-1 rounded ${theme === "bg-gray-100" ? "bg-gray-400 text-white" : "bg-white text-gray-600"}`}
+                className={`px-3 py-1 rounded ${
+                  theme === "bg-gray-100"
+                    ? "bg-gray-400 text-white"
+                    : "bg-white text-gray-600"
+                }`}
                 onClick={() => setTheme("bg-gray-100")}
               >
                 Minimal
@@ -362,31 +416,49 @@ export default function Profile() {
             <h2 className="text-lg font-semibold mb-2">Achievements</h2>
             <div className="flex gap-2 flex-wrap">
               {unlocked.includes("cap") && (
-                <span className="inline-block px-2 py-1 bg-yellow-200 rounded text-xs">🧢 Cap Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-yellow-200 rounded text-xs">
+                  🧢 Cap Unlocked
+                </span>
               )}
               {unlocked.includes("beanie") && (
-                <span className="inline-block px-2 py-1 bg-yellow-200 rounded text-xs">🧢 Beanie Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-yellow-200 rounded text-xs">
+                  🧢 Beanie Unlocked
+                </span>
               )}
               {unlocked.includes("glasses") && (
-                <span className="inline-block px-2 py-1 bg-blue-200 rounded text-xs">👓 Glasses Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-blue-200 rounded text-xs">
+                  👓 Glasses Unlocked
+                </span>
               )}
               {unlocked.includes("hoodie") && (
-                <span className="inline-block px-2 py-1 bg-green-200 rounded text-xs">🧥 Hoodie Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-green-200 rounded text-xs">
+                  🧥 Hoodie Unlocked
+                </span>
               )}
               {unlocked.includes("fedora") && (
-                <span className="inline-block px-2 py-1 bg-purple-200 rounded text-xs">🎩 Fedora Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-purple-200 rounded text-xs">
+                  🎩 Fedora Unlocked
+                </span>
               )}
               {avatar && (
-                <span className="inline-block px-2 py-1 bg-pink-200 rounded text-xs">🎨 Avatar Saved</span>
+                <span className="inline-block px-2 py-1 bg-pink-200 rounded text-xs">
+                  🎨 Avatar Saved
+                </span>
               )}
               {bio && (
-                <span className="inline-block px-2 py-1 bg-orange-200 rounded text-xs">📝 Bio Added</span>
+                <span className="inline-block px-2 py-1 bg-orange-200 rounded text-xs">
+                  📝 Bio Added
+                </span>
               )}
               {userName && (
-                <span className="inline-block px-2 py-1 bg-blue-100 rounded text-xs">🙋 Name Set</span>
+                <span className="inline-block px-2 py-1 bg-blue-100 rounded text-xs">
+                  🙋 Name Set
+                </span>
               )}
               {unlocked.length >= 5 && (
-                <span className="inline-block px-2 py-1 bg-indigo-200 rounded text-xs">🏆 5+ Items Unlocked</span>
+                <span className="inline-block px-2 py-1 bg-indigo-200 rounded text-xs">
+                  🏆 5+ Items Unlocked
+                </span>
               )}
             </div>
           </div>
