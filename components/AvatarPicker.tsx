@@ -137,9 +137,11 @@ export const getAvatarSVG = (avatar: any) => {
 function AvatarPicker({
   value,
   onChange,
+  unlocked, // <-- Add this line
 }: {
   value: any;
   onChange: (val: any) => void;
+  unlocked?: string[]; // <-- Add this line (optional if not always used)
 }) {
   const [animVibe, setAnimVibe] = useState<string | null>(null);
   const [showReadyPlayer, setShowReadyPlayer] = useState(false);
