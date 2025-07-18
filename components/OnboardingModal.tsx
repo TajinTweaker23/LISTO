@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import AvatarPicker, { defaultAvatar, getAvatarSVG } from "../components/AvatarPicker";
+import AvatarPicker, { defaultAvatar, getAvatarSVG } from "./ui/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
 
 // --- Sound effect ---
@@ -13,16 +13,19 @@ const playSound = () => {
 
 const THEME_OPTIONS = [
   { label: "Blue/Teal", value: "bg-gradient-to-r from-blue-900 to-teal-600" },
-  { label: "Pink/Yellow", value: "bg-gradient-to-r from-pink-500 to-yellow-300" },
+  {
+    label: "Pink/Yellow",
+    value: "bg-gradient-to-r from-pink-500 to-yellow-300",
+  },
   { label: "Green/Blue", value: "bg-gradient-to-r from-green-400 to-blue-500" },
-  { label: "Minimal", value: "bg-gray-100" }
+  { label: "Minimal", value: "bg-gray-100" },
 ];
 
 const MUSIC_OPTIONS = [
   { label: "None", value: "" },
   { label: "Rain", value: "/sounds/rain.mp3" },
   { label: "Café", value: "/sounds/cafe.mp3" },
-  { label: "Forest", value: "/sounds/forest.mp3" }
+  { label: "Forest", value: "/sounds/forest.mp3" },
 ];
 
 // --- Onboarding steps, now with icons/emoji! ---
@@ -32,7 +35,7 @@ const steps = [
   { key: "avatar", icon: "🧑‍🎤", label: "Avatar" },
   { key: "theme", icon: "🎨", label: "Theme" },
   { key: "music", icon: "🎵", label: "Music" },
-  { key: "finish", icon: "🚀", label: "Finish" }
+  { key: "finish", icon: "🚀", label: "Finish" },
 ];
 
 // --- Seasonal/Easter Egg Vortex Themes ---
@@ -52,22 +55,48 @@ function getSeasonalVortexImages() {
   return [
     <svg width="48" height="48" viewBox="0 0 48 48" key="rocket">
       <circle cx="24" cy="24" r="20" fill="#fbbf24" />
-      <text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">🚀</text>
+      <text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">
+        🚀
+      </text>
     </svg>,
     <svg width="48" height="48" viewBox="0 0 48 48" key="art">
       <rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1" />
-      <text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">🎨</text>
+      <text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">
+        🎨
+      </text>
     </svg>,
-    "🪐", "🌟", "✨", "🧠", "💡", "🎵", "📚", "🎲", "🦄", "🌈"
+    "🪐",
+    "🌟",
+    "✨",
+    "🧠",
+    "💡",
+    "🎵",
+    "📚",
+    "🎲",
+    "🦄",
+    "🌈",
   ];
 }
 
 // --- Vortex Animated Background ---
-function VortexBackground({ step, finished, reduceMotion }: { step: number; finished: boolean; reduceMotion: boolean; }) {
+function VortexBackground({
+  step,
+  finished,
+  reduceMotion,
+}: {
+  step: number;
+  finished: boolean;
+  reduceMotion: boolean;
+}) {
   const [tick, setTick] = useState(0);
   const [burst, setBurst] = useState(false);
   const vortexImages = getSeasonalVortexImages();
-  const imagesToShow = finished ? vortexImages.length : Math.max(3, Math.floor(((step + 1) / steps.length) * vortexImages.length));
+  const imagesToShow = finished
+    ? vortexImages.length
+    : Math.max(
+        3,
+        Math.floor(((step + 1) / steps.length) * vortexImages.length)
+      );
 
   useEffect(() => {
     if (finished) {
@@ -85,14 +114,22 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
 
   if (reduceMotion) return null;
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 overflow-hidden" style={{ filter: "blur(0.5px)" }}>
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-40 overflow-hidden"
+      style={{ filter: "blur(0.5px)" }}
+    >
       {vortexImages.slice(0, imagesToShow).map((img, i) => {
         const t = (tick + i * 20) / 60;
         const angle = t + (i / vortexImages.length) * 2 * Math.PI;
-        const radius = burst ? 320 + 120 * Math.sin(t + i) : 180 + 60 * Math.sin(t + i);
+        const radius = burst
+          ? 320 + 120 * Math.sin(t + i)
+          : 180 + 60 * Math.sin(t + i);
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
-        const scale = burst ? 1.5 + 0.7 * Math.sin(t + i) : 1 + 0.4 * Math.sin(t + i);
+        const scale = burst
+          ? 1.5 + 0.7 * Math.sin(t + i)
+          : 1 + 0.4 * Math.sin(t + i);
         const blur = 1 + 2 * Math.abs(Math.cos(angle));
         return (
           <motion.div
@@ -130,10 +167,18 @@ function ProgressStepper({ current }: { current: number }) {
           animate={idx === current ? { scale: 1.2, y: -2 } : { scale: 1, y: 0 }}
           className={`flex flex-col items-center transition`}
         >
-          <div className={`text-2xl ${idx === current ? "text-pink-500" : "text-gray-400"}`}>
+          <div
+            className={`text-2xl ${
+              idx === current ? "text-pink-500" : "text-gray-400"
+            }`}
+          >
             {step.icon}
           </div>
-          <div className={`text-xs mt-1 ${idx === current ? "font-bold text-blue-600" : "text-gray-400"}`}>
+          <div
+            className={`text-xs mt-1 ${
+              idx === current ? "font-bold text-blue-600" : "text-gray-400"
+            }`}
+          >
             {step.label}
           </div>
         </motion.div>
@@ -145,7 +190,7 @@ function ProgressStepper({ current }: { current: number }) {
 // --- Main Modal ---
 export default function OnboardingModal({
   onClose,
-  onComplete
+  onComplete,
 }: {
   onClose: () => void;
   onComplete: (avatar: any | null, theme?: string, music?: string) => void;
@@ -183,7 +228,10 @@ export default function OnboardingModal({
 
   // Save draft state to localStorage on change
   useEffect(() => {
-    localStorage.setItem("onboardingDraft", JSON.stringify({ step, name, avatar, theme, music }));
+    localStorage.setItem(
+      "onboardingDraft",
+      JSON.stringify({ step, name, avatar, theme, music })
+    );
   }, [step, name, avatar, theme, music]);
 
   // Show only once: check localStorage
@@ -276,21 +324,32 @@ export default function OnboardingModal({
     onClose();
   };
   const handleContinueLater = () => {
-    localStorage.setItem("onboardingDraft", JSON.stringify({ step, name, avatar, theme, music }));
+    localStorage.setItem(
+      "onboardingDraft",
+      JSON.stringify({ step, name, avatar, theme, music })
+    );
     onClose();
   };
 
   // Online/offline awareness
   useEffect(() => {
-    const goOnline = () => { setIsOnline(true); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1000);}
-    const goOffline = () => { setIsOnline(false); setShowNetworkToast(true); setTimeout(() => setShowNetworkToast(false), 1000);}
+    const goOnline = () => {
+      setIsOnline(true);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1000);
+    };
+    const goOffline = () => {
+      setIsOnline(false);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1000);
+    };
     window.addEventListener("online", goOnline);
     window.addEventListener("offline", goOffline);
     setIsOnline(navigator.onLine);
     return () => {
       window.removeEventListener("online", goOnline);
       window.removeEventListener("offline", goOffline);
-    }
+    };
   }, []);
 
   // --- Emoji Rain micro-animation on finish
@@ -365,7 +424,11 @@ export default function OnboardingModal({
         )}
       </AnimatePresence>
 
-      <VortexBackground step={step} finished={finished} reduceMotion={reduceMotion} />
+      <VortexBackground
+        step={step}
+        finished={finished}
+        reduceMotion={reduceMotion}
+      />
       <ConfettiBlast show={showConfetti} />
       <EmojiRain show={showEmojiRain} />
 
@@ -374,7 +437,7 @@ export default function OnboardingModal({
         className="bg-white/90 dark:bg-[#232946] rounded-3xl shadow-2xl w-full max-w-md mx-auto px-7 py-8 flex flex-col items-center relative z-50 border-2 border-blue-200"
         style={{
           minHeight: 500,
-          boxShadow: "0 6px 36px 0 #0ff1ce44, 0 0 40px 8px #a21caf33"
+          boxShadow: "0 6px 36px 0 #0ff1ce44, 0 0 40px 8px #a21caf33",
         }}
         initial={{ opacity: 0, scale: 0.94, y: 60 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -386,8 +449,12 @@ export default function OnboardingModal({
         {/* Accessibility Toggle */}
         <button
           className="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 rounded shadow text-xs hover:bg-gray-200 transition"
-          onClick={() => setReduceMotion(r => !r)}
-          aria-label={reduceMotion ? "Enable animations" : "Reduce motion / disable vortex"}
+          onClick={() => setReduceMotion((r) => !r)}
+          aria-label={
+            reduceMotion
+              ? "Enable animations"
+              : "Reduce motion / disable vortex"
+          }
         >
           {reduceMotion ? "Enable Animations" : "Reduce Motion"}
         </button>
@@ -418,7 +485,8 @@ export default function OnboardingModal({
                 Welcome to LISTO!
               </h2>
               <p className="mb-8 text-lg text-gray-700 dark:text-gray-200 font-medium tracking-wide">
-                Set up your space, your way. <span className="font-bold text-blue-700">Let's go!</span>
+                Set up your space, your way.{" "}
+                <span className="font-bold text-blue-700">Let's go!</span>
               </p>
               <div className="flex gap-4 w-full justify-center mb-4">
                 <button
@@ -463,13 +531,13 @@ export default function OnboardingModal({
                 className="w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-center font-medium tracking-wide"
                 placeholder="Type your name…"
                 value={name}
-                onChange={e => {
+                onChange={(e) => {
                   setName(e.target.value);
                   setError("");
                 }}
                 aria-label="Your name"
                 maxLength={32}
-                onKeyDown={e => {
+                onKeyDown={(e) => {
                   if (e.key === "Enter") handleNext();
                 }}
               />
@@ -518,14 +586,18 @@ export default function OnboardingModal({
               <div className="mb-6">
                 <div className="flex flex-col items-center">
                   <p className="mb-2 font-semibold text-gray-800 dark:text-gray-200">
-                    Choose your avatar <span className="text-gray-500 font-normal">(or create a 3D one!)</span>
+                    Choose your avatar{" "}
+                    <span className="text-gray-500 font-normal">
+                      (or create a 3D one!)
+                    </span>
                   </p>
                   <div className="w-full flex flex-col items-center">
                     {/* AvatarPicker does both Cartoon & ReadyPlayerMe */}
                     <AvatarPicker value={avatar} onChange={setAvatar} />
                   </div>
                   <span className="text-xs mt-2 text-gray-400 text-center">
-                    Want to stand out? Choose a cartoon or a 3D avatar!<br />
+                    Want to stand out? Choose a cartoon or a 3D avatar!
+                    <br />
                     You can always change this later from your profile.
                   </span>
                 </div>
@@ -570,10 +642,14 @@ export default function OnboardingModal({
                 Pick a Profile Theme
               </h3>
               <div className="flex gap-2 flex-wrap justify-center mb-4">
-                {THEME_OPTIONS.map(opt => (
+                {THEME_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
-                    className={`px-3 py-1 rounded transition border ${theme === opt.value ? "bg-blue-600 text-white border-blue-800" : "bg-white text-blue-600 border-blue-200"}`}
+                    className={`px-3 py-1 rounded transition border ${
+                      theme === opt.value
+                        ? "bg-blue-600 text-white border-blue-800"
+                        : "bg-white text-blue-600 border-blue-200"
+                    }`}
                     onClick={() => setTheme(opt.value)}
                     aria-label={opt.label}
                   >
@@ -582,8 +658,13 @@ export default function OnboardingModal({
                 ))}
               </div>
               <div className="w-full mb-2">
-                <div className="rounded-xl p-2 font-semibold text-center text-sm text-gray-600 dark:text-gray-100"
-                  style={{ background: "linear-gradient(90deg, #e0eafc, #cfdef3 80%)", ...(theme.startsWith("bg-") ? {} : { background: theme }) }}>
+                <div
+                  className="rounded-xl p-2 font-semibold text-center text-sm text-gray-600 dark:text-gray-100"
+                  style={{
+                    background: "linear-gradient(90deg, #e0eafc, #cfdef3 80%)",
+                    ...(theme.startsWith("bg-") ? {} : { background: theme }),
+                  }}
+                >
                   Live Preview!
                 </div>
               </div>
@@ -627,10 +708,14 @@ export default function OnboardingModal({
                 Theme Music (Optional)
               </h3>
               <div className="flex gap-2 flex-wrap justify-center mb-4">
-                {MUSIC_OPTIONS.map(opt => (
+                {MUSIC_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
-                    className={`px-3 py-1 rounded transition border ${music === opt.value ? "bg-pink-500 text-white border-pink-800" : "bg-white text-pink-500 border-pink-200"}`}
+                    className={`px-3 py-1 rounded transition border ${
+                      music === opt.value
+                        ? "bg-pink-500 text-white border-pink-800"
+                        : "bg-white text-pink-500 border-pink-200"
+                    }`}
                     onClick={() => setMusic(opt.value)}
                     aria-label={opt.label}
                   >
@@ -678,7 +763,11 @@ export default function OnboardingModal({
                 You're all set!
               </h2>
               <p className="mb-4 text-lg text-gray-700 dark:text-gray-100 font-medium">
-                Welcome aboard, <span className="font-bold text-blue-700">{name || "friend"}</span>!
+                Welcome aboard,{" "}
+                <span className="font-bold text-blue-700">
+                  {name || "friend"}
+                </span>
+                !
               </p>
               <motion.div
                 initial={{ scale: 0.8 }}
@@ -696,7 +785,8 @@ export default function OnboardingModal({
                 Go to Dashboard
               </button>
               <div className="mt-4 text-xs text-gray-400">
-                🎊 You can always update your profile & preferences later from Settings!
+                🎊 You can always update your profile & preferences later from
+                Settings!
               </div>
             </motion.div>
           )}
