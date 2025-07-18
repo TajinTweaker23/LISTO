@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// --- FIXED INTERFACE: This MUST match your usage! ---
 interface AvatarPickerProps extends React.HTMLAttributes<HTMLDivElement> {
   value: any;
   onChange: (val: any) => void;
-  unlocked?: string[];
+  unlocked?: string[]; // <-- Add any other custom props here if needed
 }
 
 // Modern, real human personality vibes
@@ -33,6 +34,7 @@ const accessories = [
   { label: "Hat", value: "hat", emoji: "🧢" },
   { label: "Mustache", value: "mustache", emoji: "🦸" },
 ];
+
 
 const READY_PLAYER_ME_URL = "https://listo-app.readyplayer.me/avatar";
 
