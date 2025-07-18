@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- FIXED INTERFACE: This MUST match your usage! ---
+// --- INTERFACE: Matches usage in profile.tsx ---
 export interface AvatarPickerProps extends React.HTMLAttributes<HTMLDivElement> {
   value: any;
   onChange: (val: any) => void;
-  unlocked?: string[]; // <-- Custom prop for unlocked items
+  unlocked?: string[];
 }
 
 // Modern, real human personality vibes
@@ -37,6 +37,7 @@ const accessories = [
 
 const READY_PLAYER_ME_URL = "https://listo-app.readyplayer.me/avatar";
 
+// Default avatar object
 export const defaultAvatar = {
   vibe: "outgoing",
   skin: "#f9dcc4",
@@ -46,6 +47,7 @@ export const defaultAvatar = {
   accessory: "",
 };
 
+// SVG generator for a cartoon avatar (named export!)
 export const getAvatarSVG = (avatar: any) => {
   const v = avatar || defaultAvatar;
   return (
@@ -113,6 +115,7 @@ export const getAvatarSVG = (avatar: any) => {
   );
 };
 
+// Default export: AvatarPicker component
 const AvatarPicker: React.FC<AvatarPickerProps> = ({
   value,
   onChange,
