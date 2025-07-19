@@ -17,7 +17,8 @@ import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
 import { Howl } from "howler";
 import Mascot from "./Mascot";
-import { getAvatarSVG } from "./AvatarPicker"; // <-- CORRECTED import!
+import AchievementBadge from "./AchievementBadge";
+import OnboardingModal from './OnboardingModal';
 import "../styles/globals.css";
 
 // --- Font ---
@@ -145,16 +146,16 @@ class ErrorBoundary extends React.Component<
   { children: ReactNode },
   { hasError: boolean }
 > {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state = { hasError: false };
+
   static getDerivedStateFromError(_: any) {
     return { hasError: true };
   }
+
   componentDidCatch(error: any, info: any) {
     // Log error for analytics/reporting if needed
   }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -200,6 +201,27 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const [isOnline, setIsOnline] = useState(true);
   const [showNetworkToast, setShowNetworkToast] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [achievements, setAchievements] = useState<{ [key: string]: boolean }>({});
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const hasOnboarded = localStorage.getItem('hasOnboarded');
+    if (!hasOnboarded) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleCloseOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('hasOnboarded', 'true');
+  };
+
+  const unlockAchievement = (name: string, description: string, icon: string) => {
+    if (!achievements[name]) {
+      setAchievements(prev => ({ ...prev, [name]: true }));
+      // Show badge
+    }
+  };
 
   // Mascot
   const mascotRef = useRef<any>(null);
@@ -226,6 +248,10 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     setTimeout(() => setShowConfetti(false), 2000);
   };
   const triggerToast = (message: string) => {
+    if (settings.textToSpeech) {
+      const utterance = new SpeechSynthesisUtterance(message);
+      window.speechSynthesis.speak(utterance);
+    }
     setToast({ message, show: true });
     setTimeout(() => setToast({ message: "", show: false }), 1800);
   };
@@ -238,13 +264,19 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     triggerConfetti();
     triggerToast(`Shape "${shape}" added!`);
     setMascotAction("cheer");
-    if ((shapes.length + 1) % 5 === 0) triggerEmojiRain();
+    if ((shapes.length + 1) % 5 === 0) {
+      triggerEmojiRain();
+      unlockAchievement("Shape Enthusiast", "You added 5 shapes!", "🎨");
+    }
   };
   const handleInsertTable = (rows: number, cols: number) => {
     setTables([...tables, { rows, cols }]);
     triggerConfetti();
     triggerToast(`Table ${rows}x${cols} added!`);
     setMascotAction("cheer");
+    if ((tables.length + 1) % 3 === 0) {
+       unlockAchievement("Table Master", "You added 3 tables!", "📊");
+    }
     if ((tables.length + 1) % 5 === 0) triggerEmojiRain();
   };
 
@@ -421,10 +453,26 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       <FocusTimer show={showFocusTimer} onEnd={handleFocusTimerEnd} />
       <ReadingRuler enabled={readingRuler} />
 
+      <OnboardingModal show={showOnboarding} onClose={handleCloseOnboarding} />
+
       {/* Network Status Toast */}
       <Toast
         message={isOnline ? "Back online!" : "You're offline."}
         show={showNetworkToast}
+      />
+
+      {/* Achievement Badges */}
+      <AchievementBadge
+        name="Shape Enthusiast"
+        description="You added 5 shapes!"
+        icon="🎨"
+        show={achievements["Shape Enthusiast"]}
+      />
+      <AchievementBadge
+        name="Table Master"
+        description="You added 3 tables!"
+        icon="📊"
+        show={achievements["Table Master"]}
       />
 
       {/* Greeting Bar */}

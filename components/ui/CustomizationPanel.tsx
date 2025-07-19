@@ -199,6 +199,25 @@ export default function CustomizationPanel({
         />
       </div>
 
+      {/* Text-to-Speech Toggle */}
+      <div className="flex items-center justify-between mt-4">
+        <label
+          htmlFor="tts-toggle"
+          className="text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Text-to-Speech Notifications
+        </label>
+        <input
+          type="checkbox"
+          id="tts-toggle"
+          checked={settings.textToSpeech}
+          onChange={(e) =>
+            onChange({ ...settings, textToSpeech: e.target.checked })
+          }
+          className="toggle-checkbox"
+        />
+      </div>
+
       <style>{`
         .animate-spin-slow {
           animation: spin 2s linear infinite;
