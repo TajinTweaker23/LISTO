@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Button } from "./button";
 
 const fonts = [
@@ -20,111 +20,185 @@ const defaultSettings = {
   blindMode: false,
 };
 
-export default function CustomizationPanel({ settings, onChange }: {
-  settings: any;
-  onChange: (opts: any) => void;
+export default function CustomizationPanel({
+  settings,
+  onChange,
+}: {
+  settings: typeof defaultSettings;
+  onChange: (opts: typeof defaultSettings) => void;
 }) {
-  // Reset handler
-  const handleReset = () => onChange({ ...defaultSettings });
+  // Reset handler with memoization for better performance
+  const handleReset = useCallback(
+    () => onChange({ ...defaultSettings }),
+    [onChange]
+  );
 
   return (
-    <aside className="p-5 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-xl space-y-6 w-full max-w-xs transition-all duration-300">
+    <aside
+      className="p-5 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-xl space-y-6 w-full max-w-xs transition-all duration-300"
+      aria-labelledby="customization-panel"
+    >
       <div className="flex items-center justify-between">
-        <h2 className="font-bold text-lg text-gray-700 dark:text-gray-100">Customize</h2>
+        <h2
+          id="customization-panel"
+          className="font-bold text-lg text-gray-700 dark:text-gray-100"
+        >
+          Customize
+        </h2>
         <Button
           variant="ghost"
           size="sm"
           tooltip="Reset to defaults"
           onClick={handleReset}
-          leftIcon={<span role="img" aria-label="reset" className="animate-spin-slow">🔄</span>}
+          leftIcon={
+            <span role="img" aria-label="reset" className="animate-spin-slow">
+              🔄
+            </span>
+          }
         >
           Reset
         </Button>
       </div>
+
+      {/* Font Family Selector */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Font Family</label>
+        <label
+          htmlFor="font-family"
+          className="block text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Font Family
+        </label>
         <select
+          id="font-family"
           value={settings.fontFamily}
-          onChange={e => onChange({ ...settings, fontFamily: e.target.value })}
+          onChange={(e) =>
+            onChange({ ...settings, fontFamily: e.target.value })
+          }
           className="w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-400 transition"
           style={{ fontFamily: settings.fontFamily }}
         >
-          {fonts.map(f => (
-            <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>{f.label}</option>
+          {fonts.map((f) => (
+            <option
+              key={f.value}
+              value={f.value}
+              style={{ fontFamily: f.value }}
+            >
+              {f.label}
+            </option>
           ))}
         </select>
-        <div className="mt-1 text-xs text-gray-500" style={{ fontFamily: settings.fontFamily }}>
+        <div
+          className="mt-1 text-xs text-gray-500"
+          style={{ fontFamily: settings.fontFamily }}
+        >
           Live preview: The quick brown fox jumps over the lazy dog.
         </div>
       </div>
+
+      {/* Font Color Picker */}
       <div className="flex gap-2 items-center">
-        <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Font Color</label>
+        <label
+          htmlFor="font-color"
+          className="text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Font Color
+        </label>
         <input
+          id="font-color"
           type="color"
           value={settings.fontColor}
-          onChange={e => onChange({ ...settings, fontColor: e.target.value })}
+          onChange={(e) => onChange({ ...settings, fontColor: e.target.value })}
           className="w-8 h-8 rounded-full border-2 border-gray-300 shadow transition-transform duration-200 hover:scale-110"
         />
         <span className="text-xs">{settings.fontColor}</span>
       </div>
+
+      {/* Background Color Picker */}
       <div className="flex gap-2 items-center">
-        <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Background</label>
+        <label
+          htmlFor="bg-color"
+          className="text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Background
+        </label>
         <input
+          id="bg-color"
           type="color"
           value={settings.bgColor}
-          onChange={e => onChange({ ...settings, bgColor: e.target.value })}
+          onChange={(e) => onChange({ ...settings, bgColor: e.target.value })}
           className="w-8 h-8 rounded-full border-2 border-gray-300 shadow transition-transform duration-200 hover:scale-110"
         />
         <span className="text-xs">{settings.bgColor}</span>
       </div>
+
+      {/* Font Size Slider */}
       <div>
-        <label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Font Size</label>
+        <label
+          htmlFor="font-size"
+          className="block text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Font Size
+        </label>
         <input
+          id="font-size"
           type="range"
           min={12}
           max={48}
           value={settings.fontSize}
-          onChange={e => onChange({ ...settings, fontSize: e.target.value })}
+          onChange={(e) =>
+            onChange({ ...settings, fontSize: parseInt(e.target.value) })
+          }
           className="w-full accent-blue-500"
         />
         <span className="ml-2 text-xs">{settings.fontSize}px</span>
       </div>
+
+      {/* Theme Music */}
       <div>
-        <label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Theme Music (YouTube URL)</label>
+        <label
+          htmlFor="music-url"
+          className="block text-sm font-medium text-gray-600 dark:text-gray-300"
+        >
+          Theme Music (YouTube URL)
+        </label>
         <input
+          id="music-url"
           type="text"
           value={settings.musicUrl}
-          onChange={e => onChange({ ...settings, musicUrl: e.target.value })}
+          onChange={(e) => onChange({ ...settings, musicUrl: e.target.value })}
           placeholder="Paste YouTube link"
           className="w-full rounded border px-2 py-1 mt-1 focus:ring-2 focus:ring-blue-400 transition"
         />
       </div>
+
+      {/* Toggles for Accessibility Settings */}
       <div className="space-y-2">
         <Toggle
           label="Text to Speech"
           checked={settings.textToSpeech}
-          onChange={v => onChange({ ...settings, textToSpeech: v })}
+          onChange={(v) => onChange({ ...settings, textToSpeech: v })}
           tooltip="Reads text aloud"
         />
         <Toggle
           label="High Contrast"
           checked={settings.highContrast}
-          onChange={v => onChange({ ...settings, highContrast: v })}
+          onChange={(v) => onChange({ ...settings, highContrast: v })}
           tooltip="Improves visibility"
         />
         <Toggle
           label="Deaf Mode (Captions)"
           checked={settings.deafMode}
-          onChange={v => onChange({ ...settings, deafMode: v })}
+          onChange={(v) => onChange({ ...settings, deafMode: v })}
           tooltip="Enables captions"
         />
         <Toggle
           label="Blind Mode (Screen Reader)"
           checked={settings.blindMode}
-          onChange={v => onChange({ ...settings, blindMode: v })}
+          onChange={(v) => onChange({ ...settings, blindMode: v })}
           tooltip="Optimizes for screen readers"
         />
       </div>
+
       <style>{`
         .animate-spin-slow {
           animation: spin 2s linear infinite;
@@ -137,8 +211,18 @@ export default function CustomizationPanel({ settings, onChange }: {
   );
 }
 
-// Sleek toggle switch with tooltip
-function Toggle({ label, checked, onChange, tooltip }: { label: string, checked: boolean, onChange: (v: boolean) => void, tooltip?: string }) {
+// Toggle Switch Component
+function Toggle({
+  label,
+  checked,
+  onChange,
+  tooltip,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  tooltip?: string;
+}) {
   return (
     <label className="flex items-center gap-2 cursor-pointer group relative">
       <span className="text-sm text-gray-700 dark:text-gray-200">{label}</span>
@@ -146,7 +230,7 @@ function Toggle({ label, checked, onChange, tooltip }: { label: string, checked:
         <input
           type="checkbox"
           checked={checked}
-          onChange={e => onChange(e.target.checked)}
+          onChange={(e) => onChange(e.target.checked)}
           className="sr-only"
         />
         <span
