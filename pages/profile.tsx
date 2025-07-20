@@ -76,7 +76,6 @@ export default function Profile() {
   };
 
   const handleBioEdit = () => {
-    setBio(bio);
     setEditingBio(false);
     localStorage.setItem("listoBio", bio);
   };
@@ -124,38 +123,93 @@ export default function Profile() {
   }
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <Navbar theme={theme} />
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">My Profile</h1>
-        <div className="bg-white p-6 rounded shadow mb-4">
-          <p>
-            <strong className="text-gray-700">Email:</strong> {user.email}
-          </p>
-          <p>
-            <strong className="text-gray-700">UID:</strong> {user.uid}
-          </p>
-        </div>
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="flex flex-col items-center mb-6">
-            <div
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-sage-100">
+      <Navbar theme="light" />
+      
+      {/* Sophisticated background elements */}
+      <motion.div
+        className="absolute top-20 left-1/4 w-48 h-48 rounded-full bg-gradient-to-br from-sage-200/20 to-sage-300/10 blur-3xl"
+        animate={{ y: [0, -25, 0], x: [0, 15, 0] }}
+        transition={{ repeat: Infinity, duration: 18, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-20 right-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-warm-gray-200/30 to-sage-200/20 blur-2xl"
+        animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 14, ease: "easeInOut" }}
+      />
+
+      <main className="max-w-5xl mx-auto px-6 py-8 pt-28 relative z-10">
+        <motion.h1 
+          className="text-4xl font-bold text-sage-800 mb-8 text-center"
+          style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          ✨ My Profile
+        </motion.h1>
+
+        {/* User Info Card */}
+        <motion.div 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-2xl font-bold text-sage-800 mb-6 flex items-center gap-3">
+            <span className="text-2xl">👤</span>
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Account Details</span>
+          </h2>
+          <div className="space-y-4">
+            <div className="p-4 bg-sage-50 rounded-2xl border border-sage-100">
+              <span className="text-sage-600 font-medium">Email:</span>
+              <span className="ml-3 text-sage-800 font-semibold">{user.email}</span>
+            </div>
+            <div className="p-4 bg-sage-50 rounded-2xl border border-sage-100">
+              <span className="text-sage-600 font-medium">User ID:</span>
+              <span className="ml-3 text-sage-800 font-mono text-sm">{user.uid}</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Avatar Section */}
+        <motion.div 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <div className="flex flex-col items-center">
+            <h2 className="text-2xl font-bold text-sage-800 mb-8 flex items-center gap-3">
+              <span className="text-2xl">🎨</span>
+              <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Avatar Customization</span>
+            </h2>
+
+            <motion.div
               ref={avatarRef}
-              className="mb-2"
+              className="mb-6 p-6 bg-sage-50 rounded-3xl border border-sage-200 shadow-lg"
               aria-label="Your avatar"
               role="img"
               tabIndex={0}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
             >
               {getAvatarSVG(avatar)}
-            </div>
-            <button
-              className="px-3 py-1 bg-indigo-500 text-white rounded shadow hover:bg-pink-400 transition mb-4"
+            </motion.div>
+
+            <motion.button
+              className="px-8 py-4 bg-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl hover:bg-sage-700 transition-all duration-300 font-semibold mb-6"
               onClick={() => {
                 setPendingAvatar(avatar);
                 setShowAvatarEditor(true);
               }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Edit Avatar
-            </button>
+              🎭 Edit Avatar
+            </motion.button>
             {/* Animate presence for avatar editor modal */}
             <AnimatePresence>
               {showAvatarEditor && (
@@ -475,7 +529,7 @@ export default function Profile() {
           >
             Save Changes
           </button>
-        </div>
+        </motion.div>
       </main>
       {/* Floating Action Button */}
       <motion.button

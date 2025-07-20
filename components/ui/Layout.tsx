@@ -4,12 +4,10 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback,
 } from "react";
 import Confetti from "react-confetti";
 import { Dialog, Combobox } from "@headlessui/react";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomizationPanel from "./CustomizationPanel";
@@ -19,7 +17,8 @@ import { Howl } from "howler";
 import Mascot from "./Mascot";
 import AchievementBadge from "./AchievementBadge";
 import OnboardingModal from './OnboardingModal';
-import "../styles/globals.css";
+import TabBar from "./TabBar";
+import NotificationContainer, { useNotifications } from "./NotificationSystem";
 
 // --- Font ---
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
@@ -39,7 +38,7 @@ export type LayoutProps = {
 };
 
 // --- Toast ---
-function Toast({ message, show }: { message: string; show: boolean }) {
+function Toast({ message, show }: { readonly message: string; readonly show: boolean }) {
   return (
     <AnimatePresence>
       {show && (
@@ -58,7 +57,7 @@ function Toast({ message, show }: { message: string; show: boolean }) {
 }
 
 // --- Emoji Rain ---
-function EmojiRain({ show }: { show: boolean }) {
+function EmojiRain({ show }: { readonly show: boolean }) {
   const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
   return (
     <AnimatePresence>
@@ -88,7 +87,7 @@ function EmojiRain({ show }: { show: boolean }) {
 }
 
 // --- Focus Timer ---
-function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
+function FocusTimer({ show, onEnd }: { readonly show: boolean; readonly onEnd: () => void }) {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     if (!show) return;
@@ -117,7 +116,7 @@ function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
 }
 
 // --- Reading Ruler ---
-function ReadingRuler({ enabled }: { enabled: boolean }) {
+function ReadingRuler({ enabled }: { readonly enabled: boolean }) {
   const [y, setY] = useState(0);
   useEffect(() => {
     if (!enabled) return;
@@ -143,7 +142,7 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
 
 // --- Error Boundary ---
 class ErrorBoundary extends React.Component<
-  { children: ReactNode },
+  { readonly children: ReactNode },
   { hasError: boolean }
 > {
   state = { hasError: false };
@@ -170,7 +169,34 @@ class ErrorBoundary extends React.Component<
   }
 }
 
+/**
+ * The `Layout` component serves as the main application wrapper for LISTO, providing global UI features,
+ * accessibility enhancements, and interactive elements. It manages theme switching, focus mode, onboarding,
+ * achievement badges, ambient soundscapes, command palette, settings, and visual effects such as confetti,
+ * emoji rain, and animated backgrounds.
+ *
+ * @component
+ * @param {LayoutProps} props - The props for the Layout component.
+ * @param {React.ReactNode} props.children - The main content to be rendered within the layout.
+ * @param {"light" | "dark"} props.theme - The current theme mode.
+ * @param {(theme: "light" | "dark") => void} props.setTheme - Function to update the theme mode.
+ *
+ * @remarks
+ * - Handles onboarding flow and achievement unlocking.
+ * - Provides accessibility features such as text-to-speech, high contrast, and assistive modes.
+ * - Integrates ambient soundscapes and theme scheduling.
+ * - Includes animated UI elements and interactive feedback (confetti, emoji rain, toast notifications).
+ * - Supports keyboard shortcuts for command palette and theme toggling.
+ *
+ * @example
+ * ```tsx
+ * <Layout theme={theme} setTheme={setTheme}>
+ *   <YourAppContent />
+ * </Layout>
+ * ```
+ */
 const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
+  const { notifications, removeNotification } = useNotifications();
   const [settings, setSettings] = useState({
     fontFamily: "Space Grotesk, sans-serif",
     fontColor: "#e4e6fb",
@@ -232,12 +258,12 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   // Greeting
   useEffect(() => {
     const hour = new Date().getHours();
-    let greet = "Welcome";
-    if (hour < 5) greet = "Burning the midnight oil?";
-    else if (hour < 12) greet = "Good morning";
-    else if (hour < 18) greet = "Good afternoon";
-    else greet = "Good evening";
-    setGreeting(greet);
+    let greetingText = "Welcome";
+    if (hour < 5) greetingText = "Burning the midnight oil?";
+    else if (hour < 12) greetingText = "Good morning";
+    else if (hour < 18) greetingText = "Good afternoon";
+    else greetingText = "Good evening";
+    setGreeting(greetingText);
   }, []);
 
   // --- Error handling for children (now covered by ErrorBoundary) ---
@@ -477,9 +503,11 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
       {/* Greeting Bar */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 mt-4 flex items-center gap-3 bg-white/70 dark:bg-black/60 px-6 py-2 rounded-full shadow-lg border border-blue-400/10 text-lg font-bold text-gray-700 dark:text-gray-100 backdrop-blur-lg animate-fade-in">
-        <span role="img" aria-label="wave">
-          👋
-        </span>
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext x='0' y='24' font-size='24'%3E%F0%9F%91%8B%3C/text%3E%3C/svg%3E"
+          alt="Waving hand emoji"
+          style={{ width: "2em", height: "2em", display: "inline" }}
+        />
         {greeting}, <span className="text-blue-500">LISTO User!</span>
         {!isOnline && (
           <span className="ml-2 text-red-600 text-base">[Offline]</span>
@@ -560,10 +588,10 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
             />
-            <Combobox.Options>
+            <Combobox.Options className="max-h-60 overflow-auto">
               {filteredActions.map((a, idx) => (
                 <Combobox.Option
-                  key={idx}
+                  key={`action-${a.name}`}
                   value={a}
                   className="p-3 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900 cursor-pointer transition"
                 >
@@ -723,7 +751,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
                       <tr key={r}>
                         {Array.from({ length: table.cols }).map((_, c) => (
                           <td
-                            key={c}
+                            key={`cell-${idx}-${r}-${c}`}
                             className="border border-sky-400/40 w-10 h-10 rounded-lg bg-white/60 dark:bg-[#2d2f4a]/60 shadow-inner"
                           ></td>
                         ))}
@@ -768,7 +796,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       </motion.button>
 
       {/* Footer */}
-      <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2">
+      <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2 pb-20 md:pb-3">
         <span className="animate-pulse text-blue-400">✨</span>
         <span>
           © {new Date().getFullYear()}{" "}
@@ -776,6 +804,16 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         </span>
         <span className="animate-pulse text-pink-400">✨</span>
       </footer>
+
+      {/* Mobile Tab Bar */}
+      <TabBar />
+
+      {/* Notification Container */}
+      <NotificationContainer 
+        notifications={notifications}
+        onClose={removeNotification}
+        position="top-right"
+      />
       <style>{`
         .animate-spin-slow {
           animation: spin 2.5s linear infinite;
@@ -803,3 +841,14 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 };
 
 export default Layout;
+
+interface SidebarProps {
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly currentView: string;
+  readonly onViewChange: (view: string) => void;
+}
+
+interface HeaderProps {
+  readonly onMenuClick: () => void;
+}

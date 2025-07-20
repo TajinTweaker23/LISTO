@@ -16,7 +16,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import firebaseApp from "../lib/firebase";
-import { getAvatarSVG } from "../components/AvatarPicker";
+import { getAvatarSVG } from "../components/ui/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -104,10 +104,14 @@ export default function Home() {
 
       // Weather + motivational greeting/quote
       const hour = new Date().getHours();
-      const baseGreeting =
-        hour < 12 ? "Good morning" :
-        hour < 18 ? "Good afternoon" :
-        "Good evening";
+      let baseGreeting;
+      if (hour < 12) {
+        baseGreeting = "Good morning";
+      } else if (hour < 18) {
+        baseGreeting = "Good afternoon";
+      } else {
+        baseGreeting = "Good evening";
+      }
 
       // Weather API — FIXED AS AN EXPRESSION!
       const fetchWeather = async () => {
@@ -201,14 +205,18 @@ export default function Home() {
   };
 
   return (
-    <div className={dark ? "dark min-h-screen bg-gradient-to-br from-blue-900 via-gray-900 to-pink-900" : "min-h-screen bg-gradient-to-br from-blue-50 via-white to-pink-50"}>
-      {/* Toggle button */}
-      <button
+    <div className={dark ? "dark min-h-screen bg-warm-gray-900" : "min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-sage-100"}>
+      {/* Sophisticated toggle button */}
+      <motion.button
         onClick={() => setDark(d => !d)}
-        className="absolute top-4 right-4 px-3 py-1 bg-gray-200 rounded shadow z-50"
+        className="absolute top-6 right-6 px-4 py-2 backdrop-blur-xl bg-white/20 border border-sage-200/50 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
-        {dark ? "☀️ Light" : "🌙 Dark"}
-      </button>
+        <span className="text-sage-700 font-medium flex items-center gap-2">
+          {dark ? "☀️ Light" : "🌙 Dark"}
+        </span>
+      </motion.button>
 
       {/* Hero Section */}
       <header className="flex flex-col items-center py-10 relative overflow-hidden">
@@ -244,7 +252,7 @@ export default function Home() {
           )}
         </motion.div>
         <motion.h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 z-10" {...fadeIn}>
-          {weatherGreeting ? weatherGreeting : `Good day, ${userName}!`}
+          {weatherGreeting || `Good day, ${userName}!`}
         </motion.h1>
         <motion.p className="text-lg text-gray-600 mb-2 z-10 font-medium" {...fadeIn}>
           {motivationQuote}
@@ -288,43 +296,51 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+      <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 pb-20">
         {/* Moodboards Card */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Moodboard">🎨</span> Your Moodboards
+        <motion.section 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">🎨</span> 
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Your Moodboards</span>
           </h2>
-          <div className="flex flex-wrap gap-3 mb-4">
+          <div className="flex flex-wrap gap-3 mb-6 flex-grow">
             {moodboards.length === 0 && (
-              <div className="text-gray-400">No moodboards yet. Start one!</div>
+              <div className="text-sage-400 font-medium">No moodboards yet. Start creating!</div>
             )}
             <AnimatePresence>
               {moodboards.map((mb) => (
                 <motion.div
                   key={mb.id}
-                  className={`rounded-xl px-4 py-2 bg-gradient-to-r from-blue-400 to-teal-300 text-white font-semibold shadow`}
+                  className="rounded-xl px-4 py-2 bg-gradient-to-r from-sage-500 to-sage-600 text-white font-semibold shadow-lg"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.4 }}
+                  whileHover={{ scale: 1.05 }}
                 >
                   {mb.title}
                 </motion.div>
               ))}
             </AnimatePresence>
-            <a
-              href="/moodboards/new"
-              className="rounded-xl px-4 py-2 bg-gray-100 text-gray-700 font-semibold shadow hover:bg-blue-100 transition"
-            >
-              + New Moodboard
-            </a>
           </div>
+          <motion.a
+            href="/moodboards/new"
+            className="rounded-2xl px-6 py-3 bg-sage-100 text-sage-700 font-semibold shadow-md hover:shadow-lg transition-all duration-300 text-center"
+            whileHover={{ scale: 1.02, backgroundColor: '#e8ebe8' }}
+            whileTap={{ scale: 0.98 }}
+          >
+            ✨ New Moodboard
+          </motion.a>
         </motion.section>
 
         {/* Daily Focus Card */}
         <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between" {...fadeIn}>
           <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Focus">🎯</span> Today’s Focus
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🎯</text></svg>" alt="Focus" className="inline w-8 h-8 align-middle" /> Today’s Focus
           </h2>
           <motion.p className="text-gray-700 mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             {dailyFocus}
@@ -342,67 +358,82 @@ export default function Home() {
         </motion.section>
 
         {/* Calendar Card with Real Events */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Calendar">📅</span> Calendar
+        <motion.section 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">📅</span> 
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Calendar</span>
           </h2>
-          <ul className="mb-4">
+          <ul className="mb-6 flex-grow space-y-3">
             {events.length === 0 && (
-              <li className="text-gray-400">No upcoming events.</li>
+              <li className="text-sage-400 font-medium">No upcoming events.</li>
             )}
             <AnimatePresence>
               {events.map(ev => (
                 <motion.li
                   key={ev.id}
-                  className="mb-2 flex items-center gap-2"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-sage-50 border border-sage-100"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="inline-block w-2 h-2 bg-blue-400 rounded-full"></span>
-                  <span className="font-semibold">{ev.title}</span>
-                  <span className="text-xs text-gray-500 ml-auto">
+                  <span className="inline-block w-3 h-3 bg-sage-400 rounded-full"></span>
+                  <span className="font-semibold text-sage-700 flex-grow">{ev.title}</span>
+                  <span className="text-xs text-sage-500">
                     {ev.date && new Date(ev.date.seconds ? ev.date.seconds * 1000 : ev.date).toLocaleDateString()}
                   </span>
                 </motion.li>
               ))}
             </AnimatePresence>
           </ul>
-          <a
+          <motion.a
             href="/calendar"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold w-max"
+            className="px-6 py-3 bg-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold text-center"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
           >
             Open Calendar
-          </a>
+          </motion.a>
         </motion.section>
 
         {/* Vision Board Grid */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Vision Board">🌈</span> Vision Board
+        <motion.section 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">🌈</span> 
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Vision Board</span>
           </h2>
-          <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="grid grid-cols-3 gap-3 mb-6">
             {visionItems.length === 0 && (
-              <div className="col-span-3 text-gray-400">No vision board items yet.</div>
+              <div className="col-span-3 text-sage-400 font-medium text-center py-8">
+                No vision board items yet. Start visualizing your dreams!
+              </div>
             )}
             <AnimatePresence>
               {visionItems.map(item => (
                 <motion.div
                   key={item.id}
-                  className="rounded-lg overflow-hidden shadow relative group"
+                  className="rounded-2xl overflow-hidden shadow-lg relative group bg-sage-50"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.05 }}
                 >
                   {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.caption || "Vision"} className="object-cover w-full h-24" />
+                    <img src={item.imageUrl} alt={item.caption || "Vision"} className="object-cover w-full h-28" />
                   ) : (
-                    <div className="w-full h-24 bg-gray-200 flex items-center justify-center text-2xl">🌟</div>
+                    <div className="w-full h-28 bg-gradient-to-br from-sage-100 to-sage-200 flex items-center justify-center text-3xl">🌟</div>
                   )}
                   {item.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-40 text-white text-xs px-2 py-1 truncate">
+                    <div className="absolute bottom-0 left-0 right-0 bg-sage-900/70 backdrop-blur-sm text-white text-xs px-3 py-2 truncate">
                       {item.caption}
                     </div>
                   )}
@@ -410,36 +441,46 @@ export default function Home() {
               ))}
             </AnimatePresence>
           </div>
-          <a
+          <motion.a
             href="/vision"
-            className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg shadow hover:bg-yellow-300 transition font-semibold w-max"
+            className="px-6 py-3 bg-gradient-to-r from-sage-500 to-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold text-center"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
           >
             Go to Vision Board
-          </a>
+          </motion.a>
         </motion.section>
 
         {/* Achievements Panel */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <span role="img" aria-label="Achievements">🏆</span> Achievements
+        <motion.section 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">🏆</span> 
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Achievements</span>
           </h2>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center flex-grow">
             {achievements.length === 0 && (
-              <div className="text-gray-400">No achievements yet.</div>
+              <div className="text-sage-400 font-medium text-center py-4">No achievements yet. Keep going!</div>
             )}
             <AnimatePresence>
               {achievements.map(ach => (
                 <motion.div
                   key={ach.id}
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center p-4 rounded-2xl bg-sage-50 border border-sage-100"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                 >
-                  <span className="text-3xl animate-bounce">{ach.icon || "⭐"}</span>
-                  <span className="text-sm font-semibold mt-1">{ach.name}</span>
-                  <span className="text-xs text-gray-400">{ach.earnedAt && new Date(ach.earnedAt.seconds ? ach.earnedAt.seconds * 1000 : ach.earnedAt).toLocaleDateString()}</span>
+                  <span className="text-4xl mb-2">{ach.icon || "⭐"}</span>
+                  <span className="text-sm font-semibold text-sage-700 text-center">{ach.name}</span>
+                  <span className="text-xs text-sage-400 mt-1">
+                    {ach.earnedAt && new Date(ach.earnedAt.seconds ? ach.earnedAt.seconds * 1000 : ach.earnedAt).toLocaleDateString()}
+                  </span>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -447,19 +488,24 @@ export default function Home() {
         </motion.section>
 
         {/* Quick Add Card */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Quick Add">➕</span> Quick Add
+        <motion.section 
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">➕</span> 
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Quick Add</span>
           </h2>
-          <form className="flex gap-2 flex-wrap" onSubmit={handleQuickAdd}>
+          <form className="flex gap-4 flex-wrap" onSubmit={handleQuickAdd}>
             <select
               value={quickAddType}
               onChange={e => setQuickAddType(e.target.value)}
-              className="px-2 py-2 border rounded-lg shadow-sm text-sm"
+              className="px-4 py-3 border border-sage-200 rounded-2xl shadow-sm text-sm font-medium text-sage-700 bg-white focus:ring-2 focus:ring-sage-300 focus:border-sage-300 transition-all"
             >
-              <option value="goal">Goal</option>
-              <option value="event">Event</option>
-              <option value="idea">Idea</option>
+              <option value="goal">🎯 Goal</option>
+              <option value="event">📅 Event</option>
+              <option value="idea">💡 Idea</option>
             </select>
             <input
               ref={quickAddInputRef}
@@ -467,26 +513,28 @@ export default function Home() {
               value={quickAdd}
               onChange={e => setQuickAdd(e.target.value)}
               placeholder={`Add a new ${quickAddType}...`}
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="flex-1 px-4 py-3 border border-sage-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-sage-300 transition-all bg-white text-sage-700"
             />
-            <button
+            <motion.button
               type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition font-semibold"
+              className="px-6 py-3 bg-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!quickAdd.trim()}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Add
-            </button>
+              Add ✨
+            </motion.button>
           </form>
           <AnimatePresence>
             {quickAddSuccess && (
               <motion.div
-                className="mt-2 text-green-600 font-semibold flex items-center gap-2"
+                className="mt-4 text-sage-600 font-semibold flex items-center gap-3 p-3 bg-sage-100 rounded-2xl"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.4 }}
               >
-                <span>✔️ Added!</span>
+                <span className="text-lg">✅</span> Successfully added!
               </motion.div>
             )}
           </AnimatePresence>
@@ -518,16 +566,16 @@ export default function Home() {
         </motion.section>
       </main>
 
-      {/* Quick Action Button */}
+      {/* Sophisticated Quick Action Button */}
       <motion.button
-        className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
-        whileHover={{ scale: 1.15, rotate: 8 }}
+        className="fixed bottom-8 right-8 z-50 bg-sage-600 hover:bg-sage-700 text-white rounded-full shadow-2xl p-6 text-2xl border-4 border-white/50 backdrop-blur-sm"
+        whileHover={{ scale: 1.1, rotate: 180 }}
         whileTap={{ scale: 0.95 }}
-        animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
+        animate={{ y: [0, -8, 0] }}
+        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
         aria-label="Quick Action"
       >
-        +
+        ✨
       </motion.button>
     </div>
   );

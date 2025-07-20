@@ -13,24 +13,261 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { auth } from "../../lib/firebase";
 import { signOut } from "firebase/auth";
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// 1️⃣ Accept color props with nice defaults
+// Accept color props with nice defaults
+function BrandLogo({ logoSrc }: { readonly logoSrc?: string }) {
+  return (
+    <Link href="/" className="flex items-center gap-3 group select-none">
+      {logoSrc ? (
+        <img src={logoSrc} alt="LISTO logo" className="h-10 w-10 rounded-xl shadow-lg" />
+      ) : (
+        <motion.div
+          className="h-10 w-10 rounded-xl bg-gradient-to-br from-sage-500 to-sage-600 flex items-center justify-center shadow-lg"
+          initial={{ rotate: -8 }}
+          animate={{ rotate: [0, 8, -8, 0] }}
+          transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+        >
+          <LayoutGrid className="h-6 w-6 text-white" />
+        </motion.div>
+      )}
+      <span
+        className="font-bold text-3xl tracking-tight"
+        style={{
+          fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif',
+          background: 'linear-gradient(135deg, #6d7c6d 0%, #8fa08f 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}
+      >
+        LISTO
+      </span>
+    </Link>
+  );
+}
+
+function DesktopNavLinks({
+  navLinks,
+  router,
+  theme,
+}: {
+  readonly navLinks: { label: string; href: string; icon: JSX.Element }[];
+  readonly router: ReturnType<typeof useRouter>;
+  readonly theme: string;
+}) {
+  return (
+    <div className="hidden md:flex items-center gap-8">
+      {navLinks.map((link) => (
+        <Link
+          href={link.href}
+          key={link.href}
+          className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 font-medium ${
+            router.pathname === link.href
+              ? theme === "dark"
+                ? "bg-sage-800/60 text-sage-100 shadow-lg"
+                : "bg-sage-100 text-sage-700 shadow-md"
+              : theme === "dark"
+              ? "text-sage-300 hover:text-sage-100 hover:bg-sage-800/40"
+              : "text-sage-600 hover:text-sage-700 hover:bg-sage-50"
+          }`}
+        >
+          {link.icon}
+          {link.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function ThemeToggleButton({
+  theme,
+  setTheme,
+}: {
+  readonly theme: string;
+  readonly setTheme?: (theme: string) => void;
+}) {
+  if (!setTheme) return null;
+  return (
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className={`p-3 rounded-2xl transition-all duration-300 ${
+        theme === "dark"
+          ? "bg-sage-800/60 text-sage-200 hover:bg-sage-700/60"
+          : "bg-sage-100 text-sage-600 hover:bg-sage-200"
+      }`}
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+    </motion.button>
+  );
+}
+
+function UserActions({
+  user,
+  theme,
+  handleSignOut,
+}: {
+  readonly user: any;
+  readonly theme: string;
+  readonly handleSignOut: () => void;
+}) {
+  return user ? (
+    <div className="hidden md:flex items-center gap-3">
+      <span className={`text-sm font-medium ${theme === "dark" ? "text-sage-200" : "text-sage-700"}`}>
+        {user.email}
+      </span>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleSignOut}
+        className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300 font-medium ${
+          theme === "dark"
+            ? "bg-red-900/60 text-red-200 hover:bg-red-800/60"
+            : "bg-red-100 text-red-700 hover:bg-red-200"
+        }`}
+      >
+        <LogOut className="h-4 w-4" />
+        Sign Out
+      </motion.button>
+    </div>
+  ) : (
+    <Link
+      href="/login"
+      className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl transition-all duration-300 font-semibold ${
+        theme === "dark"
+          ? "bg-sage-600 text-white hover:bg-sage-500 shadow-lg"
+          : "bg-sage-600 text-white hover:bg-sage-700 shadow-md"
+      }`}
+    >
+      Sign In
+    </Link>
+  );
+}
+
+function MobileDrawer({
+  drawerOpen,
+  navLinks,
+  router,
+  theme,
+  user,
+  handleSignOut,
+  setDrawerOpen,
+}: {
+  readonly drawerOpen: boolean;
+  readonly navLinks: { label: string; href: string; icon: JSX.Element }[];
+  readonly router: ReturnType<typeof useRouter>;
+  readonly theme: string;
+  readonly user: any;
+  readonly handleSignOut: () => void;
+  readonly setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  return (
+    <AnimatePresence>
+      {drawerOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className={`md:hidden border-t ${
+            theme === "dark"
+              ? "bg-warm-gray-900/95 border-sage-700/30"
+              : "bg-white/95 border-sage-200/50"
+          }`}
+        >
+          <div className="px-6 py-6 space-y-4">
+            {navLinks.map((link) => (
+              <Link
+                href={link.href}
+                key={link.href}
+                onClick={() => setDrawerOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-medium ${
+                  router.pathname === link.href
+                    ? theme === "dark"
+                      ? "bg-sage-800/60 text-sage-100"
+                      : "bg-sage-100 text-sage-700"
+                    : theme === "dark"
+                    ? "text-sage-300 hover:bg-sage-800/40"
+                    : "text-sage-600 hover:bg-sage-50"
+                }`}
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            ))}
+
+            {user ? (
+              <div className="pt-4 border-t border-sage-200/50 space-y-3">
+                <div className={`px-4 text-sm ${theme === "dark" ? "text-sage-300" : "text-sage-600"}`}>
+                  {user.email}
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSignOut}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-medium w-full ${
+                    theme === "dark"
+                      ? "bg-red-900/60 text-red-200"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </motion.button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setDrawerOpen(false)}
+                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-2xl transition-all duration-300 font-semibold ${
+                  theme === "dark"
+                    ? "bg-sage-600 text-white"
+                    : "bg-sage-600 text-white"
+                }`}
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+interface NavbarProps {
+  readonly theme: string;
+  readonly setTheme: (theme: string) => void;
+}
+
+interface MobileMenuItemProps {
+  readonly icon: React.ReactNode;
+  readonly label: string;
+  readonly href: string;
+  readonly onClick?: () => void;
+  readonly badge?: string;
+  readonly isActive?: boolean;
+  readonly className?: string;
+}
+
 export default function Navbar({
   theme,
   setTheme,
   logoSrc,
-  primaryColor = "#6366f1",       // Default: indigo-500
-  secondaryColor = "#f472b6",     // Default: pink-400
-  gradient = "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #fbbf24)", // blue > purple > pink > yellow
+  primaryColor = "#6366f1",
+  secondaryColor = "#f472b6",
+  gradient = "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #fbbf24)",
 }: {
-  theme: string;
-  setTheme?: (theme: string) => void;
-  logoSrc?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
-  gradient?: string;
+  readonly theme: string;
+  readonly setTheme?: (theme: string) => void;
+  readonly logoSrc?: string;
+  readonly primaryColor?: string;
+  readonly secondaryColor?: string;
+  readonly gradient?: string;
 }) {
   const { user } = useAuth();
   const router = useRouter();
@@ -38,12 +275,11 @@ export default function Navbar({
 
   const navLinks = [
     { label: "Home", href: "/", icon: <HomeIcon className="h-5 w-5" /> },
-    user && { label: "Dashboard", href: "/dashboard", icon: <LayoutGrid className="h-5 w-5" /> },
     user && { label: "Profile", href: "/profile", icon: <UserIcon className="h-5 w-5" /> },
-    { label: "Vision Board", href: "/vision", icon: <LayoutGrid className="h-5 w-5" /> },
-    { label: "Moodboards", href: "/moodboards", icon: <LayoutGrid className="h-5 w-5" /> },
-    { label: "Calendar", href: "/calendar", icon: <LayoutGrid className="h-5 w-5" /> },
-  ].filter(Boolean);
+    { label: "Vision Board", href: "/vision-board", icon: <LayoutGrid className="h-5 w-5" /> },
+    { label: "Explore", href: "/explore", icon: <LayoutGrid className="h-5 w-5" /> },
+    { label: "UI Demo", href: "/mobile-ui-demo", icon: <LayoutGrid className="h-5 w-5" /> },
+  ].filter(Boolean) as { label: string; href: string; icon: JSX.Element }[];
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -55,197 +291,47 @@ export default function Navbar({
       initial={{ y: -30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, type: "spring" }}
-      className={`fixed w-full top-0 left-0 z-50 shadow-xl backdrop-blur-lg border-b
-        ${theme === "dark"
-          ? "bg-[#181824cc] border-fuchsia-400/20"
-          : "bg-white/80 border-cyan-400/20"
-        }`}
+      className={`fixed w-full top-0 left-0 z-50 shadow-xl backdrop-blur-2xl border-b ${
+        theme === "dark"
+          ? "bg-warm-gray-900/90 border-sage-700/30"
+          : "bg-white/80 border-sage-200/50"
+      }`}
       style={{
         WebkitBackdropFilter: "blur(20px)",
         backdropFilter: "blur(20px)",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 flex h-16 items-center justify-between">
-        {/* Brand/Logo */}
-        <Link href="/" className="flex items-center gap-2 group select-none">
-          {logoSrc ? (
-            <img src={logoSrc} alt="LISTO logo" className="h-8 w-8 rounded shadow" />
-          ) : (
-            <motion.span
-              initial={{ rotate: -8 }}
-              animate={{ rotate: [0, 14, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            >
-              <LayoutGrid className="h-8 w-8"
-                style={{ color: primaryColor, filter: "drop-shadow(0 0 8px " + secondaryColor + ")" }}
-              />
-            </motion.span>
-          )}
-          <span
-            className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent animate-gradient-x"
-            style={{ background: gradient }}
+      <div className="max-w-7xl mx-auto px-6 md:px-8 flex h-20 items-center justify-between">
+        <BrandLogo logoSrc={logoSrc} />
+        <DesktopNavLinks navLinks={navLinks} router={router} theme={theme} />
+        <div className="flex items-center gap-4">
+          <ThemeToggleButton theme={theme} setTheme={setTheme} />
+          <UserActions user={user} theme={theme} handleSignOut={handleSignOut} />
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            className={`md:hidden p-3 rounded-2xl transition-all duration-300 ${
+              theme === "dark"
+                ? "bg-sage-800/60 text-sage-200"
+                : "bg-sage-100 text-sage-600"
+            }`}
+            aria-label="Toggle mobile menu"
           >
-            LISTO
-          </span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link, i) => (
-            <Link
-              href={link.href}
-              key={i}
-              className="flex items-center gap-1 px-3 py-1 rounded-full transition-all font-medium"
-              style={{
-                color: primaryColor,
-                border: "1px solid transparent",
-                background: "none",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = secondaryColor + "22")}
-              onMouseLeave={e => (e.currentTarget.style.background = "none")}
-            >
-              {link.icon}
-              <span className="hidden sm:inline">{link.label}</span>
-            </Link>
-          ))}
-          {user ? (
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              onClick={handleSignOut}
-              className="flex items-center gap-1 px-3 py-1 rounded-full text-white shadow-lg hover:scale-105 transition-all font-medium"
-              style={{ background: gradient, boxShadow: "0 0 8px " + secondaryColor }}
-              title="Sign out"
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </motion.button>
-          ) : (
-            <Link
-              href="/login"
-              className="px-4 py-1 rounded-full text-white shadow-lg hover:scale-105 transition-all font-medium"
-              style={{ background: gradient }}
-            >
-              Login
-            </Link>
-          )}
-          {setTheme && (
-            <motion.button
-              whileTap={{ rotate: 22, scale: 1.1 }}
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="ml-2 p-2 rounded-full shadow transition"
-              style={{ background: primaryColor, color: "#fff" }}
-              title="Toggle theme"
-              aria-label="Toggle dark mode"
-              type="button"
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5 text-yellow-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-white" />
-              )}
-            </motion.button>
-          )}
+            {drawerOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </motion.button>
         </div>
-
-        {/* Hamburger for Mobile */}
-        <button
-          onClick={() => setDrawerOpen(true)}
-          className="md:hidden p-2 rounded transition"
-          style={{ color: primaryColor, background: secondaryColor + "12" }}
-          aria-label="Open menu"
-        >
-          <Menu className="w-7 h-7" />
-        </button>
-
-        {/* Mobile Drawer */}
-        <AnimatePresence>
-          {drawerOpen && (
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.33, type: "spring" }}
-              className="fixed inset-0 z-[9999] flex"
-            >
-              <div
-                className="fixed inset-0 bg-black/40"
-                onClick={() => setDrawerOpen(false)}
-              />
-              <div className="ml-auto w-72 bg-white dark:bg-[#1c1b2b] h-full shadow-2xl px-6 py-8 flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <span
-                    className="font-bold text-lg tracking-tight"
-                    style={{ background: gradient, WebkitBackgroundClip: "text", color: "transparent" }}
-                  >
-                    LISTO
-                  </span>
-                  <button
-                    className="p-2 rounded"
-                    style={{ background: secondaryColor + "22" }}
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-                <div className="flex flex-col gap-5">
-                  {navLinks.map((link, i) => (
-                    <Link
-                      href={link.href}
-                      key={i}
-                      className="flex items-center gap-3 text-lg font-medium py-2 px-2 rounded transition"
-                      style={{ color: primaryColor }}
-                      onClick={() => setDrawerOpen(false)}
-                      onMouseEnter={e => (e.currentTarget.style.background = secondaryColor + "22")}
-                      onMouseLeave={e => (e.currentTarget.style.background = "none")}
-                    >
-                      {link.icon}
-                      <span>{link.label}</span>
-                    </Link>
-                  ))}
-                  {user ? (
-                    <button
-                      onClick={() => {
-                        setDrawerOpen(false);
-                        handleSignOut();
-                      }}
-                      className="flex items-center gap-3 px-3 py-2 rounded text-white shadow-lg hover:scale-105 transition-all font-medium mt-2"
-                      style={{ background: gradient }}
-                      title="Sign out"
-                    >
-                      <LogOut className="h-5 w-5" />
-                      Sign Out
-                    </button>
-                  ) : (
-                    <Link
-                      href="/login"
-                      className="px-4 py-2 mt-2 rounded-full text-white shadow-lg hover:scale-105 transition-all font-medium"
-                      style={{ background: gradient }}
-                    >
-                      Login
-                    </Link>
-                  )}
-                </div>
-                {setTheme && (
-                  <button
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                    className="mt-10 flex items-center gap-2 p-2 rounded shadow transition"
-                    style={{ background: primaryColor, color: "#fff" }}
-                    aria-label="Toggle theme"
-                    type="button"
-                  >
-                    {theme === "dark" ? (
-                      <Sun className="w-5 h-5 text-yellow-400" />
-                    ) : (
-                      <Moon className="w-5 h-5 text-white" />
-                    )}
-                    <span className="font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+      <MobileDrawer
+        drawerOpen={drawerOpen}
+        navLinks={navLinks}
+        router={router}
+        theme={theme}
+        user={user}
+        handleSignOut={handleSignOut}
+        setDrawerOpen={setDrawerOpen}
+      />
     </motion.nav>
   );
 }
+/* No additional code needed at the end of this file. */

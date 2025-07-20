@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { AuthProvider } from "../context/AuthContext";
-import Layout from "../components/Layout";
-import OnboardingModal from "../components/OnboardingModal";
+import Layout from "../components/ui/Layout";
+import OnboardingModal from "../components/ui/OnboardingModal";
 import "../styles/globals.css";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -19,7 +19,7 @@ const db = getFirestore(firebaseApp);
 function MyApp({ Component, pageProps }: AppProps) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -46,8 +46,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (showOnboarding) {
     return (
       <OnboardingModal
-        onClose={() => setShowOnboarding(false)}
-        onComplete={async () => {
+        show={showOnboarding}
+        onClose={async () => {
           const user = auth.currentUser;
           if (user) {
             const userRef = doc(db, "users", user.uid);
@@ -61,10 +61,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <AuthProvider>
-      <Layout>
+      <Layout theme={theme} setTheme={setTheme}>
         <div
           className={`${
-            darkMode ? "dark" : ""
+            theme === "dark" ? "dark" : ""
           } font-sans transition-all duration-300`}
           style={{ fontFamily: "'Quicksand', sans-serif" }}
         >
