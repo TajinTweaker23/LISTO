@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, LayoutDashboard, Calendar, FileText, Settings } from 'lucide-react';
-import Logo from '@/components/Logo'; // Using alias for robustness
 
 interface SidebarProps {
   readonly isOpen: boolean;
