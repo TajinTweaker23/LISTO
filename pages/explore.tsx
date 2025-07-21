@@ -1550,9 +1550,6 @@ export default function Explore() {
           {!showTravelPlanning ? (
             /* ---- DAILY EXPLORATION MODE ---- */
             <div>
-              {/* ---- ENHANCED EMPTY STATE ---- */}
-              {!query && !loading && items.length === 0 && (
-                <div>
               {/* WEATHER + DAY PLANNER */}
               <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
                 {/* Smart Weather Card */}
@@ -2002,11 +1999,84 @@ export default function Explore() {
               )}
             </div>
           )}
+          
+          {/* ERROR MESSAGE DISPLAY */
+          errorMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center"
+            >
+              <p className="text-red-600 dark:text-red-400">{errorMessage}</p>
+            </motion.div>
+          )}
+
+          {/* LOADING STATE */}
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-center py-20"
+            >
+              <LoaderComponent variant="spinner" sizes="lg" color="#6366f1" />
+            </motion.div>
+          )}
+
+          {/* SEARCH RESULTS */}
+          {items.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8"
+            >
+              {items.map((item, idx) => (
+                <motion.div
+                  key={item.link}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-white/80 dark:bg-stone-800/80 rounded-2xl shadow-lg overflow-hidden border border-stone-200 dark:border-stone-700 hover:shadow-xl transition-all"
+                >
+                  {item.pagemap?.cse_image?.[0]?.src && (
+                    <img
+                      src={item.pagemap.cse_image[0].src}
+                      alt={item.title}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <h3 className="font-bold text-lg mb-2 text-stone-800 dark:text-stone-200">
+                      {item.title}
+                    </h3>
+                    <p className="text-stone-600 dark:text-stone-400 text-sm mb-4">
+                      {item.snippet}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 font-medium text-sm"
+                      >
+                        Visit →
+                      </a>
+                      <button
+                        onClick={() => addToGrabBox(item)}
+                        className="bg-sage-100 dark:bg-sage-800 text-sage-700 dark:text-sage-300 px-3 py-1 rounded-full text-sm font-medium hover:bg-sage-200 dark:hover:bg-sage-700 transition-colors"
+                      >
+                        + Add
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </main>
 
         {/* GRAB BOX FOOTER + ITINERARY (Drag-and-drop) */}
         {grabBox.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-800/90 border-t-2 border-pink-100 dark:border-indigo-900 p-4 shadow-inner z-50 rounded-t-3xl">
+          <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-stone-800/90 border-t-2 border-stone-200 dark:border-stone-700 p-4 shadow-inner z-50 rounded-t-3xl">
             <div className="flex justify-between items-center max-w-6xl mx-auto">
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="grabBox" direction="horizontal">
@@ -2083,12 +2153,20 @@ export default function Explore() {
           </div>
         )}
         <motion.button
-          className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
+          className="fixed bottom-8 right-8 z-50 bg-sage-500 hover:bg-sage-600 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-stone-800"
           whileHover={{ scale: 1.15, rotate: 8 }}
           whileTap={{ scale: 0.95 }}
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           aria-label="Quick Action"
+          onClick={() => {
+            // Add quick action functionality
+            addNotification({
+              type: "info",
+              title: "Quick Action",
+              message: "Feature coming soon!",
+            });
+          }}
         >
           +
         </motion.button>
@@ -2099,7 +2177,7 @@ export default function Explore() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
-            className="fixed bottom-36 left-1/2 -translate-x-1/2 bg-white/90 dark:bg-indigo-900/90 px-6 py-3 rounded-full shadow-xl border-2 border-pink-200 text-pink-500 font-bold z-50"
+            className="fixed bottom-36 left-1/2 -translate-x-1/2 bg-white/90 dark:bg-stone-900/90 px-6 py-3 rounded-full shadow-xl border-2 border-sage-200 text-sage-600 font-bold z-50"
           >
             {toast}
           </motion.div>
