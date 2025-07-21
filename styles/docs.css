@@ -93,28 +93,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
-  height: 40px;
+  padding: 0 1rem;
+  height: 44px;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background-color: #4b50dd;
   color: #fff;
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color .2s;
-  margin-left: 16px;
 }
 
 .btn-upload:hover {
   background-color: #3a3dbd;
 }
 
-.btn-upload svg {
-  margin-right: 8px;
-  width: 18px;
-  height: 18px;
+.btn-upload .feather {
+  margin-right: 0.5rem;
+  width: 20px;
+  height: 20px;
 }
 /* --- END UPLOAD BUTTON STYLES --- */
 
