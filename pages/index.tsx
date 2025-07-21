@@ -18,6 +18,9 @@ import {
 import firebaseApp from "../lib/firebase";
 import { getAvatarSVG } from "../components/ui/AvatarPicker";
 import { motion, AnimatePresence } from "framer-motion";
+import FaqSection from '@/components/FaqSection';
+import '../styles/faq.css';
+import { Link as LinkIcon } from 'lucide-react'; // Import an icon
 
 export default function Home() {
   const [userName, setUserName] = useState("Friend");
@@ -26,6 +29,7 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
   const [visionItems, setVisionItems] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<any[]>([]);
+  const [articles, setArticles] = useState<any[]>([]); // <-- Add state for articles
   const [loading, setLoading] = useState(true);
   const [dark, setDark] = useState(false);
   const [quickAdd, setQuickAdd] = useState("");
@@ -62,6 +66,20 @@ export default function Home() {
           setAvatar(snap.data().avatar || null);
         }
       });
+
+      // Fetch Daily News Articles
+      const fetchArticles = async () => {
+        try {
+          const response = await fetch('/api/daily-news');
+          const data = await response.json();
+          if (data && Array.isArray(data)) {
+            setArticles(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch articles:", error);
+        }
+      };
+      fetchArticles();
 
       // Real-time Moodboards
       const qMood = query(collection(db, "moodboards"), where("userId", "==", user.uid));
@@ -219,24 +237,10 @@ export default function Home() {
       </motion.button>
 
       {/* Hero Section */}
-      <header className="flex flex-col items-center py-10 relative overflow-hidden">
-        {/* Animated SVG background */}
-        <motion.svg
-          className="absolute left-0 top-0 w-full h-40 opacity-20 pointer-events-none"
-          viewBox="0 0 1440 320"
-          initial={fadeIn.initial}
-          animate={fadeIn.animate}
-          exit={fadeIn.exit}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.path
-            fill="#a5b4fc"
-            fillOpacity="0.4"
-            d="M0,160L80,170.7C160,181,320,203,480,197.3C640,192,800,160,960,154.7C1120,149,1280,171,1360,181.3L1440,192L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
-            animate={{ pathLength: [0.8, 1, 0.8] }}
-            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-          />
-        </motion.svg>
+      <header className="flex flex-col items-center py-10 relative overflow-hidden bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1932&auto=format&fit=crop')"}}>
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-white/30 dark:bg-warm-gray-900/50 backdrop-blur-sm"></div>
+        
         <motion.div className="mb-4 z-10" {...fadeIn}>
           {avatar ? (
             <motion.div
@@ -357,6 +361,47 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Daily Briefing Card */}
+        <motion.section
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
+          {...fadeIn}
+          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
+            <span className="text-2xl">📰</span>
+            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Daily Briefing</span>
+          </h2>
+          <ul className="space-y-3 flex-grow">
+            {articles.length === 0 && (
+              <li className="text-sage-400 font-medium">Loading top stories...</li>
+            )}
+            <AnimatePresence>
+              {articles.map((article, index) => (
+                <motion.li
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-sage-50 transition-colors duration-200 group"
+                  >
+                    <LinkIcon className="w-5 h-5 text-sage-400 group-hover:text-sage-600 transition-colors" />
+                    <span className="font-semibold text-sage-700 flex-grow">{article.title}</span>
+                    <span className="text-xs font-bold text-white bg-sage-400 group-hover:bg-sage-500 px-2 py-1 rounded-full transition-colors">
+                      {article.source}
+                    </span>
+                  </a>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </ul>
+        </motion.section>
+
         {/* Calendar Card with Real Events */}
         <motion.section 
           className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
@@ -369,7 +414,12 @@ export default function Home() {
           </h2>
           <ul className="mb-6 flex-grow space-y-3">
             {events.length === 0 && (
-              <li className="text-sage-400 font-medium">No upcoming events.</li>
+              <li className="text-sage-400 font-medium text-center py-4">
+                <div className="text-4xl mb-2">🗓️</div>
+                No upcoming events.
+                <br />
+                <span className="text-sm">Add one using the Quick Add below!</span>
+              </li>
             )}
             <AnimatePresence>
               {events.map(ev => (
@@ -410,10 +460,15 @@ export default function Home() {
             <span className="text-2xl">🌈</span> 
             <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Vision Board</span>
           </h2>
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-3 gap-3 mb-6 flex-grow">
             {visionItems.length === 0 && (
-              <div className="col-span-3 text-sage-400 font-medium text-center py-8">
-                No vision board items yet. Start visualizing your dreams!
+              <div className="col-span-3 text-white font-bold text-center py-8 flex flex-col items-center justify-center rounded-2xl bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1508615039623-a25605d2b022?q=80&w=1200&auto=format&fit=crop')"}}>
+                <div className="bg-black/30 p-4 rounded-xl backdrop-blur-sm">
+                  <div className="text-3xl mb-2">✨</div>
+                  Visualize your dreams.
+                  <br />
+                  <span className="text-sm font-normal">Add your first vision board item.</span>
+                </div>
               </div>
             )}
             <AnimatePresence>
@@ -565,6 +620,8 @@ export default function Home() {
           </motion.div>
         </motion.section>
       </main>
+
+      <FaqSection />
 
       {/* Sophisticated Quick Action Button */}
       <motion.button

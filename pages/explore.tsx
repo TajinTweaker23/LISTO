@@ -1,8 +1,11 @@
+import '../styles/landing.css';
+import '../styles/events.css'; // <-- Import the CSS
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Calendar, Globe2, PartyPopper, Sparkle, HomeIcon, Sun, Moon, MapPin, Smile, BrainCircuit, Star, ChefHat, Move, Trash2, Loader2, Search, Mic, Loader, Flame, Leaf } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useSpring as useFramerSpring } from "framer-motion";
 import dynamic from "next/dynamic";
+import { Button } from "@/components/ui/button";
 
 // Mobile App Design Components
 import LoaderComponent from "../components/ui/Loader";
@@ -12,6 +15,7 @@ import Tooltip from "../components/ui/Tooltip";
 import { ProductCard, Accordion } from "../components/ui/EnhancedCards";
 import { ImageCarousel } from "../components/ui/Carousel";
 import { useNotifications } from "../components/ui/NotificationSystem";
+import EventsSection from '@/components/EventsSection'; // <-- Import the component
 
 // Dynamically import MapContainer to avoid SSR issues
 const MapContainer = dynamic<any>(
@@ -1198,7 +1202,8 @@ export default function Explore() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
         {/* MAIN CONTENT */
         <main className="max-w-7xl mx-auto px-4 py-10" ref={resultsRef}>
@@ -1605,8 +1610,8 @@ export default function Explore() {
             </div>
           )}
           
-          {/* ERROR MESSAGE DISPLAY */
-          errorMessage && (
+          {/* ERROR MESSAGE DISPLAY */}
+          {errorMessage && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1619,7 +1624,7 @@ export default function Explore() {
           {/* LOADING STATE */}
           {loading && (
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={{ opacity:  0 }}
               animate={{ opacity: 1 }}
               className="flex justify-center py-20"
             >

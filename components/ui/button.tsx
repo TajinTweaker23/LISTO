@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "relative overflow-hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200 focus:outline-none select-none shadow-sm",
+  "relative group overflow-hidden inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200 focus:outline-none select-none shadow-sm",
   {
     variants: {
       variant: {
@@ -13,6 +13,7 @@ const buttonVariants = cva(
         outline:
           "border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-400",
         danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-400",
+        glow: "text-green-400 bg-gray-800 border border-gray-600 rounded-2xl uppercase tracking-wider font-bold hover:shadow-[0_0_10px_#34d399,0_0_25px_#2dd4bf,0_0_50px_#34d399] hover:text-white transition-shadow duration-300 delay-[0.6s]",
         spinner: "", // Add an empty class for spinner
         dots: "", // Add an empty class for dots
         bars: "", // Add an empty class for bars
@@ -118,6 +119,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         data-testid={dataTestId || "button"}
         {...props}
       >
+        {variant === "glow" && (
+          <>
+            <span className="absolute top-0 -left-full w-full h-0.5 bg-gradient-to-r from-transparent to-green-500 transition-all duration-700 group-hover:left-full" />
+            <span className="absolute -top-full right-0 w-0.5 h-full bg-gradient-to-b from-transparent to-green-500 transition-all duration-700 delay-150 group-hover:top-full" />
+            <span className="absolute bottom-0 -right-full w-full h-0.5 bg-gradient-to-l from-transparent to-teal-500 transition-all duration-700 delay-300 group-hover:right-full" />
+            <span className="absolute -bottom-full left-0 w-0.5 h-full bg-gradient-to-t from-transparent to-teal-500 transition-all duration-700 delay-500 group-hover:bottom-full" />
+          </>
+        )}
         <span
           ref={rippleRef}
           className="absolute inset-0 pointer-events-none"

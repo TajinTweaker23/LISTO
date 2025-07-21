@@ -1,7 +1,10 @@
 // pages/impact-projects.tsx
 // ──────────────────────────────────────────────────────────────────────────────
 // Example page that reads/writes from Firestore. We fix the import path for `db`.
+import '../styles/events.css'; // <-- Import the CSS
+// ... other imports
 
+// Removed duplicate default export Explore component to fix redeclaration error.
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar";
 import { db } from "../lib/firebase"; // ← correct path to lib/firebase.ts
@@ -86,23 +89,27 @@ export default function ImpactProjects() {
           </select>
         </div>
 
-        {loading ? (
-          <p>Loading projects…</p>
-        ) : projects.length === 0 ? (
-          <p>No projects found.</p>
-        ) : (
-          <ul className="space-y-4">
-            {projects.map((proj) => (
-              <li
-                key={proj.id}
-                className="p-4 bg-white rounded-lg shadow flex flex-col"
-              >
-                <h3 className="font-bold text-lg">{proj.title}</h3>
-                <p className="text-gray-600">{proj.description}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+        {(() => {
+          if (loading) {
+            return <p>Loading projects…</p>;
+          } else if (projects.length === 0) {
+            return <p>No projects found.</p>;
+          } else {
+            return (
+              <ul className="space-y-4">
+                {projects.map((proj) => (
+                  <li
+                    key={proj.id}
+                    className="p-4 bg-white rounded-lg shadow flex flex-col"
+                  >
+                    <h3 className="font-bold text-lg">{proj.title}</h3>
+                    <p className="text-gray-600">{proj.description}</p>
+                  </li>
+                ))}
+              </ul>
+            );
+          }
+        })()}
 
         {/* Floating Action Button */}
         <motion.button

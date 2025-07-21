@@ -63,7 +63,7 @@ html, body {
   --gradient-sage: linear-gradient(135deg, #f6f7f6 0%, #e8ebe8 100%);
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Syne:wght@700;800&display=swap');
 
 /* Custom Tailwind utilities for sage colors */
 .bg-sage-50 { background-color: var(--sage-50); }
@@ -249,24 +249,431 @@ html, body {
 /* --- Modern Card & Grid Styles --- */
 /* 3. Body, Headings, Typography */
 body {
-  background: var(--color-bg);
-  color: var(--color-text-main);
-  font-family: var(--font-body);
-  line-height: 1.6;
-  scroll-behavior: smooth;
-  background: var(--gradient-bg);
+  font-family: var(--font-sans);
+  background-color: var(--light);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .cs-title, .cs-h3 {
+  font-family: var(--font-display);
+  color: var(--headerColor);
+  font-weight: 800;
+}
+
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode .cs-title, .dark-mode .cs-h3 {
+    color: var(--bodyTextColorWhite);
+}
+
+.cs-topper {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+p { margin-bottom: 1rem; }
+/* 4. Buttons */
+.button, button, .btn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
   font-family: var(--font-brand);
-  color: var(--color-text-title);
-  letter-spacing: 0.01em;
-  margin-bottom: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--rounded-md);
+  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.2);
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-h1 { font-size: 2.5rem; font-weight: 700; }
-h2 { font-size: 1.8rem; font-weight: 600; }
-h3 { font-size: 1.3rem; font-weight: 600; }
+.button:hover, button:hover, .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.13);
+}
+
+/* 5. Card/Panel (Glassmorphism) */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-elevated);
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.grid {
+  display: grid;
+  gap: 1.75rem;
+}
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: transparent;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-title);
+}
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: transparent;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-light);
+}
+
+/* 7. Gradient Backgrounds */
+.animated-gradient,
+.main-bg {
+  background: var(--gradient-bg);
+  background-size: 180% 180%;
+  animation: gradient-animate 18s ease infinite;
+}
+@keyframes gradient-animate {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 8. Utilities */
+.text-center { text-align: center; }
+.mt-8 { margin-top: 2rem; }
+.mb-8 { margin-bottom: 2rem; }
+/* 9. Input Styles */
+input, select, textarea {
+  border: 1px solid var(--color-border);
+  border-radius: var(--rounded-md);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-main);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: border 0.2s ease, background-color 0.2s ease;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary);
+  background-color: rgba(130, 170, 255, 0.1);
+  outline: none;
+}
+/* 10. Misc: Hide scrollbars for webkit (optional) */
+body::-webkit-scrollbar { 
+  width: 8px;
+}
+body::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+body::-webkit-scrollbar-thumb {
+  background: var(--color-card);
+  border-radius: 4px;
+}
+
+/* Tailwind utilities and custom layers */
+@tailwind utilities;
+
+@layer utilities {
+  .bg-dark-ui {
+    background-color: var(--dark-ui);
+  }
+}
+
+:root {
+  /* Font Families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
+  --font-mono: 'Courier New', Courier, monospace;
+
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* Backgrounds */
+  --light: #f7f9f9;
+  --dark: #1a2120;
+  --dark-ui: #111827; /* Added for dark UI elements like the sidebar */
+  --medium: #2a3331;
+
+  /* General */
+  --color-bg: #1c1917;
+  --color-card: rgba(68, 64, 60, 0.5);
+  --color-primary: #6d7c6d;
+  --color-secondary: #8fa08f;
+  --color-accent: #b1bdb1;
+  --color-text-title: #fafaf9;
+  --color-text-main: #e7e5e4;
+  --color-text-light: #a8a29e;
+  --color-border: rgba(109, 124, 109, 0.2);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Typography - Sophisticated fonts */
+  --font-brand: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  --font-body: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+
+  /* Modern design tokens */
+  --rounded-md: 16px;
+  --shadow-elevated: 0 4px 20px 0 rgba(28, 25, 23, 0.1), 0 1px 4px 0 rgba(28, 25, 23, 0.05);
+
+  /* Sophisticated gradients */
+  --gradient-bg: linear-gradient(135deg, #fafaf9 0%, #f6f7f6 100%);
+  --gradient-sage: linear-gradient(135deg, #f6f7f6 0%, #e8ebe8 100%);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Syne:wght@700;800&display=swap');
+
+/* Custom Tailwind utilities for sage colors */
+.bg-sage-50 { background-color: var(--sage-50); }
+.bg-sage-100 { background-color: var(--sage-100); }
+.bg-sage-200 { background-color: var(--sage-200); }
+.bg-sage-300 { background-color: var(--sage-300); }
+.bg-sage-400 { background-color: var(--sage-400); }
+.bg-sage-500 { background-color: var(--sage-500); }
+.bg-sage-600 { background-color: var(--sage-600); }
+.bg-sage-700 { background-color: var(--sage-700); }
+.bg-sage-800 { background-color: var(--sage-800); }
+.bg-sage-900 { background-color: var(--sage-900); }
+
+.text-sage-50 { color: var(--sage-50); }
+.text-sage-100 { color: var(--sage-100); }
+.text-sage-200 { color: var(--sage-200); }
+.text-sage-300 { color: var(--sage-300); }
+.text-sage-400 { color: var(--sage-400); }
+.text-sage-500 { color: var(--sage-500); }
+.text-sage-600 { color: var(--sage-600); }
+.text-sage-700 { color: var(--sage-700); }
+.text-sage-800 { color: var(--sage-800); }
+.text-sage-900 { color: var(--sage-900); }
+
+.border-sage-200 { border-color: var(--sage-200); }
+.border-sage-700 { border-color: var(--sage-700); }
+
+.bg-warm-gray-50 { background-color: var(--warm-gray-50); }
+.bg-warm-gray-900 { background-color: var(--warm-gray-900); }
+
+/* --- Sophisticated Card & Layout Styles --- */
+.card-modern {
+  background: linear-gradient(135deg, #fafaf9 0%, #f6f7f6 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px 0 rgba(28, 25, 23, 0.08);
+  padding: 2rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1px solid var(--sage-200);
+}
+.card-modern:hover {
+  box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.22);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.grid-modern {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 640px) {
+  .grid-modern-2 { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .grid-modern-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-modern-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+/* --- Professional Button Styles --- */
+.btn-modern {
+  background: linear-gradient(90deg, #a5b4fc 0%, #f472b6 100%);
+  color: #fff;
+  font-family: var(--font-brand);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.9rem 2.2rem;
+  font-size: 1.08rem;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.10);
+  border: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-modern:hover {
+  background: linear-gradient(90deg, #f472b6 0%, #a5b4fc 100%);
+  transform: scale(1.04);
+}
+
+/* --- Section Headers & Dividers --- */
+.section-header {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+.section-divider {
+  height: 3px;
+  background: linear-gradient(90deg, #f472b6 0%, #a5b4fc 100%);
+  border-radius: 2px;
+  margin: 2rem 0;
+  opacity: 0.15;
+}
+
+/* --- Enhanced Image Styles --- */
+.img-modern {
+  border-radius: 16px;
+  box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.10);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.img-modern:hover {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  transform: scale(1.03);
+}
+
+/* --- Modern Typography --- */
+.heading-modern {
+  font-family: 'Poppins', 'Inter', Arial, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 1.2rem;
+}
+.text-modern {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 1.08rem;
+  color: #374151;
+  line-height: 1.7;
+}
+
+/* --- Responsive Utilities --- */
+@media (max-width: 600px) {
+  .card-modern, .btn-modern {
+    padding: 1.2rem;
+    font-size: 1rem;
+  }
+  .heading-modern {
+    font-size: 1.5rem;
+  }
+}
+
+/* --- Sticky Sidebar Navigation --- */
+.sidebar-modern {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 260px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+  box-shadow: 2px 0 16px 0 rgba(31,38,135,0.08);
+  border-right: 1px solid #e0e7ff;
+  z-index: 100;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .sidebar-modern {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid #e0e7ff;
+  }
+}
+
+/* --- Modal Dialog Styles --- */
+.modal-modern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(31,38,135,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-content-modern {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  padding: 2.5rem 2rem;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+/* --- Modern Card & Grid Styles --- */
+/* 3. Body, Headings, Typography */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--light);
+}
+
+h1, h2, h3, h4, h5, h6, .cs-title, .cs-h3 {
+  font-family: var(--font-display);
+  color: var(--headerColor);
+  font-weight: 800;
+}
+
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode .cs-title, .dark-mode .cs-h3 {
+    color: var(--bodyTextColorWhite);
+}
+
+.cs-topper {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+    color: var(--primary);
+}
 
 p { margin-bottom: 1rem; }
 /* 4. Buttons */
@@ -577,5 +984,4 @@ body::-webkit-scrollbar-thumb {
     opacity: 0;
     transform: scale(0);
   }
-}
 }

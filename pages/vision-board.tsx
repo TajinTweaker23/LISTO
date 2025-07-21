@@ -1,5 +1,9 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import '../styles/events.css'; // <-- Import the CSS
+// ... other imports
+
+// Removed duplicate default export Explore component to resolve redeclaration error.
+import React, { useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Youtube, Plus, Search } from "lucide-react";
 
@@ -46,7 +50,7 @@ export default function VisionBoard() {
 	const [showGifModal, setShowGifModal] = useState(false);
 	const [gifSearch, setGifSearch] = useState("");
 	const [gifResults, setGifResults] = useState<any[]>([]);
-	const [showMoodboards, setShowMoodboards] = useState(true);
+	const [showMoodboards] = useState(true);
 
 	// Giphy Search Handler
 	const handleGifSearch = async () => {
@@ -104,8 +108,8 @@ export default function VisionBoard() {
 	};
 	const handleDragEnd = () => {
 		const items = [...visionItems];
-		const dragged = items.splice(dragItem.current!, 1)[0];
-		items.splice(dragOverItem.current!, 0, dragged);
+		const dragged = items.splice(dragItem.current, 1)[0];
+		items.splice(dragOverItem.current, 0, dragged);
 		setVisionItems(items);
 		dragItem.current = null;
 		dragOverItem.current = null;
@@ -139,15 +143,15 @@ export default function VisionBoard() {
 					<>
 						<h2 className="text-xl font-bold text-white mb-2">Moodboards</h2>
 						<div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-							{moodboardsData.map((mb, idx) => (
+							{moodboardsData.map((mb) => (
 								<motion.div
-									key={idx}
+									key={mb.title}
 									className="bg-white/80 rounded-xl shadow flex flex-col items-center p-2 border border-gray-200 hover:scale-105 transition cursor-pointer"
 									whileHover={{ scale: 1.04 }}
 									onClick={() => handleAddMoodboard(mb)}
 									draggable
-									onDragStart={() => handleDragStart(idx)}
-									onDragEnter={() => handleDragEnter(idx)}
+									onDragStart={() => handleDragStart(moodboardsData.findIndex(m => m.title === mb.title))}
+									onDragEnter={() => handleDragEnter(moodboardsData.findIndex(m => m.title === mb.title))}
 									onDragEnd={handleDragEnd}
 								>
 									<img
@@ -266,9 +270,9 @@ export default function VisionBoard() {
 										{item.title}
 									</div>
 									<div className="flex gap-1">
-										{item.colors.map((c: string, i: number) => (
+										{item.colors.map((c: string) => (
 											<div
-												key={i}
+												key={c}
 												style={{
 													background: c,
 													width: 14,

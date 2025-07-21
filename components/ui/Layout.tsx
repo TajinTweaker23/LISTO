@@ -19,6 +19,7 @@ import AchievementBadge from "./AchievementBadge";
 import OnboardingModal from './OnboardingModal';
 import TabBar from "./TabBar";
 import NotificationContainer, { useNotifications } from "./NotificationSystem";
+import Sidebar from './Sidebar';
 
 // --- Font ---
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
