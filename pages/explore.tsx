@@ -1199,90 +1199,246 @@ export default function Explore() {
               </div>
             </div>
 
-            {/* Accordion Demo */}
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-4 flex items-center gap-2">
-                📋 Organized Content
-              </h3>
-              <Accordion
-                items={[
-                  {
-                    id: "features",
-                    title: "Enhanced Features",
-                    icon: <span className="text-sage-600">🚀</span>,
-                    content: (
-                      <div className="space-y-3">
-                        <p className="text-stone-600 dark:text-stone-400">
-                          Our mobile-first design includes sophisticated progress indicators, smart form validation, 
-                          contextual tooltips, and engaging micro-interactions.
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {["Progress Bars", "Smart Forms", "Tooltips", "Notifications", "Cards", "Carousels"].map((feature) => (
-                            <span key={feature} className="px-3 py-1 bg-sage-100 dark:bg-sage-900/30 text-sage-700 dark:text-sage-300 rounded-full text-sm">
-                              {feature}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  },
-                  {
-                    id: "accessibility",
-                    title: "Accessibility & Usability",
-                    icon: <span className="text-blue-600">♿</span>,
-                    content: (
-                      <div className="text-stone-600 dark:text-stone-400 space-y-2">
-                        <p>All components follow WCAG guidelines with proper focus management, keyboard navigation, and screen reader support.</p>
-                        <p>Responsive design ensures optimal experience across all device sizes.</p>
-                      </div>
-                    )
-                  },
-                  {
-                    id: "performance",
-                    title: "Performance Optimizations",
-                    icon: <span className="text-green-600">⚡</span>,
-                    content: (
-                      <div className="text-stone-600 dark:text-stone-400 space-y-2">
-                        <p>Optimized animations with Framer Motion, efficient state management, and lazy loading for smooth 60fps interactions.</p>
-                        <LoaderComponent variant="dots" sizes="sm" color="#6366f1" />
-                      </div>
-                    )
-                  }
-                ]}
-                allowMultiple={true}
-              />
+            {/* BREAKING NEWS */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-10"
+            >
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-pink-400 animate-pulse">📰</span>{" "}
+                Breaking News
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {mockNews.map((n, idx) => (
+                  <a
+                    key={n.url}
+                    href={n.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg flex items-center overflow-hidden hover:scale-[1.03] transition border-2 border-pink-100 dark:border-indigo-900"
+                  >
+                    <img src={n.img} alt={n.title} className="w-32 h-28 object-cover" />
+                    <div className="p-4 flex-1">
+                      <div className="font-semibold text-lg group-hover:text-pink-400">{n.title}</div>
+                      <div className="text-gray-500 dark:text-gray-400 text-sm">{n.snippet}</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* RANDOMIZER & CHALLENGES */}
+            <div className="flex flex-col md:flex-row gap-6 mb-10">
+              <div className="flex-1 bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center text-center border-2 border-pink-100 dark:border-indigo-900">
+                <Sparkle className="w-7 h-7 text-pink-400 mb-1" />
+                <div className="font-bold text-lg mb-2">Surprise Generator</div>
+                <div className="mb-3 text-indigo-700 dark:text-indigo-300">{mockMicroVolunteer[randomIndex]}</div>
+                <button
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-pink-100 to-indigo-100 dark:from-indigo-800 dark:to-pink-900 text-indigo-800 dark:text-white text-sm hover:bg-pink-200 dark:hover:bg-indigo-700 font-medium shadow"
+                  onClick={handleRandomizer}
+                >
+                  Give me a random idea!
+                </button>
+              </div>
+              <div className="flex-1 bg-pink-50 dark:bg-indigo-900/80 rounded-2xl shadow-lg p-6 flex flex-col items-center text-center border-2 border-pink-100 dark:border-indigo-900">
+                <PartyPopper className="w-7 h-7 text-pink-400 mb-2" />
+                <div className="font-bold mb-1 text-lg">Challenges</div>
+                <ul className="flex flex-wrap gap-2 justify-center">
+                  {mockChallenges.map((c, idx) => (
+                    <li key={idx} className="px-3 py-2 bg-white dark:bg-gray-800 rounded-lg shadow text-sm flex items-center gap-2 font-medium border border-pink-100 dark:border-indigo-900">
+                      <span>{c.badge}</span> {c.challenge}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            {/* Carousel Demo */}
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-4 flex items-center gap-2">
-                🎠 Interactive Carousel
-              </h3>
-              <ImageCarousel
-                images={[
-                  {
-                    src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
-                    alt: "Mountain Adventure",
-                    caption: "Discover breathtaking mountain views and hiking trails"
-                  },
-                  {
-                    src: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=400&fit=crop",
-                    alt: "Forest Exploration",
-                    caption: "Immerse yourself in pristine forest environments"
-                  },
-                  {
-                    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=400&fit=crop",
-                    alt: "Lakeside Serenity",
-                    caption: "Find peace and tranquility by crystal clear lakes"
-                  },
-                  {
-                    src: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&h=400&fit=crop",
-                    alt: "Coastal Beauty",
-                    caption: "Experience stunning coastal landscapes and ocean views"
-                  }
-                ]}
-                className="rounded-2xl overflow-hidden"
-              />
+            {/* QUICK EXPLORE CARDS */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                { emoji: "📰", title: "Breaking News", desc: "Global updates" },
+                { emoji: "🌿", title: "Green Living", desc: "Eco tips" },
+                { emoji: "📚", title: "Book Recs", desc: "Curated reads" },
+                { emoji: "⚽", title: "Sports", desc: "Highlights" },
+                { emoji: "🛠️", title: "DIY Projects", desc: "Hands-on" },
+                { emoji: "❤️", title: "Humanity Wins", desc: "Stories" },
+                { emoji: "💡", title: "Mindful Living", desc: "Peace & Prod" },
+                { emoji: "📢", title: "Get Involved", desc: "Volunteer" },
+              ].map((card, idx) => (
+                <motion.div
+                  key={idx}
+                  className="bg-white/80 dark:bg-gray-900/80 p-8 rounded-2xl shadow-xl flex flex-col items-center text-center border-2 border-pink-100 dark:border-indigo-900 hover:border-pink-400 dark:hover:border-indigo-600 transition-all"
+                  whileHover={{ scale: 1.06, rotate: 1.5 }}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.03 * idx }}
+                >
+                  <div className="text-4xl mb-2">{card.emoji}</div>
+                  <div className={`font-bold text-lg mb-1 ${accentGradient}`}>{card.title}</div>
+                  <div className="text-gray-600 dark:text-gray-400">{card.desc}</div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* MAP: ECO-FRIENDLY LOCATIONS */}
+            <div className="mb-14">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Globe2 className="w-5 h-5" /> Eco-Friendly Spots Near You
+                {userLocation && <span className="flex items-center text-xs ml-3 text-pink-400">
+                  <MapPin className="w-3 h-3 mr-1" />
+                  {`${userLocation.lat.toFixed(2)}, ${userLocation.lng.toFixed(2)}`}
+                </span>}
+              </h2>
+              {userLocation && (
+                <MapContainer
+                  center={[userLocation.lat, userLocation.lng]}
+                  zoom={13}
+                  style={{ height: "350px", width: "100%", borderRadius: "1rem", boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}
+                  scrollWheelZoom={false}
+                  className="mb-6"
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={[userLocation.lat, userLocation.lng]}>
+                    <Popup>You are here! 🌸</Popup>
+                  </Marker>
+                  {ecoSuggestions.map((proj, idx) => (
+                    <Marker
+                      key={proj.title}
+                      position={[proj.lat, proj.lng]}
+                      // @ts-expect-error: icon is not in MarkerProps type but is supported by leaflet
+                      icon={ecoIcon}
+                      eventHandlers={{
+                        click: () => setQuery(proj.title),
+                      }}
+                    >
+                      <Popup>
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">🌱</div>
+                          <strong>{proj.title}</strong>
+                          <br />
+                          {proj.desc}
+                          <br />
+                          <button
+                            className="mt-2 px-2 py-1 bg-pink-100 rounded text-pink-800 hover:bg-pink-200"
+                            onClick={() => setQuery(proj.title)}
+                          >
+                            Add to Itinerary
+                          </button>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              )}
+            </div>
+
+            {/* MICRO-VOLUNTEERING + MOOD TRACKER + ECO */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+              <div className="bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-lg p-6 text-center border-2 border-pink-100 dark:border-indigo-900">
+                <Star className="w-6 h-6 text-yellow-300 mb-1" />
+                <div className="font-bold mb-2">Micro-Volunteering</div>
+                <div className="mb-2 text-indigo-700 dark:text-indigo-300">{mockMicroVolunteer[randomIndex]}</div>
+                <div className="text-gray-500 text-xs">Take 5 min and make a difference now.</div>
+              </div>
+              <div className="bg-pink-50 dark:bg-indigo-900/80 rounded-2xl shadow-lg p-6 text-center border-2 border-pink-100 dark:border-indigo-900">
+                <Smile className="w-6 h-6 text-pink-400 mb-1" />
+                <div className="font-bold mb-2">Mood Tracker</div>
+                <div className="mb-2 text-indigo-700 dark:text-indigo-200">
+                  {mood ? `Your current mood: ${mood}` : "How are you feeling today?"}
+                </div>
+                <div className="flex gap-2 justify-center">
+                  {["😃", "🙂", "😐", "😢", "😡"].map((emoji, idx) => (
+                    <button key={emoji} className="text-2xl hover:scale-125 transition" onClick={() => setMood(emoji)}>
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-lg p-6 text-center border-2 border-pink-100 dark:border-indigo-900">
+                <BrainCircuit className="w-6 h-6 text-indigo-400 mb-1" />
+                <div className="font-bold mb-2">Eco Impact Score</div>
+                <animated.div className="mb-2 text-pink-400 text-2xl font-bold">
+                  <animated.span>{ecoSpring.number.to((n) => n.toFixed(1))}</animated.span> lbs CO₂ saved!
+                </animated.div>
+                <div className="text-gray-500 text-xs">Optimize your day, reduce your footprint.</div>
+              </div>
+            </div>
+
+            {/* LEARN TO COOK WIDGET */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mb-14"
+            >
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <ChefHat className="w-5 h-5" /> Learn to Cook: Easy Recipe of the Day
+              </h2>
+              <motion.div
+                whileHover={{ scale: 1.04 }}
+                className="flex flex-col sm:flex-row items-center gap-5 bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-lg p-5 border-2 border-pink-100 dark:border-indigo-900"
+              >
+                <img src="/avocado-toast.jpg" alt="Avocado Toast" className="w-32 h-32 object-cover rounded-xl mb-3" />
+                <div className="flex-1">
+                  <div className="font-bold text-lg text-pink-400 dark:text-indigo-200 mb-1">
+                    {mockRecipes[recipeIndex].name}
+                    <span className="ml-2 px-2 py-1 text-xs bg-pink-100 dark:bg-indigo-800 text-pink-700 dark:text-white rounded-full">{mockRecipes[recipeIndex].difficulty}</span>
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-300 mb-2">{mockRecipes[recipeIndex].desc}</div>
+                  <a
+                    href={mockRecipes[recipeIndex].link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-pink-400 hover:text-indigo-500 underline font-medium"
+                  >View Recipe</a>
+                </div>
+                <button
+                  className="mt-3 px-3 py-2 rounded-full bg-pink-100 dark:bg-indigo-700 text-pink-700 dark:text-white font-medium hover:bg-pink-200 dark:hover:bg-indigo-600 transition"
+                  onClick={() => setRecipeIndex((i) => (i + 1) % mockRecipes.length)}
+                >
+                  Next Recipe
+                </button>
+              </motion.div>
+            </motion.div>
+
+            {/* TRENDING GIFS */}
+            <div className="mb-14">
+              <h2 className="text-xl font-bold mb-4">🔥 Trending GIFs</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {mockGIFs.map((gif, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="overflow-hidden rounded-xl shadow-lg border-2 border-pink-100 dark:border-indigo-900"
+                    whileHover={{ scale: 1.04 }}
+                  >
+                    <img src={gif.src} alt={gif.alt} className="w-full h-40 object-cover" />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* TRENDING SEARCHES */}
+            <div className="mb-12">
+              <h2 className="text-xl font-bold mb-4">📌 Trending Searches</h2>
+              <div className="flex flex-wrap gap-3">
+                {mockTrending.map((term, idx) => (
+                  <motion.button
+                    key={idx}
+                    onClick={() => {
+                      setQuery(term);
+                      handleSearch();
+                    }}
+                    className="px-4 py-2 rounded-full bg-gradient-to-r from-pink-100 to-indigo-100 dark:from-indigo-800 dark:to-pink-900 text-indigo-800 dark:text-white text-sm hover:bg-pink-200 dark:hover:bg-indigo-700 font-medium shadow"
+                    whileHover={{ scale: 1.06 }}
+                  >
+                    {term}
+                  </motion.button>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -1443,165 +1599,10 @@ export default function Explore() {
         </div>
 
         {/* ENHANCED SEARCH BAR WITH SMART FEATURES */}
-        <div className="sticky top-0 z-20 bg-gradient-to-r from-pink-50 via-indigo-50 to-teal-50 dark:from-indigo-950 dark:via-pink-950 dark:to-teal-950 py-6 px-4 border-b border-pink-100 dark:border-indigo-900 backdrop-blur-xl">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-            className="relative max-w-2xl mx-auto"
-          >
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-pink-400 group-hover:text-indigo-500 transition-colors z-10" />
-              
-              <motion.input
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSearch()}
-                placeholder="Search for anything that inspires you..."
-                className="w-full pl-14 pr-28 py-5 text-lg border border-stone-200 dark:border-stone-700 rounded-2xl bg-white/90 dark:bg-stone-800/90 text-stone-800 dark:text-stone-200 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-sage-400 dark:focus:border-sage-500 focus:ring-4 focus:ring-sage-100/50 dark:focus:ring-sage-800/50 transition-all shadow-sm backdrop-blur-sm"
-                whileFocus={{ scale: 1.01 }}
-              />
-
-              {/* Voice Search Button */}
-              <motion.button
-                onClick={toggleVoiceSearch}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className={`absolute right-16 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all
-                           ${isListening 
-                             ? 'bg-red-500 text-white pulse-red' 
-                             : 'bg-pink-100 dark:bg-indigo-800 text-pink-500 dark:text-indigo-300 hover:bg-pink-200 dark:hover:bg-indigo-700'
-                           }`}
-                aria-label={isListening ? "Stop voice search" : "Start voice search"}
-              >
-                <Mic className="w-4 h-4" />
-              </motion.button>
-
-              {/* Search Button */}
-              <motion.button
-                onClick={handleSearch}
-                disabled={!query.trim() || loading}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-sage-500 to-sage-600 hover:from-sage-600 hover:to-sage-700 disabled:from-stone-300 disabled:to-stone-400 text-white px-5 py-2.5 rounded-xl transition-all shadow-sm disabled:opacity-50 font-medium"
-              >
-                {loading ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Search"
-                )}
-              </motion.button>
-            </div>
-
-            {/* Search Suggestions */}
-            {smartSuggestions.length > 0 && query.length > 2 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute top-full mt-2 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200 dark:border-indigo-700 z-20"
-              >
-                {smartSuggestions.slice(0, 5).map((suggestion, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="p-3 hover:bg-pink-50 dark:hover:bg-indigo-900/50 cursor-pointer transition-colors first:rounded-t-2xl last:rounded-b-2xl border-b border-pink-100 dark:border-indigo-800 last:border-b-0"
-                    onClick={() => {
-                      setQuery(suggestion);
-                      setSmartSuggestions([]);
-                      handleSearch();
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Search className="w-4 h-4 text-pink-400" />
-                      <span className="text-gray-700 dark:text-gray-300">{suggestion}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-
-            {/* Voice Recognition Feedback */}
-            {isListening && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="absolute top-full mt-3 w-full bg-red-50/95 dark:bg-red-900/20 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-800/50"
-              >
-                <div className="flex items-center justify-center gap-3 text-red-600 dark:text-red-400">
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                  >
-                    <Mic className="w-5 h-5" />
-                  </motion.div>
-                  <span className="font-medium">Listening... Speak naturally</span>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
-
-        {/* MAIN CONTENT */}
-        <main className="max-w-7xl mx-auto px-4 py-10" ref={resultsRef}>
-          {/* CONDITIONAL CONTENT BASED ON MODE */}
-          {!showTravelPlanning ? (
-            /* ---- DAILY EXPLORATION MODE ---- */
-            <div>
-              {/* WEATHER + DAY PLANNER */}
-              <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
-                {/* Smart Weather Card */}
-                <motion.div
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/50 rounded-2xl shadow-lg p-6 text-center border-2 border-blue-200 dark:border-indigo-700 relative overflow-hidden smart-weather-card"
-                >
-                  <div className="absolute top-2 right-2">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Sun className="w-5 h-5 text-yellow-500 opacity-70" />
-                    </motion.div>
-                  </div>
-                  
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="text-4xl font-bold mb-2"
-                  >
-                    {mockWeather.icon} {mockWeather.temp}
-                  </motion.div>
-                  
-                  <div className="text-lg mb-2">{mockWeather.desc}</div>
-                  <div className="text-blue-600 dark:text-blue-300 font-semibold mb-3">{mockWeather.suggestion}</div>
-                  
-                  {/* Weather-based Activity Suggestions */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      setQuery(mockWeather.desc.includes('sunny') ? 'outdoor activities' : 'indoor activities');
-                      handleSearch();
-                    }}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 transition shadow-md"
-                  >
-                    Find {mockWeather.desc.includes('sunny') ? 'Outdoor' : 'Indoor'} Activities
-                  </motion.button>
-
-                  {/* Location-based weather hint */}
-                  {userLocation && (
-                    <div className="mt-2 text-xs text-blue-500 dark:text-blue-400">
-                      📍 Based on your location
-                    </div>
-                  )}
-                </motion.div>
-                <div className="flex-1 bg-pink-50 dark:bg-indigo-900/80 rounded-2xl shadow-lg p-6 flex flex-col items-center text-center border-2 border-pink-100 dark:border-indigo-900">
-                  <Calendar className="w-7 h-7 text-pink-400 mb-2" />
                   <div className="font-bold mb-1 text-lg">Today’s Smart Plan</div>
                   <div className="text-indigo-600 dark:text-indigo-200">{mockDayPlans[recipeIndex % mockDayPlans.length]}</div>
                   <button
+                   
                     className="mt-3 px-4 py-2 bg-pink-100 dark:bg-indigo-700 text-pink-700 dark:text-white rounded-full font-medium hover:bg-pink-200 dark:hover:bg-indigo-600 transition"
                     onClick={() => setRecipeIndex((i) => (i + 1) % mockDayPlans.length)}
                   >
@@ -1624,12 +1625,6 @@ export default function Explore() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {mockNews.map((n, idx) => (
                     <a
-                      key={n.url}
-                      href={n.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg flex items-center overflow-hidden hover:scale-[1.03] transition border-2 border-pink-100 dark:border-indigo-900"
-                    >
                       key={n.url}
                       href={n.url}
                       target="_blank"
