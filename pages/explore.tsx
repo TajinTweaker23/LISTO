@@ -625,23 +625,16 @@ export default function Explore() {
   // Update theme daily
   useEffect(() => {
     const updateTheme = () => {
-      if (!customThemeActive) {
-        const newTheme = getCurrentDayTheme();
-        setCurrentTheme(newTheme);
-        setHighlight(newTheme.highlights[0]);
-      }
+      const newTheme = getCurrentDayTheme();
+      setCurrentTheme(newTheme);
+      setHighlight(newTheme.highlights[0]);
     };
-
-    // Update theme at midnight
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    const msUntilMidnight = tomorrow.getTime() - now.getTime();
     
-    const timeout = setTimeout(updateTheme, msUntilMidnight);
-    return () => clearTimeout(timeout);
-  }, [customThemeActive]);
+    updateTheme();
+    const interval = setInterval(updateTheme, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
+  }, []); // Keep empty dependency array
 
   // Enhanced location tracking with travel board integration
   useEffect(() => {
@@ -1634,6 +1627,12 @@ export default function Explore() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {mockNews.map((n, idx) => (
                     <a
+                      key={n.url}
+                      href={n.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg flex items-center overflow-hidden hover:scale-[1.03] transition border-2 border-pink-100 dark:border-indigo-900"
+                    >
                       key={n.url}
                       href={n.url}
                       target="_blank"
