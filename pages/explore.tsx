@@ -1244,7 +1244,7 @@ export default function Explore() {
                     content: (
                       <div className="text-stone-600 dark:text-stone-400 space-y-2">
                         <p>Optimized animations with Framer Motion, efficient state management, and lazy loading for smooth 60fps interactions.</p>
-                        <LoaderComponent variant="dots" size="sm" color="sage" />
+                        <LoaderComponent variant="dots" sizes="sm" color="#6366f1" />
                       </div>
                     )
                   }
