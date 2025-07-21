@@ -230,6 +230,8 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const [muted, setMuted] = useState(false);
   const [achievements, setAchievements] = useState<{ [key: string]: boolean }>({});
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('dashboard');
 
   useEffect(() => {
     const hasOnboarded = localStorage.getItem('hasOnboarded');
@@ -471,6 +473,12 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       }
       aria-live="polite"
     >
+      <Sidebar 
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentView={currentView}
+        onViewChange={setCurrentView}
+      />
       {/* Confetti/Emoji/Toast */}
       {showConfetti && typeof window !== "undefined" && (
         <Confetti width={window.innerWidth} height={window.innerHeight} />
@@ -521,7 +529,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
       </div>
 
       {/* Navbar */}
-      <Navbar theme={theme} setTheme={setTheme} />
+      <Navbar theme={theme} setTheme={setTheme} onMenuClick={() => setSidebarOpen(true)} />
 
       {/* Animated Blobs */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
@@ -843,12 +851,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
 export default Layout;
 
-interface SidebarProps {
-  readonly isOpen: boolean;
-  readonly onClose: () => void;
-  readonly currentView: string;
-  readonly onViewChange: (view: string) => void;
-}
+// The SidebarProps interface is no longer needed here.
 
 interface HeaderProps {
   readonly onMenuClick: () => void;
