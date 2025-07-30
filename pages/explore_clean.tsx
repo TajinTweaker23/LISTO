@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue } from "framer-motion";
-import { HomeIcon, Sun, Moon, Loader2, Search, Mic, Loader, Flame, Leaf, Trash2 } from "lucide-react";
+import { Calendar, Globe2, PartyPopper, Sparkle, HomeIcon, Sun, Moon, MapPin, Smile, BrainCircuit, Star, ChefHat, Move, Trash2, Loader2, Search, Mic, Loader, Flame, Leaf } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useSpring, animated } from "@react-spring/web";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // Dynamically import MapContainer to avoid SSR issues
@@ -301,9 +302,13 @@ export default function Explore() {
   const [grabBox, setGrabBox] = useState<SearchItem[]>([]);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showItinerary, setShowItinerary] = useState(false);
+  const [mood, setMood] = useState<string | null>(null);
+  const [randomIndex, setRandomIndex] = useState<number>(0);
+  const [recipeIndex, setRecipeIndex] = useState<number>(0);
+  const [ecoSuggestions, setEcoSuggestions] = useState<LocalProject[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   
-  // Enhanced state for features
+  // 🚀 Enhanced state for features
   const [achievements, setAchievements] = useState<string[]>([]);
   const [userPreferences, setUserPreferences] = useState({
     interests: [] as string[],
@@ -313,10 +318,21 @@ export default function Explore() {
     dailyGoalProgress: 0
   });
   const [particles, setParticles] = useState<Array<{id: string, x: number, y: number}>>([]);
+  const [smartSuggestions, setSmartSuggestions] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   
-  // Dynamic Content State
+  // 🎯 Dynamic Content State
   const [currentTheme, setCurrentTheme] = useState(getCurrentDayTheme());
+  
+  // 📱 Mobile App Design Elements State
+  const { addNotification } = useNotifications();
+  const [demoProgress, setDemoProgress] = useState(0);
+  const [formData, setFormData] = useState({
+    email: "",
+    location: "",
+    notifications: true,
+    theme: "sage"
+  });
 
   // Motion values for advanced animations
   const mouseX = useMotionValue(0);
@@ -362,8 +378,20 @@ export default function Explore() {
     }
   }, [achievements]);
 
-  // Remove the unused callback
-  
+  // 🎯 Smart content recommendations based on user behavior
+  const generateSmartSuggestions = useCallback(() => {
+    const suggestions = [
+      "sustainable living tips",
+      "local events near me",
+      "outdoor activities today",
+      "healthy recipes",
+      "travel destinations",
+      "mindfulness practices",
+      "creative projects",
+      "fitness routines"
+    ];
+    setSmartSuggestions(suggestions.slice(0, 5));
+  }, []);
 
   // 🗣️ Voice search functionality
   const startVoiceSearch = useCallback(() => {
@@ -408,9 +436,15 @@ export default function Explore() {
         const idx = highlights.indexOf(prev);
         return highlights[(idx + 1) % highlights.length];
       });
+      setRecipeIndex((i) => (i + 1) % mockRecipes.length);
+      
+      // Generate smart suggestions periodically
+      if (Math.random() > 0.7) {
+        generateSmartSuggestions();
+      }
     }, 5000);
     return () => clearInterval(interval);
-  }, [currentTheme]);
+  }, [generateSmartSuggestions, currentTheme]);
 
   // Update theme daily
   useEffect(() => {
@@ -444,13 +478,23 @@ export default function Explore() {
 
   // Smart eco suggestions
   useEffect(() => {
-    if (userLocation) {
-      setUserPreferences(prev => ({
-        ...prev,
-        ecoScore: prev.ecoScore + 0.5
-      }));
+    async function fetchEcoSuggestions() {
+      if (userLocation) {
+        const filteredProjects = mockProjects.filter(project => {
+          if (mood === "😃") return project.title.includes("Community");
+          if (mood === "🌱") return project.title.includes("Garden");
+          return true;
+        });
+        setEcoSuggestions(filteredProjects);
+        
+        setUserPreferences(prev => ({
+          ...prev,
+          ecoScore: prev.ecoScore + 0.5
+        }));
+      }
     }
-  }, [userLocation]);
+    fetchEcoSuggestions();
+  }, [userLocation, mood]);
 
   // Smart streak tracking
   useEffect(() => {
@@ -563,42 +607,17 @@ export default function Explore() {
   const removeFromGrabBox = (link: string) => setGrabBox(grabBox.filter(i => i.link !== link));
   const clearGrabBox = () => setGrabBox([]);
 
-  const handleRemoveFromBox = useCallback((link: string) => {
-    removeFromGrabBox(link);
-  }, [grabBox]);
-
-  const renderGrabBoxItem = useCallback((item: SearchItem, index: number) => (
-    <Draggable key={item.link} draggableId={item.link} index={index}>
-      {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className="min-w-48 bg-white dark:bg-stone-700 rounded-xl p-3 shadow-lg border border-stone-200 dark:border-stone-600"
-        >
-          <h4 className="font-medium text-sm text-stone-800 dark:text-stone-200 mb-1 truncate">
-            {item.title}
-          </h4>
-          <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">
-            {item.snippet}
-          </p>
-          <button
-            onClick={() => handleRemoveFromBox(item.link)}
-            className="mt-2 text-red-500 hover:text-red-600 text-xs"
-          >
-            <Trash2 className="w-3 h-3" />
-          </button>
-        </div>
-      )}
-    </Draggable>
-  ), [handleRemoveFromBox]);
-
   // Enhanced surprise generator
   const handleRandomizer = () => {
     const newIndex = Math.floor(Math.random() * mockMicroVolunteer.length);
+    setRandomIndex(newIndex);
     setHighlight("✨ Surprise: " + mockMicroVolunteer[newIndex]);
     unlockAchievement("Surprise Seeker");
   };
+
+  // Animated eco impact
+  const ecoImpact = grabBox.length * 1.2;
+  const ecoSpring = useSpring({ number: ecoImpact, from: { number: 0 } });
 
   return (
     <div className={`${darkMode ? "dark" : ""} font-sans transition-all duration-300`} style={{ fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif" }}>
@@ -752,7 +771,7 @@ export default function Explore() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search images, articles, places..."
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -811,11 +830,12 @@ export default function Explore() {
               animate={{ opacity: 1, y: 0 }}
               className="grid lg:grid-cols-2 gap-6 mb-10"
             >
-              {items.map((item) => (
+              {items.map((item, idx) => (
                 <motion.div
-                  key={item.link}
+                  key={idx}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
                   className="bg-white dark:bg-stone-800 rounded-xl shadow-lg overflow-hidden border border-stone-200 dark:border-stone-700"
                 >
                   {item.pagemap?.cse_image?.[0] && (
@@ -864,9 +884,9 @@ export default function Explore() {
               {currentTheme.theme} Ideas
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {currentTheme.quickCards.map((card) => (
+              {currentTheme.quickCards.map((card, idx) => (
                 <motion.div
-                  key={card.title}
+                  key={idx}
                   whileHover={{ scale: 1.02, y: -2 }}
                   className="bg-white dark:bg-stone-800 rounded-xl p-4 shadow-lg border border-stone-200 dark:border-stone-700 cursor-pointer"
                   onClick={() => setQuery(card.title)}
@@ -898,7 +918,7 @@ export default function Explore() {
               ✨ Surprise Me! ✨
             </motion.button>
             <p className="mt-4 text-stone-600 dark:text-stone-400">
-              Click for a random suggestion!
+              {mockMicroVolunteer[randomIndex]}
             </p>
           </motion.div>
 
@@ -916,7 +936,31 @@ export default function Explore() {
                       ref={provided.innerRef}
                       className="flex gap-3 flex-1 overflow-x-auto"
                     >
-                      {grabBox.map((item, index) => renderGrabBoxItem(item, index))}
+                      {grabBox.map((item, index) => (
+                        <Draggable key={item.link} draggableId={item.link} index={index}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="min-w-48 bg-white dark:bg-stone-700 rounded-xl p-3 shadow-lg border border-stone-200 dark:border-stone-600"
+                            >
+                              <h4 className="font-medium text-sm text-stone-800 dark:text-stone-200 mb-1 truncate">
+                                {item.title}
+                              </h4>
+                              <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">
+                                {item.snippet}
+                              </p>
+                              <button
+                                onClick={() => removeFromGrabBox(item.link)}
+                                className="mt-2 text-red-500 hover:text-red-600 text-xs"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
                       {provided.placeholder}
                     </div>
                   )}

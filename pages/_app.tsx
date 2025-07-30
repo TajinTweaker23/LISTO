@@ -1,91 +1,47 @@
 // pages/_app.tsx
 
-import React, { useEffect, useState } from "react";
+import "../styles/globals.css";
+import "../styles/faq.css";
 import type { AppProps } from "next/app";
 import { AuthProvider } from "../context/AuthContext";
 import Layout from "../components/ui/Layout";
-import OnboardingModal from "../components/ui/OnboardingModal";
-import "../styles/globals.css";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import firebaseApp from "../lib/firebase";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
+// Create a client instance
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
 
+  // Effect to load and apply the saved theme on initial load
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Check onboarding status in Firestore
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists() && userSnap.data().onboarded) {
-          setShowOnboarding(false);
-        } else {
-          setShowOnboarding(true);
-        }
-      } else {
-        setShowOnboarding(false);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
 
-  if (loading) return null; // or a spinner
-
-  if (showOnboarding) {
-    return (
-      <OnboardingModal
-        show={showOnboarding}
-        onClose={async () => {
-          const user = auth.currentUser;
-          if (user) {
-            const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, { onboarded: true }, { merge: true });
-          }
-          setShowOnboarding(false);
-        }}
-      />
-    );
-  }
+  // Function to update theme state, local storage, and DOM
+  const handleSetTheme = (newTheme: string) => {
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(newTheme);
+  };
 
   // If a page has a specific layout, use it. Otherwise, use the default.
   // This is a common pattern for pages that shouldn't have a sidebar (e.g., a login page).
-  const getLayout = (page: React.ReactElement) => <Layout>{page}</Layout>;
-
-  return getLayout(
-    <AuthProvider>
-      <div
-        className={`${
-          theme === "dark" ? "dark" : ""
-        } font-sans transition-all duration-300`}
-        style={{ fontFamily: "'Quicksand', sans-serif" }}
-      >
-        <Component {...pageProps} />
-        {/* Add this near the end of your main layout or each page */}
-        <motion.button
-          className="fixed bottom-8 right-8 z-50 bg-indigo-500 hover:bg-pink-400 text-white rounded-full shadow-xl p-5 text-3xl border-4 border-white dark:border-indigo-900"
-          whileHover={{ scale: 1.15, rotate: 8 }}
-          whileTap={{ scale: 0.95 }}
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          aria-label="Quick Action"
-        >
-          +
-        </motion.button>
-      </div>
-    </AuthProvider>
+  const getLayout = (page: React.ReactElement) => (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Layout theme={theme} setTheme={handleSetTheme}>
+          {page}
+        </Layout>
+      </AuthProvider>
+    </QueryClientProvider>
   );
+
+  return getLayout(<Component {...pageProps} />);
 }
 
 export default MyApp;

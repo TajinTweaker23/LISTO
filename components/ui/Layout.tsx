@@ -19,7 +19,7 @@ import AchievementBadge from "./AchievementBadge";
 import OnboardingModal from './OnboardingModal';
 import TabBar from "./TabBar";
 import NotificationContainer, { useNotifications } from "./NotificationSystem";
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar'; // Changed from './Sidebar' to '../Sidebar'
 
 // --- Font ---
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
@@ -852,7 +852,3 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 export default Layout;
 
 // The SidebarProps interface is no longer needed here.
-
-interface HeaderProps {
-  readonly onMenuClick: () => void;
-}

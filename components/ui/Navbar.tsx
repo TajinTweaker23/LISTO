@@ -258,6 +258,7 @@ export default function Navbar({
   theme,
   setTheme,
   logoSrc,
+  onMenuClick, // Add this
   primaryColor = "#6366f1",
   secondaryColor = "#f472b6",
   gradient = "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #fbbf24)",
@@ -265,6 +266,7 @@ export default function Navbar({
   readonly theme: string;
   readonly setTheme?: (theme: string) => void;
   readonly logoSrc?: string;
+  readonly onMenuClick?: () => void; // Add this
   readonly primaryColor?: string;
   readonly secondaryColor?: string;
   readonly gradient?: string;
@@ -275,6 +277,7 @@ export default function Navbar({
 
   const navLinks = [
     { label: "Home", href: "/", icon: <HomeIcon className="h-5 w-5" /> },
+    user && { label: "Dashboard", href: "/dashboard", icon: <LayoutGrid className="h-5 w-5" /> },
     user && { label: "Profile", href: "/profile", icon: <UserIcon className="h-5 w-5" /> },
     { label: "Vision Board", href: "/vision-board", icon: <LayoutGrid className="h-5 w-5" /> },
     { label: "Explore", href: "/explore", icon: <LayoutGrid className="h-5 w-5" /> },
@@ -310,7 +313,7 @@ export default function Navbar({
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setDrawerOpen(!drawerOpen)}
+            onClick={onMenuClick} // Change this line
             className={`md:hidden p-3 rounded-2xl transition-all duration-300 ${
               theme === "dark"
                 ? "bg-sage-800/60 text-sage-200"

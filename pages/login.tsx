@@ -29,7 +29,7 @@ export default function LoginPage() {
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      router.push("/vision-board");
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);
     }

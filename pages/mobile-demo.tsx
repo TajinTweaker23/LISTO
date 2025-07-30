@@ -246,22 +246,22 @@ const MobileDemo: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center space-y-3">
                 <h4 className="font-medium text-sage-900">Spinner</h4>
-                <LoaderComponent variant="spinner" size="md" />
+                <LoaderComponent variant="spinner" sizes="md" />
               </div>
               
               <div className="text-center space-y-3">
                 <h4 className="font-medium text-sage-900">Dots</h4>
-                <LoaderComponent variant="dots" size="md" />
+                <LoaderComponent variant="dots" sizes="md" />
               </div>
               
               <div className="text-center space-y-3">
                 <h4 className="font-medium text-sage-900">Pulse</h4>
-                <LoaderComponent variant="pulse" size="md" />
+                <LoaderComponent variant="pulse" sizes="md" />
               </div>
               
               <div className="text-center space-y-3">
                 <h4 className="font-medium text-sage-900">Progress</h4>
-                <LoaderComponent variant="progress" size="md" />
+                <LoaderComponent variant="circle" sizes="md" />
               </div>
             </div>
           </Card>

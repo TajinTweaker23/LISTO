@@ -121,19 +121,19 @@ export default function MobileUIDemo() {
             <h4 className="font-medium text-sage-700 mb-3">Loading Animations</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <Loader variant="spinner" size="md" color="sage" />
+                <Loader variant="spinner" sizes="md" color="sage" />
                 <p className="text-xs text-sage-500 mt-2">Spinner</p>
               </div>
               <div className="text-center">
-                <Loader variant="dots" size="md" color="sage" />
+                <Loader variant="dots" sizes="md" color="sage" />
                 <p className="text-xs text-sage-500 mt-2">Dots</p>
               </div>
               <div className="text-center">
-                <Loader variant="pulse" size="md" color="sage" />
+                <Loader variant="pulse" sizes="md" color="sage" />
                 <p className="text-xs text-sage-500 mt-2">Pulse</p>
               </div>
               <div className="text-center">
-                <Loader variant="progress" size="md" color="sage" />
+                <Loader variant="circle" sizes="md" color="sage" />
                 <p className="text-xs text-sage-500 mt-2">Progress</p>
               </div>
             </div>
@@ -252,9 +252,7 @@ export default function MobileUIDemo() {
       {isLoading && (
         <Loader
           variant="spinner"
-          size="lg"
-          message="Loading amazing content..."
-          fullScreen
+          sizes="lg"
         />
       )}
 
