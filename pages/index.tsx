@@ -1,639 +1,450 @@
 // pages/index.tsx
 
-import { useEffect, useState, useRef } from "react";
-import { getAuth } from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import firebaseApp from "../lib/firebase";
-import { getAvatarSVG } from "../components/ui/AvatarPicker";
-import { motion, AnimatePresence } from "framer-motion";
-import FaqSection from '@/components/FaqSection';
-import '../styles/faq.css';
-import { Link as LinkIcon } from 'lucide-react'; // Import an icon
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/router";
+import { motion, useScroll, useTransform } from "framer-motion";
+import FaqSection from "@/components/FaqSection";
 
-export default function Home() {
-  const [userName, setUserName] = useState("Friend");
-  const [avatar, setAvatar] = useState<any>(null);
-  const [moodboards, setMoodboards] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
-  const [visionItems, setVisionItems] = useState<any[]>([]);
-  const [achievements, setAchievements] = useState<any[]>([]);
-  const [articles, setArticles] = useState<any[]>([]); // <-- Add state for articles
-  const [loading, setLoading] = useState(true);
-  const [dark, setDark] = useState(false);
-  const [quickAdd, setQuickAdd] = useState("");
-  const [quickAddType, setQuickAddType] = useState("goal");
-  const [quickAddSuccess, setQuickAddSuccess] = useState(false);
-  const [weatherGreeting, setWeatherGreeting] = useState<string>("");
-  const [motivationQuote, setMotivationQuote] = useState<string>("The future depends on what you do today. — Mahatma Gandhi");
-  const quickAddInputRef = useRef<HTMLInputElement>(null);
-
-  // Quotes for the widget
-  const quotes = [
-    "The future depends on what you do today. — Mahatma Gandhi",
-    "You are the sky. Everything else is just the weather. — Pema Chödrön",
-    "Don't watch the clock; do what it does. Keep going. — Sam Levenson",
-    "I'm not a businessman, I'm a business, man. — Jay-Z",
-    "I am deliberate and afraid of nothing. — Audre Lorde",
-    "Today’s grind is tomorrow’s shine. — LISTO",
-    "You’re closer than you think. — LISTO",
-    "Let your hustle be louder than your doubts. — LISTO",
-    "One day or day one. You decide. — LISTO"
-  ];
+// Advanced landing page component with stunning visuals
+function LandingPage() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 300], [0, 100]);
+  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
 
   useEffect(() => {
-    const auth = getAuth(firebaseApp);
-    const db = getFirestore(firebaseApp);
-    const user = auth.currentUser;
-
-    if (user) {
-      // User Profile
-      const userRef = doc(db, "users", user.uid);
-      getDoc(userRef).then((snap) => {
-        if (snap.exists()) {
-          setUserName(snap.data().name || "Friend");
-          setAvatar(snap.data().avatar || null);
-        }
-      });
-
-      // Fetch Daily News Articles
-      const fetchArticles = async () => {
-        try {
-          const response = await fetch('/api/daily-news');
-          const data = await response.json();
-          if (data && Array.isArray(data)) {
-            setArticles(data);
-          }
-        } catch (error) {
-          console.error("Failed to fetch articles:", error);
-        }
-      };
-      fetchArticles();
-
-      // Real-time Moodboards
-      const qMood = query(collection(db, "moodboards"), where("userId", "==", user.uid));
-      const unsubMood = onSnapshot(qMood, (querySnap) => {
-        setMoodboards(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      // Real-time Events
-      const qEvents = query(
-        collection(db, "events"),
-        where("userId", "==", user.uid),
-        orderBy("date", "asc"),
-        limit(3)
-      );
-      const unsubEvents = onSnapshot(qEvents, (querySnap) => {
-        setEvents(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      // Real-time Vision Board
-      const qVision = query(
-        collection(db, "visionBoardItems"),
-        where("userId", "==", user.uid),
-        limit(6)
-      );
-      const unsubVision = onSnapshot(qVision, (querySnap) => {
-        setVisionItems(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      // Real-time Achievements
-      const qAch = query(
-        collection(db, "achievements"),
-        where("userId", "==", user.uid),
-        orderBy("earnedAt", "desc"),
-        limit(4)
-      );
-      const unsubAch = onSnapshot(qAch, (querySnap) => {
-        setAchievements(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        setLoading(false);
-      });
-
-      // Weather + motivational greeting/quote
-      const hour = new Date().getHours();
-      let baseGreeting;
-      if (hour < 12) {
-        baseGreeting = "Good morning";
-      } else if (hour < 18) {
-        baseGreeting = "Good afternoon";
-      } else {
-        baseGreeting = "Good evening";
-      }
-
-      // Weather API — FIXED AS AN EXPRESSION!
-      const fetchWeather = async () => {
-        try {
-          // Salt Lake City default. (Change lat/lon for your city)
-          const response = await fetch(
-            "https://api.openweathermap.org/data/2.5/weather?lat=40.7608&lon=-111.8910&units=imperial&appid=abffd9926f11af59e8cea4b63b40e3d7"
-          );
-          const data = await response.json();
-          const weather = data.weather?.[0]?.main;
-          const temp = Math.round(data.main?.temp);
-          let weatherMsg = "";
-          if (weather === "Rain") {
-            weatherMsg = "Stay cozy, perfect day to reflect 🌧️";
-          } else if (weather === "Clear") {
-            weatherMsg = "Let’s make it a bright one ☀️";
-          } else if (weather === "Clouds") {
-            weatherMsg = "A calm day to dream ☁️";
-          } else if (weather === "Snow") {
-            weatherMsg = "Bundle up and build big dreams ❄️";
-          } else if (weather === "Thunderstorm") {
-            weatherMsg = "Channel the energy! ⚡";
-          } else {
-            weatherMsg = "Let’s make it count 🌟";
-          }
-          setWeatherGreeting(`${baseGreeting}, ${userName}! ${weatherMsg} (${temp}°F)`);
-        } catch {
-          setWeatherGreeting(`${baseGreeting}, ${userName}!`);
-        }
-      };
-      fetchWeather();
-
-      // Rotating motivational quote widget (different each day)
-      const dateSeed = new Date().toDateString();
-      const hash = dateSeed
-        .split("")
-        .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      setMotivationQuote(quotes[hash % quotes.length]);
-
-      return () => {
-        unsubMood();
-        unsubEvents();
-        unsubVision();
-        unsubAch();
-      };
-    }
-    // include userName in deps so weather greeting updates
-  }, [userName]);
-
-  // Animations
-  const fadeIn = {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 30 },
-    transition: { duration: 0.5, type: "spring" as const },
-  };
-
-  if (loading) return <div className="text-center py-20">Loading...</div>;
-
-  const dailyFocus = "Finish onboarding UI & plan next week’s goals!";
-
-  // Quick Add Logic
-  const handleQuickAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const auth = getAuth(firebaseApp);
-    const db = getFirestore(firebaseApp);
-    const user = auth.currentUser;
-    if (!user || !quickAdd.trim()) return;
-    let col = "";
-    let data: any = {
-      userId: user.uid,
-      createdAt: serverTimestamp(),
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
     };
-    if (quickAddType === "goal") {
-      col = "goals";
-      data.text = quickAdd.trim();
-      data.completed = false;
-    } else if (quickAddType === "event") {
-      col = "events";
-      data.title = quickAdd.trim();
-      data.date = serverTimestamp();
-    } else if (quickAddType === "idea") {
-      col = "ideas";
-      data.text = quickAdd.trim();
-    }
-    await addDoc(collection(db, col), data);
-    setQuickAdd("");
-    setQuickAddSuccess(true);
-    setTimeout(() => setQuickAddSuccess(false), 1200);
-    quickAddInputRef.current?.focus();
-  };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <div className={dark ? "dark min-h-screen bg-warm-gray-900" : "min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-sage-100"}>
-      {/* Sophisticated toggle button */}
-      <motion.button
-        onClick={() => setDark(d => !d)}
-        className="absolute top-6 right-6 px-4 py-2 backdrop-blur-xl bg-white/20 border border-sage-200/50 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <span className="text-sage-700 font-medium flex items-center gap-2">
-          {dark ? "☀️ Light" : "🌙 Dark"}
-        </span>
-      </motion.button>
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-indigo-50 via-white to-purple-50 overflow-y-auto">
+      {/* Animated background grid */}
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
+      {/* Mouse follower effect */}
+      <motion.div
+        className="fixed w-96 h-96 rounded-full pointer-events-none z-10"
+        style={{
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          left: mousePosition.x - 192,
+          top: mousePosition.y - 192,
+        }}
+        animate={{
+          x: (mousePosition.x - (typeof window !== 'undefined' ? window.innerWidth : 0) / 2) * 0.05,
+          y: (mousePosition.y - (typeof window !== 'undefined' ? window.innerHeight : 0) / 2) * 0.05,
+        }}
+        transition={{ type: "spring", stiffness: 150, damping: 15 }}
+      />
 
-      {/* Hero Section */}
-      <header className="flex flex-col items-center py-10 relative overflow-hidden bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1932&auto=format&fit=crop')"}}>
-        {/* Overlay for readability */}
-        <div className="absolute inset-0 bg-white/30 dark:bg-warm-gray-900/50 backdrop-blur-sm"></div>
+      {/* Hero Section with 3D effect */}
+      <header className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Layered background with parallax */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10"
+          style={{ y: y1 }}
+        />
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-tl from-emerald-600/5 via-transparent to-cyan-600/5"
+          style={{ y: y2 }}
+        />
         
-        <motion.div className="mb-4 z-10" {...fadeIn}>
-          {avatar ? (
-            <motion.div
-              className="w-24 h-24 rounded-full shadow-lg bg-white flex items-center justify-center ring-4 ring-blue-200"
-              initial={{ scale: 0.8, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", duration: 0.7 }}
+        {/* Floating geometric shapes */}
+        <motion.div
+          className="absolute top-20 left-[10%] w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-600 rounded-3xl opacity-20 blur-sm"
+          animate={{ 
+            y: [0, -30, 0],
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ repeat: Infinity, duration: 20, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-32 right-[15%] w-24 h-24 bg-gradient-to-br from-pink-400 to-orange-500 rounded-full opacity-25"
+          animate={{ 
+            y: [0, 20, 0],
+            x: [0, -15, 0],
+            scale: [1, 0.8, 1]
+          }}
+          transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute top-1/2 right-[5%] w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 transform rotate-45 opacity-20"
+          animate={{ 
+            rotate: [45, 225, 405],
+            scale: [1, 1.3, 1]
+          }}
+          transition={{ repeat: Infinity, duration: 25, ease: "easeInOut" }}
+        />
+
+        <div className="container mx-auto px-6 lg:px-8 relative z-20 w-full">
+          <motion.div 
+            className="max-w-7xl mx-auto text-center"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            {/* Main headline with gradient text */}
+            <motion.h1 
+              className="text-7xl sm:text-8xl lg:text-9xl xl:text-[12rem] font-black mb-8 leading-[0.85] tracking-tight"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.2 }}
             >
-              {getAvatarSVG(avatar)}
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                LISTO
+              </span>
+              <br />
+              <motion.span 
+                className="text-gray-800 text-6xl sm:text-7xl lg:text-8xl"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                Vision to Reality
+              </motion.span>
+            </motion.h1>
+
+            {/* Subtitle with typewriter effect */}
+            <motion.p 
+              className="text-2xl sm:text-3xl lg:text-4xl text-gray-600 mb-16 max-w-6xl mx-auto leading-relaxed font-light"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 1 }}
+            >
+              Transform chaotic dreams into organized success. The only productivity platform that thinks like you do.
+            </motion.p>
+            
+            {/* CTA Button with advanced hover effects */}
+            <motion.div 
+              className="mb-20"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+            >
+              <motion.a
+                href="/login"
+                className="group relative inline-block"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-16 py-6 rounded-2xl font-bold text-2xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 border border-white/20">
+                  Start Your Journey
+                  <motion.div
+                    className="absolute inset-0 bg-white/20 rounded-2xl"
+                    initial={{ scale: 0, opacity: 0 }}
+                    whileHover={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.a>
             </motion.div>
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-200" />
-          )}
-        </motion.div>
-        <motion.h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 z-10" {...fadeIn}>
-          {weatherGreeting || `Good day, ${userName}!`}
-        </motion.h1>
-        <motion.p className="text-lg text-gray-600 mb-2 z-10 font-medium" {...fadeIn}>
-          {motivationQuote}
-        </motion.p>
-        <motion.p className="text-lg text-gray-600 mb-6 z-10" {...fadeIn}>
-          Dream. Do. Dominate. What’s your focus today?
-        </motion.p>
-        <motion.div className="flex gap-4 z-10" {...fadeIn}>
-          <a
-            href="/moodboards"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold"
-          >
-            Create Moodboard
-          </a>
-          <a
-            href="/calendar"
-            className="px-6 py-2 bg-pink-500 text-white rounded-lg shadow hover:bg-pink-600 transition font-semibold"
-          >
-            Calendar
-          </a>
-          <a
-            href="/vision"
-            className="px-6 py-2 bg-yellow-400 text-gray-900 rounded-lg shadow hover:bg-yellow-300 transition font-semibold"
-          >
-            Vision Board
-          </a>
-        </motion.div>
-        {/* Decorative animated shapes */}
-        <motion.div
-          className="absolute right-10 top-10 w-16 h-16 bg-pink-400 rounded-full opacity-30"
-          initial={{ scale: 0.7, y: -30 }}
-          animate={{ scale: [0.7, 1.1, 0.7], y: [-30, 10, -30] }}
-          transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute left-10 bottom-0 w-24 h-24 bg-blue-300 rounded-full opacity-20"
-          initial={{ scale: 0.8, y: 0 }}
-          animate={{ scale: [0.8, 1.2, 0.8], y: [0, 20, 0] }}
-          transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
-        />
+
+            {/* Enhanced stats with animations */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-3 gap-12 max-w-5xl mx-auto"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.4 }}
+            >
+              {[
+                { number: "50K+", label: "Dreams Realized", color: "from-blue-500 to-cyan-500" },
+                { number: "AI-Powered", label: "Smart Organization", color: "from-purple-500 to-pink-500" },
+                { number: "24/7", label: "Sync Anywhere", color: "from-emerald-500 to-teal-500" }
+              ].map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  className="group text-center p-8 rounded-3xl bg-white/30 backdrop-blur-sm border border-white/20 hover:bg-white/50 transition-all duration-300"
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
+                >
+                  <div className={`text-5xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-3`}>
+                    {stat.number}
+                  </div>
+                  <div className="text-xl text-gray-700 font-medium">{stat.label}</div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 pb-20">
-        {/* Moodboards Card */}
-        <motion.section 
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">🎨</span> 
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Your Moodboards</span>
-          </h2>
-          <div className="flex flex-wrap gap-3 mb-6 flex-grow">
-            {moodboards.length === 0 && (
-              <div className="text-sage-400 font-medium">No moodboards yet. Start creating!</div>
-            )}
-            <AnimatePresence>
-              {moodboards.map((mb) => (
-                <motion.div
-                  key={mb.id}
-                  className="rounded-xl px-4 py-2 bg-gradient-to-r from-sage-500 to-sage-600 text-white font-semibold shadow-lg"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.4 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {mb.title}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-          <motion.a
-            href="/moodboards/new"
-            className="rounded-2xl px-6 py-3 bg-sage-100 text-sage-700 font-semibold shadow-md hover:shadow-lg transition-all duration-300 text-center"
-            whileHover={{ scale: 1.02, backgroundColor: '#e8ebe8' }}
-            whileTap={{ scale: 0.98 }}
-          >
-            ✨ New Moodboard
-          </motion.a>
-        </motion.section>
+      {/* Revolutionary Features Section */}
+      <section className="py-32 px-6 lg:px-8 relative z-10 overflow-hidden">
+        {/* Section background with animated blobs */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50/50 to-white"></div>
+        <motion.div
+          className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-blue-300/30 to-purple-300/30 rounded-full blur-3xl"
+          animate={{ x: [0, 100, 0], y: [0, -50, 0] }}
+          transition={{ repeat: Infinity, duration: 30, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-32 -right-32 w-96 h-96 bg-gradient-to-br from-pink-300/30 to-orange-300/30 rounded-full blur-3xl"
+          animate={{ x: [0, -100, 0], y: [0, 50, 0] }}
+          transition={{ repeat: Infinity, duration: 25, ease: "easeInOut" }}
+        />
 
-        {/* Daily Focus Card */}
-        <motion.section className="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between" {...fadeIn}>
-          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🎯</text></svg>" alt="Focus" className="inline w-8 h-8 align-middle" /> Today’s Focus
-          </h2>
-          <motion.p className="text-gray-700 mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            {dailyFocus}
-          </motion.p>
-          <div className="mt-auto">
-            <motion.span
-              className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold"
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300 }}
+        <div className="container mx-auto max-w-8xl relative z-10">
+          <motion.div 
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <motion.h2 
+              className="text-6xl sm:text-7xl lg:text-8xl font-black mb-8 leading-tight"
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
             >
-              Streak: 3 days
-            </motion.span>
-          </div>
-        </motion.section>
-
-        {/* Daily Briefing Card */}
-        <motion.section
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">📰</span>
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Daily Briefing</span>
-          </h2>
-          <ul className="space-y-3 flex-grow">
-            {articles.length === 0 && (
-              <li className="text-sage-400 font-medium">Loading top stories...</li>
-            )}
-            <AnimatePresence>
-              {articles.map((article, index) => (
-                <motion.li
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-sage-50 transition-colors duration-200 group"
-                  >
-                    <LinkIcon className="w-5 h-5 text-sage-400 group-hover:text-sage-600 transition-colors" />
-                    <span className="font-semibold text-sage-700 flex-grow">{article.title}</span>
-                    <span className="text-xs font-bold text-white bg-sage-400 group-hover:bg-sage-500 px-2 py-1 rounded-full transition-colors">
-                      {article.source}
-                    </span>
-                  </a>
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </ul>
-        </motion.section>
-
-        {/* Calendar Card with Real Events */}
-        <motion.section 
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">📅</span> 
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Calendar</span>
-          </h2>
-          <ul className="mb-6 flex-grow space-y-3">
-            {events.length === 0 && (
-              <li className="text-sage-400 font-medium text-center py-4">
-                <div className="text-4xl mb-2">🗓️</div>
-                No upcoming events.
-                <br />
-                <span className="text-sm">Add one using the Quick Add below!</span>
-              </li>
-            )}
-            <AnimatePresence>
-              {events.map(ev => (
-                <motion.li
-                  key={ev.id}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-sage-50 border border-sage-100"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <span className="inline-block w-3 h-3 bg-sage-400 rounded-full"></span>
-                  <span className="font-semibold text-sage-700 flex-grow">{ev.title}</span>
-                  <span className="text-xs text-sage-500">
-                    {ev.date && new Date(ev.date.seconds ? ev.date.seconds * 1000 : ev.date).toLocaleDateString()}
-                  </span>
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </ul>
-          <motion.a
-            href="/calendar"
-            className="px-6 py-3 bg-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold text-center"
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Open Calendar
-          </motion.a>
-        </motion.section>
-
-        {/* Vision Board Grid */}
-        <motion.section 
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">🌈</span> 
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Vision Board</span>
-          </h2>
-          <div className="grid grid-cols-3 gap-3 mb-6 flex-grow">
-            {visionItems.length === 0 && (
-              <div className="col-span-3 text-white font-bold text-center py-8 flex flex-col items-center justify-center rounded-2xl bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1508615039623-a25605d2b022?q=80&w=1200&auto=format&fit=crop')"}}>
-                <div className="bg-black/30 p-4 rounded-xl backdrop-blur-sm">
-                  <div className="text-3xl mb-2">✨</div>
-                  Visualize your dreams.
-                  <br />
-                  <span className="text-sm font-normal">Add your first vision board item.</span>
-                </div>
-              </div>
-            )}
-            <AnimatePresence>
-              {visionItems.map(item => (
-                <motion.div
-                  key={item.id}
-                  className="rounded-2xl overflow-hidden shadow-lg relative group bg-sage-50"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.caption || "Vision"} className="object-cover w-full h-28" />
-                  ) : (
-                    <div className="w-full h-28 bg-gradient-to-br from-sage-100 to-sage-200 flex items-center justify-center text-3xl">🌟</div>
-                  )}
-                  {item.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-sage-900/70 backdrop-blur-sm text-white text-xs px-3 py-2 truncate">
-                      {item.caption}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-          <motion.a
-            href="/vision"
-            className="px-6 py-3 bg-gradient-to-r from-sage-500 to-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold text-center"
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Go to Vision Board
-          </motion.a>
-        </motion.section>
-
-        {/* Achievements Panel */}
-        <motion.section 
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">🏆</span> 
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Achievements</span>
-          </h2>
-          <div className="flex flex-wrap gap-4 justify-center flex-grow">
-            {achievements.length === 0 && (
-              <div className="text-sage-400 font-medium text-center py-4">No achievements yet. Keep going!</div>
-            )}
-            <AnimatePresence>
-              {achievements.map(ach => (
-                <motion.div
-                  key={ach.id}
-                  className="flex flex-col items-center p-4 rounded-2xl bg-sage-50 border border-sage-100"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                >
-                  <span className="text-4xl mb-2">{ach.icon || "⭐"}</span>
-                  <span className="text-sm font-semibold text-sage-700 text-center">{ach.name}</span>
-                  <span className="text-xs text-sage-400 mt-1">
-                    {ach.earnedAt && new Date(ach.earnedAt.seconds ? ach.earnedAt.seconds * 1000 : ach.earnedAt).toLocaleDateString()}
-                  </span>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </motion.section>
-
-        {/* Quick Add Card */}
-        <motion.section 
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-sage-200/50 p-8 flex flex-col lg:col-span-2"
-          {...fadeIn}
-          whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(109, 124, 109, 0.15)" }}
-        >
-          <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-sage-800">
-            <span className="text-2xl">➕</span> 
-            <span style={{ fontFamily: 'Inter, SF Pro Display, system-ui, sans-serif' }}>Quick Add</span>
-          </h2>
-          <form className="flex gap-4 flex-wrap" onSubmit={handleQuickAdd}>
-            <select
-              value={quickAddType}
-              onChange={e => setQuickAddType(e.target.value)}
-              className="px-4 py-3 border border-sage-200 rounded-2xl shadow-sm text-sm font-medium text-sage-700 bg-white focus:ring-2 focus:ring-sage-300 focus:border-sage-300 transition-all"
+              <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
+                Features That
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Change Everything
+              </span>
+            </motion.h2>
+            <motion.p 
+              className="text-2xl sm:text-3xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
             >
-              <option value="goal">🎯 Goal</option>
-              <option value="event">📅 Event</option>
-              <option value="idea">💡 Idea</option>
-            </select>
-            <input
-              ref={quickAddInputRef}
-              type="text"
-              value={quickAdd}
-              onChange={e => setQuickAdd(e.target.value)}
-              placeholder={`Add a new ${quickAddType}...`}
-              className="flex-1 px-4 py-3 border border-sage-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-sage-300 transition-all bg-white text-sage-700"
-            />
-            <motion.button
-              type="submit"
-              className="px-6 py-3 bg-sage-600 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!quickAdd.trim()}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Add ✨
-            </motion.button>
-          </form>
-          <AnimatePresence>
-            {quickAddSuccess && (
-              <motion.div
-                className="mt-4 text-sage-600 font-semibold flex items-center gap-3 p-3 bg-sage-100 rounded-2xl"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-lg">✅</span> Successfully added!
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.section>
-
-        {/* Motivational Quote Card */}
-        <motion.section className="bg-gradient-to-r from-pink-200 via-yellow-100 to-blue-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center col-span-1 md:col-span-2" {...fadeIn}>
-          <blockquote className="text-xl italic text-gray-700 text-center mb-2">
-            “{motivationQuote}”
-          </blockquote>
-          <span className="text-sm text-gray-500">— LISTO Motivation</span>
-        </motion.section>
-
-        {/* Animated Decorative Block */}
-        <motion.section
-          className="col-span-1 md:col-span-2 flex justify-center items-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, type: "spring" }}
-        >
-          <motion.div
-            className="w-40 h-24 rounded-2xl bg-gradient-to-br from-blue-400 via-pink-400 to-yellow-300 shadow-xl flex items-center justify-center text-4xl font-extrabold text-white"
-            initial={{ rotate: -8 }}
-            animate={{ rotate: [0, 8, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-          >
-            🚀 Keep Going!
+              Revolutionary tools designed for the ambitious minds of tomorrow.
+            </motion.p>
           </motion.div>
-        </motion.section>
-      </main>
+
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+            {[
+              {
+                icon: "🎨",
+                title: "Neural Vision Boards",
+                description: "AI-powered mood boards that evolve with your thinking. Create immersive visual landscapes that inspire breakthrough moments.",
+                gradient: "from-blue-500 via-cyan-500 to-teal-500",
+                delay: 0
+              },
+              {
+                icon: "🧠",
+                title: "Genius Mode Planning",
+                description: "Our proprietary algorithm breaks down impossible dreams into perfectly actionable micro-steps that guarantee progress.",
+                gradient: "from-purple-500 via-pink-500 to-rose-500",
+                delay: 0.1
+              },
+              {
+                icon: "⚡",
+                title: "Lightning Sync",
+                description: "Quantum-speed synchronization across all devices. Your ideas travel faster than your thoughts.",
+                gradient: "from-amber-500 via-orange-500 to-red-500",
+                delay: 0.2
+              },
+              {
+                icon: "🎯",
+                title: "Precision Targeting",
+                description: "Laser-focused goal architecture with success probability calculations. Know exactly where you're headed.",
+                gradient: "from-emerald-500 via-green-500 to-lime-500",
+                delay: 0.3
+              },
+              {
+                icon: "📊",
+                title: "Success Analytics",
+                description: "Advanced pattern recognition reveals your peak performance windows and optimization opportunities.",
+                gradient: "from-indigo-500 via-blue-500 to-cyan-500",
+                delay: 0.4
+              },
+              {
+                icon: "🚀",
+                title: "Momentum Engine",
+                description: "Proprietary motivation algorithms that adapt to your energy cycles and keep you in the flow state.",
+                gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
+                delay: 0.5
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={`feature-${feature.title}`}
+                className="group relative"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: feature.delay }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
+              >
+                {/* Card glow effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 rounded-3xl`} />
+                
+                {/* Main card */}
+                <div className="relative bg-white/60 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-white/40 hover:border-white/60 transition-all duration-500 h-full shadow-lg hover:shadow-2xl">
+                  {/* Icon with gradient background */}
+                  <motion.div 
+                    className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${feature.gradient} mb-6 text-3xl shadow-lg`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    {feature.icon}
+                  </motion.div>
+                  
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 group-hover:text-gray-800 transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    {feature.description}
+                  </p>
+
+                  {/* Hover indicator */}
+                  <motion.div
+                    className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${feature.gradient} rounded-b-3xl`}
+                    initial={{ width: 0 }}
+                    whileHover={{ width: "100%" }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Testimonial/Social Proof Section */}
+          <motion.div 
+            className="text-center mt-32"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <motion.div
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 backdrop-blur-sm border border-yellow-400/30 rounded-full px-6 py-3 mb-8"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span className="text-2xl">⭐⭐⭐⭐⭐</span>
+              <span className="text-gray-700 font-medium">4.9/5 from 10,000+ users</span>
+            </motion.div>
+            
+            <motion.h3 
+              className="text-5xl sm:text-6xl font-black mb-8"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                Join the productivity
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                revolution
+              </span>
+            </motion.h3>
+            
+            <motion.a
+              href="/login"
+              className="group relative inline-block"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+              <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 border border-white/20">
+                Transform Your Life Today
+                <motion.div
+                  className="absolute inset-0 bg-white/20 rounded-2xl"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+            </motion.a>
+          </motion.div>
+        </div>
+      </section>
 
       <FaqSection />
+    </div>
+  );
+}
 
-      {/* Sophisticated Quick Action Button */}
-      <motion.button
-        className="fixed bottom-8 right-8 z-50 bg-sage-600 hover:bg-sage-700 text-white rounded-full shadow-2xl p-6 text-2xl border-4 border-white/50 backdrop-blur-sm"
-        whileHover={{ scale: 1.1, rotate: 180 }}
-        whileTap={{ scale: 0.95 }}
-        animate={{ y: [0, -8, 0] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-        aria-label="Quick Action"
-      >
-        ✨
-      </motion.button>
+export default function Home() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
+  // Show landing page for non-authenticated users
+  if (!user) {
+    return <LandingPage />;
+  }
+
+  // Show loading while redirecting authenticated users  
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
+      <div className="text-center relative z-10">
+        {/* Animated LISTO logo */}
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            LISTO
+          </h1>
+        </motion.div>
+        
+        {/* Advanced loading spinner */}
+        <motion.div
+          className="relative w-20 h-20 mx-auto mb-6"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute inset-0 rounded-full border-4 border-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-20"></div>
+          <div className="absolute inset-2 rounded-full border-4 border-transparent bg-gradient-to-r from-pink-600 via-blue-600 to-purple-600"></div>
+          <div className="absolute inset-4 rounded-full bg-white"></div>
+        </motion.div>
+        
+        <motion.p 
+          className="text-xl text-gray-600 font-medium"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          Preparing your productivity paradise...
+        </motion.p>
+        
+        {/* Floating elements */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-3 h-3 bg-blue-400 rounded-full opacity-60"
+          animate={{ y: [0, -20, 0], opacity: [0.6, 1, 0.6] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 w-2 h-2 bg-purple-400 rounded-full opacity-60"
+          animate={{ y: [0, 15, 0], opacity: [0.6, 1, 0.6] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
+        />
+      </div>
     </div>
   );
 }

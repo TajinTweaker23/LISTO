@@ -52,6 +52,78 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'pulse-slow': 'pulse 3s ease-in-out infinite',
+        'gradient-x': 'gradient-x 15s ease infinite',
+        'gradient-y': 'gradient-y 15s ease infinite',
+        'gradient-xy': 'gradient-xy 15s ease infinite',
+        'float-1': 'float-1 6s ease-in-out infinite',
+        'float-2': 'float-2 8s ease-in-out infinite',
+        'float-3': 'float-3 7s ease-in-out infinite',
+        'shimmer': 'shimmer 2s infinite',
+        'morph': 'morph 8s ease-in-out infinite',
+        'bounce-slow': 'bounce 3s infinite',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+      },
+      keyframes: {
+        'gradient-x': {
+          '0%, 100%': {
+            'transform': 'translateX(0%)',
+          },
+          '50%': {
+            'transform': 'translateX(100%)',
+          },
+        },
+        'gradient-y': {
+          '0%, 100%': {
+            'transform': 'translateY(0%)',
+          },
+          '50%': {
+            'transform': 'translateY(100%)',
+          },
+        },
+        'gradient-xy': {
+          '0%, 100%': {
+            'transform': 'translate(0%, 0%)',
+          },
+          '25%': {
+            'transform': 'translate(100%, 0%)',
+          },
+          '50%': {
+            'transform': 'translate(100%, 100%)',
+          },
+          '75%': {
+            'transform': 'translate(0%, 100%)',
+          },
+        },
+        'float-1': {
+          '0%, 100%': { 'transform': 'translateY(0px) rotate(0deg)' },
+          '33%': { 'transform': 'translateY(-30px) rotate(120deg)' },
+          '66%': { 'transform': 'translateY(-15px) rotate(240deg)' },
+        },
+        'float-2': {
+          '0%, 100%': { 'transform': 'translateY(0px) rotate(0deg)' },
+          '33%': { 'transform': 'translateY(-20px) rotate(-120deg)' },
+          '66%': { 'transform': 'translateY(-40px) rotate(-240deg)' },
+        },
+        'float-3': {
+          '0%, 100%': { 'transform': 'translateY(0px) rotate(0deg)' },
+          '50%': { 'transform': 'translateY(-25px) rotate(180deg)' },
+        },
+        'shimmer': {
+          '0%': { 'background-position': '-200% 0' },
+          '100%': { 'background-position': '200% 0' },
+        },
+        'morph': {
+          '0%, 100%': {
+            'border-radius': '60% 40% 30% 70% / 60% 30% 70% 40%',
+          },
+          '50%': {
+            'border-radius': '30% 60% 70% 40% / 50% 60% 30% 60%',
+          },
+        },
+        'wiggle': {
+          '0%, 100%': { 'transform': 'rotate(-3deg)' },
+          '50%': { 'transform': 'rotate(3deg)' },
+        },
       },
       spacing: {
         'safe': 'env(safe-area-inset-bottom)',
