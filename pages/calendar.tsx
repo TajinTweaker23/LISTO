@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import DefaultCalendar from '@/components/DefaultCalendar';
-import '../styles/calendar.css';
 
 const NotionCalendarPlaceholder = () => (
   <div className="notion-placeholder"><h2>Notion Calendar</h2><p>This is where the Notion-style calendar would be.</p></div>

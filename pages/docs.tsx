@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { Search, Upload } from 'lucide-react';
-import '../styles/docs.css';
 
 const DocsPage = () => {
   return (

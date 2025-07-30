@@ -2,6 +2,9 @@
 
 import "../styles/globals.css";
 import "../styles/faq.css";
+import "../styles/calendar.css";
+import "../styles/docs.css";
+import "../styles/events.css";
 import type { AppProps } from "next/app";
 import { AuthProvider } from "../context/AuthContext";
 import Layout from "../components/ui/Layout";

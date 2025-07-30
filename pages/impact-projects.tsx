@@ -1,7 +1,6 @@
 // pages/impact-projects.tsx
 // ──────────────────────────────────────────────────────────────────────────────
 // Example page that reads/writes from Firestore. We fix the import path for `db`.
-import '../styles/events.css'; // <-- Import the CSS
 // ... other imports
 
 // Removed duplicate default export Explore component to fix redeclaration error.
