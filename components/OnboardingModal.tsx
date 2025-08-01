@@ -188,12 +188,16 @@ function ProgressStepper({ current }: { current: number }) {
 }
 
 // --- Main Modal ---
-export default function OnboardingModal({
+function OnboardingModalInternal({
   onClose,
   onComplete,
 }: {
-  onClose: () => void;
-  onComplete: (avatar: any | null, theme?: string, music?: string) => void;
+  readonly onClose: () => void;
+  readonly onComplete: (
+    avatar: any | null,
+    theme?: string,
+    music?: string
+  ) => void;
 }) {
   // --- Persistent state! ---
   const [step, setStep] = useState(() => {
@@ -402,10 +406,9 @@ export default function OnboardingModal({
 
   // --- Main Modal UI ---
   return (
-    <div
+    <dialog
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
       aria-modal="true"
-      role="dialog"
       tabIndex={-1}
     >
       {/* Network Status Toast */}
@@ -471,333 +474,348 @@ export default function OnboardingModal({
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Welcome Step */}
-          {steps[step].key === "welcome" && (
-            <motion.div
-              key="welcome"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-8 text-center w-full"
-            >
-              <h2 className="text-4xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-blue-700 via-pink-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg">
-                Welcome to LISTO!
-              </h2>
-              <p className="mb-8 text-lg text-gray-700 dark:text-gray-200 font-medium tracking-wide">
-                Set up your space, your way.{" "}
-                <span className="font-bold text-blue-700">Let's go!</span>
-              </p>
-              <div className="flex gap-4 w-full justify-center mb-4">
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold text-lg"
-                  onClick={handleNext}
-                  aria-label="Start onboarding"
-                  autoFocus
-                >
-                  Get Started
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg shadow hover:bg-gray-200 transition font-semibold text-lg"
-                  onClick={handleSkip}
-                  aria-label="Skip onboarding"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Name Step */}
-          {steps[step].key === "name" && (
-            <motion.div
-              key="name"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-8 w-full"
-            >
-              <label
-                htmlFor="onboard-name"
-                className="block text-2xl font-bold mb-2 text-center text-blue-700 tracking-tight"
-              >
-                What should we call you?
-              </label>
-              <input
-                ref={inputRef}
-                id="onboard-name"
-                type="text"
-                className="w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-center font-medium tracking-wide"
-                placeholder="Type your name…"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError("");
-                }}
-                aria-label="Your name"
-                maxLength={32}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleNext();
-                }}
-              />
-              {error && (
-                <div className="text-red-500 text-sm mt-1 text-center">
-                  {error}
-                </div>
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+            className="min-h-[320px] flex flex-col"
+          >
+            <div className="flex-grow">
+              {steps[step].key === "welcome" && <WelcomeStep />}
+              {steps[step].key === "name" && (
+                <NameStep
+                  name={name}
+                  setName={setName}
+                  error={error}
+                  inputRef={inputRef}
+                />
               )}
-              <div className="flex gap-4 justify-center mt-8">
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                  disabled={step === 0}
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleContinueLater}
-                  aria-label="Continue later"
-                >
-                  Continue Later
-                </button>
-              </div>
-            </motion.div>
-          )}
+              {steps[step].key === "avatar" && (
+                <AvatarStep avatar={avatar} setAvatar={setAvatar} />
+              )}
+              {steps[step].key === "theme" && (
+                <ThemeStep theme={theme} setTheme={setTheme} />
+              )}
+              {steps[step].key === "music" && (
+                <MusicStep music={music} setMusic={setMusic} />
+              )}
+              {steps[step].key === "finish" && <FinishStep name={name} />}
+            </div>
 
-          {/* Avatar Step */}
-          {steps[step].key === "avatar" && (
-            <motion.div
-              key="avatar"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="w-full"
-            >
-              <div className="mb-6">
-                <div className="flex flex-col items-center">
-                  <p className="mb-2 font-semibold text-gray-800 dark:text-gray-200">
-                    Choose your avatar{" "}
-                    <span className="text-gray-500 font-normal">
-                      (or create a 3D one!)
-                    </span>
-                  </p>
-                  <div className="w-full flex flex-col items-center">
-                    {/* AvatarPicker does both Cartoon & ReadyPlayerMe */}
-                    <AvatarPicker value={avatar} onChange={setAvatar} />
-                  </div>
-                  <span className="text-xs mt-2 text-gray-400 text-center">
-                    Want to stand out? Choose a cartoon or a 3D avatar!
-                    <br />
-                    You can always change this later from your profile.
-                  </span>
-                </div>
-              </div>
-              <div className="flex gap-4 justify-center mt-2">
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleContinueLater}
-                  aria-label="Continue later"
-                >
-                  Continue Later
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Theme Step */}
-          {steps[step].key === "theme" && (
-            <motion.div
-              key="theme"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-6 w-full"
-            >
-              <h3 className="text-xl font-semibold mb-2 text-center">
-                Pick a Profile Theme
-              </h3>
-              <div className="flex gap-2 flex-wrap justify-center mb-4">
-                {THEME_OPTIONS.map((opt) => (
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+              <div>
+                {step > 0 && (
                   <button
-                    key={opt.value}
-                    className={`px-3 py-1 rounded transition border ${
-                      theme === opt.value
-                        ? "bg-blue-600 text-white border-blue-800"
-                        : "bg-white text-blue-600 border-blue-200"
-                    }`}
-                    onClick={() => setTheme(opt.value)}
-                    aria-label={opt.label}
+                    onClick={handleBack}
+                    className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition"
                   >
-                    {opt.label}
+                    Back
                   </button>
-                ))}
+                )}
               </div>
-              <div className="w-full mb-2">
-                <div
-                  className="rounded-xl p-2 font-semibold text-center text-sm text-gray-600 dark:text-gray-100"
-                  style={{
-                    background: "linear-gradient(90deg, #e0eafc, #cfdef3 80%)",
-                    ...(theme.startsWith("bg-") ? {} : { background: theme }),
-                  }}
-                >
-                  Live Preview!
-                </div>
-              </div>
-              <div className="flex gap-4 justify-center mt-2">
+              <div className="flex gap-2">
                 <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
                   onClick={handleContinueLater}
-                  aria-label="Continue later"
+                  className="px-4 py-2 text-xs text-gray-500 hover:underline"
                 >
-                  Continue Later
+                  Save & Close
                 </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Music Step */}
-          {steps[step].key === "music" && (
-            <motion.div
-              key="music"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-6 w-full"
-            >
-              <h3 className="text-xl font-semibold mb-2 text-center">
-                Theme Music (Optional)
-              </h3>
-              <div className="flex gap-2 flex-wrap justify-center mb-4">
-                {MUSIC_OPTIONS.map((opt) => (
+                {step < steps.length - 1 ? (
                   <button
-                    key={opt.value}
-                    className={`px-3 py-1 rounded transition border ${
-                      music === opt.value
-                        ? "bg-pink-500 text-white border-pink-800"
-                        : "bg-white text-pink-500 border-pink-200"
-                    }`}
-                    onClick={() => setMusic(opt.value)}
-                    aria-label={opt.label}
+                    onClick={handleNext}
+                    className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition shadow-md"
                   >
-                    {opt.label}
+                    Next
                   </button>
-                ))}
+                ) : (
+                  <button
+                    onClick={handleFinish}
+                    className="px-8 py-3 rounded-xl bg-pink-600 text-white font-bold hover:bg-pink-700 transition shadow-lg animate-pulse"
+                  >
+                    Finish!
+                  </button>
+                )}
               </div>
-              <div className="flex gap-4 justify-center mt-2">
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleContinueLater}
-                  aria-label="Continue later"
-                >
-                  Continue Later
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Finish Step */}
-          {steps[step].key === "finish" && (
-            <motion.div
-              key="finish"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.5, type: "spring" }}
-              className="mb-8 text-center w-full"
-            >
-              <h2 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-green-500 via-blue-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">
-                You're all set!
-              </h2>
-              <p className="mb-4 text-lg text-gray-700 dark:text-gray-100 font-medium">
-                Welcome aboard,{" "}
-                <span className="font-bold text-blue-700">
-                  {name || "friend"}
-                </span>
-                !
-              </p>
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1.1 }}
-                transition={{ type: "spring", duration: 0.6 }}
-                className="flex justify-center mb-4"
-              >
-                {getAvatarSVG(avatar)}
-              </motion.div>
-              <button
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition text-lg font-semibold"
-                onClick={handleFinish}
-                aria-label="Finish onboarding"
-              >
-                Go to Dashboard
-              </button>
-              <div className="mt-4 text-xs text-gray-400">
-                🎊 You can always update your profile & preferences later from
-                Settings!
-              </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
         </AnimatePresence>
+
+        <button
+          onClick={handleSkip}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-sm"
+          aria-label="Skip onboarding"
+        >
+          Skip
+        </button>
       </motion.div>
-      {/* Mobile gesture close (swipe down) could go here in future */}
-      <style>{`
-        @media (max-width: 640px) {
-          .max-w-md { max-width: 98vw !important; }
-        }
-      `}</style>
-    </div>
+    </dialog>
   );
 }
+
+// --- Step Components ---
+const WelcomeStep = () => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Welcome to LISTO!
+    </h2>
+    <p className="text-lg text-gray-600 mb-6">
+      Set up your space, your way.{" "}
+      <span className="font-semibold text-blue-600">Let's go!</span>
+    </p>
+    <div className="flex gap-4 justify-center">
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={handleNext}
+        aria-label="Start onboarding"
+        autoFocus
+      >
+        Get Started
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold shadow-md hover:bg-gray-200 transition"
+        onClick={handleSkip}
+        aria-label="Skip onboarding"
+      >
+        Skip
+      </button>
+    </div>
+  </div>
+);
+
+const NameStep = ({
+  name,
+  setName,
+  error,
+  inputRef,
+}: {
+  readonly name: string;
+  readonly setName: (name: string) => void;
+  readonly error: string;
+  readonly inputRef: React.RefObject<HTMLInputElement>;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      What should we call you?
+    </h2>
+    <input
+      ref={inputRef}
+      type="text"
+      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+      placeholder="Type your name…"
+      value={name}
+      onChange={(e) => {
+        setName(e.target.value);
+        setError("");
+      }}
+      aria-label="Your name"
+      maxLength={32}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") handleNext();
+      }}
+    />
+    {error && (
+      <div className="text-red-500 text-sm mt-2 text-center">{error}</div>
+    )}
+    <div className="flex gap-4 justify-center mt-6">
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={handleNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleBack}
+        aria-label="Back"
+        disabled={step === 0}
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const AvatarStep = ({
+  avatar,
+  setAvatar,
+}: {
+  readonly avatar: any;
+  readonly setAvatar: (avatar: any) => void;
+}) => (
+  <div className="p-4 text-center">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">Choose an Avatar</h2>
+    <div className="flex flex-col items-center">
+      {/* AvatarPicker does both Cartoon & ReadyPlayerMe */}
+      <AvatarPicker value={avatar} onChange={setAvatar} />
+    </div>
+    <p className="text-xs mt-2 text-gray-500">
+      Want to stand out? Choose a cartoon or a 3D avatar!
+      <br />
+      You can always change this later from your profile.
+    </p>
+    <div className="flex gap-4 justify-center mt-6">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={handleNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const ThemeStep = ({
+  theme,
+  setTheme,
+}: {
+  readonly theme: string;
+  readonly setTheme: (theme: string) => void;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Pick a Profile Theme
+    </h2>
+    <div className="flex gap-2 flex-wrap justify-center mb-4">
+      {THEME_OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          className={`px-3 py-1 rounded transition border ${
+            theme === opt.value
+              ? "bg-blue-600 text-white border-blue-800"
+              : "bg-white text-blue-600 border-blue-200"
+          }`}
+          onClick={() => setTheme(opt.value)}
+          aria-label={opt.label}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+    <div className="w-full mb-2">
+      <div
+        className="rounded-xl p-2 font-semibold text-center text-sm text-gray-600 dark:text-gray-100"
+        style={{
+          background: "linear-gradient(90deg, #e0eafc, #cfdef3 80%)",
+          ...(theme.startsWith("bg-") ? {} : { background: theme }),
+        }}
+      >
+        Live Preview!
+      </div>
+    </div>
+    <div className="flex gap-4 justify-center mt-2">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={handleNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const MusicStep = ({
+  music,
+  setMusic,
+}: {
+  readonly music: string;
+  readonly setMusic: (music: string) => void;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Theme Music (Optional)
+    </h2>
+    <div className="flex gap-2 flex-wrap justify-center mb-4">
+      {MUSIC_OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          className={`px-3 py-1 rounded transition border ${
+            music === opt.value
+              ? "bg-pink-500 text-white border-pink-800"
+              : "bg-white text-pink-500 border-pink-200"
+          }`}
+          onClick={() => setMusic(opt.value)}
+          aria-label={opt.label}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+    <div className="flex gap-4 justify-center mt-2">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={handleNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={handleContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const FinishStep = ({ name }: { readonly name: string }) => (
+  <div className="text-center p-4">
+    <h2 className="text-4xl font-bold text-gray-800 mb-2">
+      You're all set!
+    </h2>
+    <p className="text-lg text-gray-600">
+      Ready to achieve your dreams, {name}?
+    </p>
+    <div className="mt-6 text-6xl animate-pulse">🚀</div>
+  </div>
+);
+
+export default React.memo(OnboardingModalInternal);

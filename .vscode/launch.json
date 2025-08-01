@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Run uuid",
+            "runtimeExecutable": "uuid",
+            "cwd": "${workspaceFolder}/node_modules/genkit",
+            "args": []
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",

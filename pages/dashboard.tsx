@@ -292,13 +292,18 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "New Moodboard", href: "/vision-board", icon: "🎨" },
+              { label: "Activism Hub", href: "#", icon: "✊", special: "activism" },
               { label: "Add Event", href: "/calendar", icon: "📅" },
-              { label: "Create Goal", href: "/", icon: "🎯" },
               { label: "Explore", href: "/explore", icon: "🔍" }
             ].map((action) => (
               <motion.a
                 key={action.label}
                 href={action.href}
+                onClick={action.special ? (e) => {
+                  e.preventDefault();
+                  // This will trigger the sidebar view change
+                  window.dispatchEvent(new CustomEvent('changeView', { detail: action.special }));
+                } : undefined}
                 className="flex flex-col items-center gap-2 p-4 bg-sage-50 rounded-xl hover:bg-sage-100 transition-colors group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

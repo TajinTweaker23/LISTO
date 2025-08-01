@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, LayoutDashboard, Calendar, FileText, Settings } from 'lucide-react';
+import { X, LayoutDashboard, Calendar, FileText, Settings, Users } from 'lucide-react';
 
 interface SidebarProps {
   readonly isOpen: boolean;
@@ -11,6 +11,7 @@ interface SidebarProps {
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'activism', label: 'Activism Hub', icon: Users },
   { id: 'calendar', label: 'Calendar', icon: Calendar },
   { id: 'documents', label: 'Documents', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -35,41 +36,46 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, currentView, onViewC
             onClick={onClose}
             aria-hidden="true"
           />
-          <motion.div
+          <motion.dialog
+            className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-[80] p-6 flex flex-col"
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed top-0 left-0 h-full w-72 bg-white/80 dark:bg-[#1a1b23]/90 backdrop-blur-lg shadow-2xl z-[80] flex flex-col p-6"
-            role="dialog"
-            aria-modal="true"
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            aria-label="Main navigation"
           >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">LISTO</h2>
-              <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Close sidebar">
-                <X className="text-gray-600 dark:text-gray-300" />
-              </button>
-            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              aria-label="Close navigation"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold mb-8">LISTO</h2>
             <nav>
               <ul>
-                {navItems.map(item => (
+                {navItems.map((item) => (
                   <li key={item.id}>
-                    <button
-                      onClick={() => handleViewChange(item.id)}
-                      className={`flex items-center w-full text-left px-4 py-3 my-1 rounded-lg transition-colors duration-200 ${
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleViewChange(item.id);
+                      }}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                         currentView === item.id
-                          ? 'bg-blue-500 text-white'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
+                          ? 'bg-blue-100 text-blue-700 font-semibold'
+                          : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
-                      <item.icon className="w-5 h-5 mr-4" />
-                      <span className="font-medium">{item.label}</span>
-                    </button>
+                      <item.icon size={20} />
+                      <span>{item.label}</span>
+                    </a>
                   </li>
                 ))}
               </ul>
             </nav>
-          </motion.div>
+          </motion.dialog>
         </>
       )}
     </AnimatePresence>

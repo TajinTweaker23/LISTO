@@ -1,15 +1,21 @@
-// pages/_app.tsx
-
 import "../styles/globals.css";
 import "../styles/faq.css";
-import "../styles/calendar.css";
+import "../styles/calendar.scss";
 import "../styles/docs.css";
 import "../styles/events.css";
+import "../styles/premium-effects.css";
 import type { AppProps } from "next/app";
 import { AuthProvider } from "../context/AuthContext";
 import Layout from "../components/ui/Layout";
 import React, { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WhiteboardProvider } from '../context/WhiteboardContext';
+import { ToastProvider } from '../hooks/useToast';
+import { AchievementsProvider } from '../hooks/useAchievements';
+import { SoundscapeProvider } from '../hooks/useSoundscape';
+import { FocusTimerProvider } from '../hooks/useFocusTimer';
+import { ParallaxProvider } from '../hooks/useParallax';
+import { NotificationProvider } from '../components/ui/NotificationSystem';
 
 // Create a client instance
 const queryClient = new QueryClient();
@@ -37,9 +43,23 @@ function MyApp({ Component, pageProps }: AppProps) {
   const getLayout = (page: React.ReactElement) => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Layout theme={theme} setTheme={handleSetTheme}>
-          {page}
-        </Layout>
+        <ToastProvider>
+          <AchievementsProvider>
+            <SoundscapeProvider>
+              <FocusTimerProvider>
+                <ParallaxProvider>
+                  <NotificationProvider>
+                    <WhiteboardProvider>
+                      <Layout theme={theme} setTheme={handleSetTheme}>
+                        {page}
+                      </Layout>
+                    </WhiteboardProvider>
+                  </NotificationProvider>
+                </ParallaxProvider>
+              </FocusTimerProvider>
+            </SoundscapeProvider>
+          </AchievementsProvider>
+        </ToastProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
@@ -48,20 +68,3 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
-
-// If you need backend API routes, place them in the /pages/api directory as separate files.
-
-// firebase.ts
-
-import { initializeApp, getApps, getApp } from "firebase/app";
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from "lucide-react";
 
 interface NotificationProps {
@@ -197,12 +197,18 @@ export const useNotifications = () => {
     setNotifications([]);
   };
 
-  return {
-    notifications,
-    addNotification,
-    removeNotification,
-    clearAll,
-  };
+  return { notifications, addNotification, removeNotification };
+};
+
+export const NotificationContext = createContext<ReturnType<typeof useNotifications> | undefined>(undefined);
+
+export const NotificationProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const notifications = useNotifications();
+  return (
+    <NotificationContext.Provider value={notifications}>
+      {children}
+    </NotificationContext.Provider>
+  );
 };
 
 export default NotificationContainer;

@@ -230,7 +230,7 @@ const MyGoogleMap: React.FC<{ onSaveLocation?: (location: { lat: number; lng: nu
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
-      if (place.geometry && place.geometry.location) {
+      if (place.geometry?.location) {
         const newLocation = {
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng(),

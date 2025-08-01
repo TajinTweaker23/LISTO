@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 // --- Constants and Environment Variables ---
 const initialImages = [
@@ -97,41 +97,23 @@ export default function Gallery() {
   const [modalImg, setModalImg] = useState<null | (typeof initialImages)[0]>(
     null
   );
-  const [liked, setLiked] = useState<{ [url: string]: boolean }>(() =>
-    JSON.parse(localStorage.getItem("listoGalleryLikes") || "{}")
-  );
   const [images, setImages] = useState(initialImages);
   const uploadRef = useRef<HTMLInputElement>(null);
 
-  // Persist liked images to localStorage securely
-  const updateLiked = (val: { [url: string]: boolean }) => {
-    setLiked(val);
-    localStorage.setItem("listoGalleryLikes", JSON.stringify(val));
-  };
-
   // Handle file upload with validation
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  const handleUpload = () => {
+    const files = uploadRef.current?.files;
+    if (!files?.length) return;
 
-    const file = files[0];
-    if (!file.type.startsWith("image/")) {
-      alert("Only image files are allowed!");
-      return;
-    }
+    const newImages = Array.from(files).map((file) => ({
+      url: URL.createObjectURL(file),
+      caption: file.name,
+      category: "All",
+    }));
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImages([
-        ...images,
-        {
-          url: reader.result as string,
-          caption: "My Upload",
-          category: "Creativity",
-        },
-      ]);
-    };
-    reader.readAsDataURL(file);
+    setImages((prev) => [...prev, ...newImages]);
+    setFilter("All");
+    uploadRef.current.value = "";
   };
 
   const filteredImages =
@@ -140,75 +122,72 @@ export default function Gallery() {
   return (
     <div className="relative max-w-5xl mx-auto p-4">
       {/* Motivational Quote */}
-      <div
+      <output
         className="mb-3 text-xl font-semibold text-blue-700 bg-blue-50 rounded-lg shadow px-4 py-2 flex items-center gap-2"
         aria-live="polite"
-        role="status"
       >
         <span role="img" aria-label="lightbulb">
           💡
         </span>
         {getRandomQuote()}
-      </div>
+      </output>
 
-      <h1
-        className="text-3xl font-bold mb-2"
-        style={{ fontFamily: "'Quicksand', 'Baloo 2', sans-serif" }}
-      >
-        Welcome to LISTO!
+      <h1 className="text-3xl font-extrabold leading-tight mb-4">
+        Image Gallery
       </h1>
-      <p className="mb-6 text-gray-600">
-        Explore interests, get inspired, and organize your life. Upload your own
-        photos or pick from below!
-      </p>
 
-      {/* Gallery Filters */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {categories.map((cat) => (
+      {/* Category Filters */}
+      <div className="mb-6">
+        {categories.map((category) => (
           <FilterButton
-            key={cat}
-            active={filter === cat}
-            label={cat}
-            emoji={categoryEmojis[cat]}
-            onClick={() => setFilter(cat)}
+            key={category}
+            active={filter === category}
+            label={category}
+            emoji={categoryEmojis[category]}
+            onClick={() => setFilter(category)}
           />
         ))}
-        <button
-          className="px-3 py-1 rounded-full border border-blue-300 bg-blue-50 text-blue-600 shadow hover:bg-blue-100"
-          onClick={() => uploadRef.current?.click()}
-        >
-          <span>➕</span> Upload
-        </button>
+      </div>
+
+      {/* Image Upload */}
+      <div className="mb-8">
         <input
-          ref={uploadRef}
           type="file"
           accept="image/*"
+          multiple
+          ref={uploadRef}
           onChange={handleUpload}
-          style={{ display: "none" }}
-          aria-label="Upload an image"
+          className="hidden"
+          id="imageUpload"
         />
+        <label
+          htmlFor="imageUpload"
+          className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white font-semibold shadow-md cursor-pointer transition hover:bg-blue-700"
+        >
+          <span>📸 Upload Image</span>
+          <span className="text-sm">(or drag & drop here)</span>
+        </label>
       </div>
 
       {/* Gallery */}
       <div className="flex flex-wrap gap-6 z-10 relative">
         {filteredImages.length === 0 && (
-          <div
+          <output
             className="text-center text-gray-400 w-full py-20"
             aria-live="polite"
-            role="status"
           >
             No images found for this category.
-          </div>
+          </output>
         )}
-        {filteredImages.map((img, idx) => (
+        {filteredImages.map((img) => (
           <motion.div
-            key={img.url + idx}
+            key={img.url}
             className="relative w-64 h-40 rounded-2xl overflow-hidden shadow-xl cursor-pointer group bg-white/70 backdrop-blur-md border border-blue-100 hover:shadow-2xl transition"
             whileHover={{ scale: 1.06, rotate: -2 }}
             onClick={() => setModalImg(img)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
+            transition={{ delay: filteredImages.indexOf(img) * 0.05 }}
           >
             <Image
               src={img.url}
@@ -216,7 +195,7 @@ export default function Gallery() {
               fill
               style={{ objectFit: "cover" }}
               sizes="256px"
-              priority={idx === 0}
+              priority={filteredImages.indexOf(img) === 0}
               onError={() => handleImageError(img.url, setImages, setModalImg)}
               loading="lazy"
             />
