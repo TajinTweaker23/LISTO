@@ -8,7 +8,7 @@ const playSound = () => {
     const audio = new Audio("/sounds/success.mp3");
     audio.volume = 0.5;
     audio.play();
-  } catch {}
+  } catch { }
 };
 
 const THEME_OPTIONS = [
@@ -84,9 +84,9 @@ function VortexBackground({
   finished,
   reduceMotion,
 }: {
-  step: number;
-  finished: boolean;
-  reduceMotion: boolean;
+  readonly step: number;
+  readonly finished: boolean;
+  readonly reduceMotion: boolean;
 }) {
   const [tick, setTick] = useState(0);
   const [burst, setBurst] = useState(false);
@@ -94,9 +94,9 @@ function VortexBackground({
   const imagesToShow = finished
     ? vortexImages.length
     : Math.max(
-        3,
-        Math.floor(((step + 1) / steps.length) * vortexImages.length)
-      );
+      3,
+      Math.floor(((step + 1) / steps.length) * vortexImages.length)
+    );
 
   useEffect(() => {
     if (finished) {
@@ -133,7 +133,7 @@ function VortexBackground({
         const blur = 1 + 2 * Math.abs(Math.cos(angle));
         return (
           <motion.div
-            key={i}
+            key={typeof img === "string" ? `${img}-${i}` : img.key}
             style={{
               position: "absolute",
               left: `calc(50vw + ${x}px - 32px)`,
@@ -157,7 +157,7 @@ function VortexBackground({
 }
 
 // --- Progress Stepper ---
-function ProgressStepper({ current }: { current: number }) {
+function ProgressStepper({ current }: { readonly current: number }) {
   return (
     <div className="flex items-center justify-center gap-2 my-4 select-none">
       {steps.map((step, idx) => (
@@ -168,16 +168,14 @@ function ProgressStepper({ current }: { current: number }) {
           className={`flex flex-col items-center transition`}
         >
           <div
-            className={`text-2xl ${
-              idx === current ? "text-pink-500" : "text-gray-400"
-            }`}
+            className={`text-2xl ${idx === current ? "text-pink-500" : "text-gray-400"
+              }`}
           >
             {step.icon}
           </div>
           <div
-            className={`text-xs mt-1 ${
-              idx === current ? "font-bold text-blue-600" : "text-gray-400"
-            }`}
+            className={`text-xs mt-1 ${idx === current ? "font-bold text-blue-600" : "text-gray-400"
+              }`}
           >
             {step.label}
           </div>
@@ -415,9 +413,8 @@ function OnboardingModalInternal({
       <AnimatePresence>
         {showNetworkToast && (
           <motion.div
-            className={`fixed top-10 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl shadow-xl font-bold text-white z-[101] ${
-              isOnline ? "bg-green-500" : "bg-pink-500"
-            }`}
+            className={`fixed top-10 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl shadow-xl font-bold text-white z-[101] ${isOnline ? "bg-green-500" : "bg-pink-500"
+              }`}
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -30, opacity: 0 }}
@@ -742,11 +739,10 @@ const ThemeStep = ({
       {THEME_OPTIONS.map((opt) => (
         <button
           key={opt.value}
-          className={`px-3 py-1 rounded transition border ${
-            theme === opt.value
+          className={`px-3 py-1 rounded transition border ${theme === opt.value
               ? "bg-blue-600 text-white border-blue-800"
               : "bg-white text-blue-600 border-blue-200"
-          }`}
+            }`}
           onClick={() => setTheme(opt.value)}
           aria-label={opt.label}
         >
@@ -812,11 +808,10 @@ const MusicStep = ({
       {MUSIC_OPTIONS.map((opt) => (
         <button
           key={opt.value}
-          className={`px-3 py-1 rounded transition border ${
-            music === opt.value
+          className={`px-3 py-1 rounded transition border ${music === opt.value
               ? "bg-pink-500 text-white border-pink-800"
               : "bg-white text-pink-500 border-pink-200"
-          }`}
+            }`}
           onClick={() => setMusic(opt.value)}
           aria-label={opt.label}
         >
