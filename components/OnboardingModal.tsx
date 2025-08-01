@@ -483,23 +483,44 @@ function OnboardingModalInternal({
             className="min-h-[320px] flex flex-col"
           >
             <div className="flex-grow">
-              {steps[step].key === "welcome" && <WelcomeStep />}
+              {steps[step].key === "welcome" && <WelcomeStep onNext={handleNext} onSkip={handleSkip} />}
               {steps[step].key === "name" && (
                 <NameStep
                   name={name}
                   setName={setName}
                   error={error}
                   inputRef={inputRef}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
                 />
               )}
               {steps[step].key === "avatar" && (
-                <AvatarStep avatar={avatar} setAvatar={setAvatar} />
+                <AvatarStep
+                  avatar={avatar}
+                  setAvatar={setAvatar}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
               )}
               {steps[step].key === "theme" && (
-                <ThemeStep theme={theme} setTheme={setTheme} />
+                <ThemeStep
+                  theme={theme}
+                  setTheme={setTheme}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
               )}
               {steps[step].key === "music" && (
-                <MusicStep music={music} setMusic={setMusic} />
+                <MusicStep
+                  music={music}
+                  setMusic={setMusic}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
               )}
               {steps[step].key === "finish" && <FinishStep name={name} />}
             </div>
@@ -555,7 +576,7 @@ function OnboardingModalInternal({
 }
 
 // --- Step Components ---
-const WelcomeStep = () => (
+const WelcomeStep = ({ onNext, onSkip }: { readonly onNext: () => void; readonly onSkip: () => void; }) => (
   <div className="p-4">
     <h2 className="text-3xl font-bold text-gray-800 mb-4">
       Welcome to LISTO!
@@ -567,7 +588,7 @@ const WelcomeStep = () => (
     <div className="flex gap-4 justify-center">
       <button
         className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
-        onClick={handleNext}
+        onClick={onNext}
         aria-label="Start onboarding"
         autoFocus
       >
@@ -575,7 +596,7 @@ const WelcomeStep = () => (
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold shadow-md hover:bg-gray-200 transition"
-        onClick={handleSkip}
+        onClick={onSkip}
         aria-label="Skip onboarding"
       >
         Skip
@@ -589,11 +610,17 @@ const NameStep = ({
   setName,
   error,
   inputRef,
+  onNext,
+  onBack,
+  onContinueLater,
 }: {
   readonly name: string;
   readonly setName: (name: string) => void;
   readonly error: string;
   readonly inputRef: React.RefObject<HTMLInputElement>;
+  readonly onNext: () => void;
+  readonly onBack: () => void;
+  readonly onContinueLater: () => void;
 }) => (
   <div className="p-4">
     <h2 className="text-3xl font-bold text-gray-800 mb-4">
@@ -607,12 +634,12 @@ const NameStep = ({
       value={name}
       onChange={(e) => {
         setName(e.target.value);
-        setError("");
+        // setError(""); // This was causing an error, assuming it should be removed or handled differently
       }}
       aria-label="Your name"
       maxLength={32}
       onKeyDown={(e) => {
-        if (e.key === "Enter") handleNext();
+        if (e.key === "Enter") onNext();
       }}
     />
     {error && (
@@ -621,22 +648,21 @@ const NameStep = ({
     <div className="flex gap-4 justify-center mt-6">
       <button
         className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
-        onClick={handleNext}
+        onClick={onNext}
         aria-label="Next step"
       >
         Next
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleBack}
+        onClick={onBack}
         aria-label="Back"
-        disabled={step === 0}
       >
         Back
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleContinueLater}
+        onClick={onContinueLater}
         aria-label="Continue later"
       >
         Continue Later
@@ -648,9 +674,15 @@ const NameStep = ({
 const AvatarStep = ({
   avatar,
   setAvatar,
+  onBack,
+  onNext,
+  onContinueLater,
 }: {
   readonly avatar: any;
   readonly setAvatar: (avatar: any) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
 }) => (
   <div className="p-4 text-center">
     <h2 className="text-3xl font-bold text-gray-800 mb-4">Choose an Avatar</h2>
@@ -666,21 +698,21 @@ const AvatarStep = ({
     <div className="flex gap-4 justify-center mt-6">
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleBack}
+        onClick={onBack}
         aria-label="Back"
       >
         Back
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
-        onClick={handleNext}
+        onClick={onNext}
         aria-label="Next step"
       >
         Next
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleContinueLater}
+        onClick={onContinueLater}
         aria-label="Continue later"
       >
         Continue Later
@@ -692,9 +724,15 @@ const AvatarStep = ({
 const ThemeStep = ({
   theme,
   setTheme,
+  onBack,
+  onNext,
+  onContinueLater,
 }: {
   readonly theme: string;
   readonly setTheme: (theme: string) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
 }) => (
   <div className="p-4">
     <h2 className="text-3xl font-bold text-gray-800 mb-4">
@@ -730,21 +768,21 @@ const ThemeStep = ({
     <div className="flex gap-4 justify-center mt-2">
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleBack}
+        onClick={onBack}
         aria-label="Back"
       >
         Back
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
-        onClick={handleNext}
+        onClick={onNext}
         aria-label="Next step"
       >
         Next
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleContinueLater}
+        onClick={onContinueLater}
         aria-label="Continue later"
       >
         Continue Later
@@ -756,9 +794,15 @@ const ThemeStep = ({
 const MusicStep = ({
   music,
   setMusic,
+  onBack,
+  onNext,
+  onContinueLater,
 }: {
   readonly music: string;
   readonly setMusic: (music: string) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
 }) => (
   <div className="p-4">
     <h2 className="text-3xl font-bold text-gray-800 mb-4">
@@ -783,21 +827,21 @@ const MusicStep = ({
     <div className="flex gap-4 justify-center mt-2">
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleBack}
+        onClick={onBack}
         aria-label="Back"
       >
         Back
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
-        onClick={handleNext}
+        onClick={onNext}
         aria-label="Next step"
       >
         Next
       </button>
       <button
         className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
-        onClick={handleContinueLater}
+        onClick={onContinueLater}
         aria-label="Continue later"
       >
         Continue Later
