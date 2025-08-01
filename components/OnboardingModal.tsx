@@ -196,7 +196,7 @@ function OnboardingModalInternal({
     theme?: string,
     music?: string
   ) => void;
-}) {
+}): React.JSX.Element {
   // --- Persistent state! ---
   const [step, setStep] = useState(() => {
     const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
@@ -355,7 +355,7 @@ function OnboardingModalInternal({
   }, []);
 
   // --- Emoji Rain micro-animation on finish
-  function EmojiRain({ show }: { show: boolean }) {
+  function EmojiRain({ show }: { readonly show: boolean }) {
     const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
     return (
       <AnimatePresence>

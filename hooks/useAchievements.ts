@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useCallback, useEffect } from 'react';
+import * as React from 'react';
 import { Achievement, UseAchievementsReturn } from '../types';
 
 const ACHIEVEMENTS_STORAGE_KEY = 'listo-achievements';
@@ -107,7 +107,7 @@ const defaultAchievements: Achievement[] = [
  * Custom hook for managing achievements with persistence and unlocking logic
  */
 export const useAchievements = (): UseAchievementsReturn => {
-  const [achievements, setAchievements] = useState<Achievement[]>(() => {
+  const [achievements, setAchievements] = React.useState<Achievement[]>(() => {
     if (typeof window === 'undefined') return defaultAchievements;
     
     const stored = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
@@ -116,8 +116,8 @@ export const useAchievements = (): UseAchievementsReturn => {
         const parsed = JSON.parse(stored);
         // Merge with default achievements to handle new achievements
         return defaultAchievements.map(defaultAch => {
-          const stored = parsed.find((a: Achievement) => a.id === defaultAch.id);
-          return stored || defaultAch;
+          const storedAch = parsed.find((a: Achievement) => a.id === defaultAch.id);
+          return storedAch || defaultAch;
         });
       } catch {
         return defaultAchievements;
@@ -127,13 +127,13 @@ export const useAchievements = (): UseAchievementsReturn => {
   });
 
   // Persist achievements to localStorage
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(achievements));
   }, [achievements]);
 
   const unlockedAchievements = achievements.filter(a => a.unlocked);
 
-  const unlockAchievement = useCallback((achievementId: string) => {
+  const unlockAchievement = React.useCallback((achievementId: string) => {
     setAchievements(prev => 
       prev.map(achievement => 
         achievement.id === achievementId && !achievement.unlocked
@@ -147,7 +147,7 @@ export const useAchievements = (): UseAchievementsReturn => {
     );
   }, []);
 
-  const checkAndUnlockAchievements = useCallback((context: {
+  const checkAndUnlockAchievements = React.useCallback((context: {
     shapesCount?: number;
     tablesCount?: number;
     focusSessionsCompleted?: number;
@@ -195,13 +195,21 @@ export const useAchievements = (): UseAchievementsReturn => {
   };
 };
 
-export const AchievementsContext = createContext<UseAchievementsReturn | undefined>(undefined);
+export const AchievementsContext = React.createContext<UseAchievementsReturn | undefined>(undefined);
 
-export const AchievementsProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+export const AchievementsProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const achievements = useAchievements();
   return (
     <AchievementsContext.Provider value={achievements}>
       {children}
     </AchievementsContext.Provider>
   );
+};
+
+export const useAchievementsContext = () => {
+  const context = React.useContext(AchievementsContext);
+  if (context === undefined) {
+    throw new Error('useAchievementsContext must be used within an AchievementsProvider');
+  }
+  return context;
 };
