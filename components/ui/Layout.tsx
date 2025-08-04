@@ -16,6 +16,7 @@ import { useParallax } from "../../hooks/useParallax";
 import { useFocusTimer } from "../../hooks/useFocusTimer";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import EnhancedToast from "./EnhancedToast";
+import HealthDashboard from '../../pages/health';
 
 // UI Components
 import Navbar from "./Navbar";
@@ -450,6 +451,8 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
             {/* Conditional Content Rendering */}
             {currentView === 'activism' ? (
               <ActivismHub theme={theme} />
+            ) : currentView === 'health' ? (
+              <HealthDashboard />
             ) : (
               children
             )}

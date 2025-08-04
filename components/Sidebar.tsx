@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, LayoutDashboard, Calendar, FileText, Settings, Users } from 'lucide-react';
+import { X, LayoutDashboard, Calendar, FileText, Settings, Users, Heart } from 'lucide-react';
 
 interface SidebarProps {
   readonly isOpen: boolean;
@@ -11,6 +11,7 @@ interface SidebarProps {
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'health', label: 'Health Hub', icon: Heart },
   { id: 'activism', label: 'Activism Hub', icon: Users },
   { id: 'calendar', label: 'Calendar', icon: Calendar },
   { id: 'documents', label: 'Documents', icon: FileText },

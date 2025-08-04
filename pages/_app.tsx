@@ -10,6 +10,7 @@ import Layout from "../components/ui/Layout";
 import React, { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WhiteboardProvider } from '../context/WhiteboardContext';
+import { HealthProvider } from '../context/HealthContext';
 import { ToastProvider } from '../hooks/useToast';
 import { AchievementsProvider } from '../hooks/useAchievements';
 import { SoundscapeProvider } from '../hooks/useSoundscape';
@@ -43,23 +44,25 @@ function MyApp({ Component, pageProps }: AppProps) {
   const getLayout = (page: React.ReactElement) => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ToastProvider>
-          <AchievementsProvider>
-            <SoundscapeProvider>
-              <FocusTimerProvider>
-                <ParallaxProvider>
-                  <NotificationProvider>
-                    <WhiteboardProvider>
-                      <Layout theme={theme} setTheme={handleSetTheme}>
-                        {page}
-                      </Layout>
-                    </WhiteboardProvider>
-                  </NotificationProvider>
-                </ParallaxProvider>
-              </FocusTimerProvider>
-            </SoundscapeProvider>
-          </AchievementsProvider>
-        </ToastProvider>
+        <HealthProvider>
+          <ToastProvider>
+            <AchievementsProvider>
+              <SoundscapeProvider>
+                <FocusTimerProvider>
+                  <ParallaxProvider>
+                    <NotificationProvider>
+                      <WhiteboardProvider>
+                        <Layout theme={theme} setTheme={handleSetTheme}>
+                          {page}
+                        </Layout>
+                      </WhiteboardProvider>
+                    </NotificationProvider>
+                  </ParallaxProvider>
+                </FocusTimerProvider>
+              </SoundscapeProvider>
+            </AchievementsProvider>
+          </ToastProvider>
+        </HealthProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
