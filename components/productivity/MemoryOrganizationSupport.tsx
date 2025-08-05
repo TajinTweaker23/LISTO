@@ -75,6 +75,14 @@ const MemoryOrganizationSupport: React.FC = () => {
   const [memoryItems, setMemoryItems] = useState<MemoryItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<MemoryItem[]>([]);
   const [organizationPattern, setOrganizationPattern] = useState<OrganizationPattern | null>(null);
+  const [cognitiveAssist, setCognitiveAssist] = useState<CognitiveAssist>({
+    workingMemorySupport: true,
+    spaceRepetition: true,
+    contextualReminders: true,
+    visualOrganization: true,
+    speechToText: false,
+    aiSuggestions: true
+  });
 
   const [activeView, setActiveView] = useState<'grid' | 'list' | 'timeline'>('grid');
   const [searchQuery, setSearchQuery] = useState('');

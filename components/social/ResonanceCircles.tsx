@@ -80,7 +80,7 @@ const ResonanceCircles: React.FC = () => {
 
   const generateHealthPattern = (healthData: any): number[] => {
     // Convert health tracking patterns to frequency signature
-    const pattern = [];
+    const pattern: number[] = [];
     for (let i = 0; i < 28; i++) {
       pattern.push(Math.sin(i * Math.PI / 14) * 50 + 50 + Math.random() * 20);
     }

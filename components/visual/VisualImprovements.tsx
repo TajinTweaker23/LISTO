@@ -3,38 +3,18 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { 
   BarChart3, 
   TrendingUp, 
-  PieChart, 
   Activity, 
   Sparkles,
   Play,
   Pause,
   Volume2,
-  VolumeX,
   Palette,
-  Eye,
   Zap,
-  Heart,
-  Brain,
-  Sun,
-  Moon,
-  Cloud,
-  CloudRain,
   Waves,
-  Gauge,
-  Timer,
-  Target,
-  Award,
-  Smile,
-  Frown,
-  Meh,
   TrendingDown,
-  RotateCcw,
-  Settings,
   Download,
   Share,
-  Filter,
-  Calendar,
-  Clock
+  Filter
 } from 'lucide-react';
 
 interface DataVisualization {
@@ -132,7 +112,6 @@ const VisualImprovements: React.FC = () => {
 
   const [activeSection, setActiveSection] = useState<'charts' | 'soundscape' | 'animations' | 'theme'>('charts');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentVisualization, setCurrentVisualization] = useState<string>('overview');
   const [showParticles, setShowParticles] = useState(true);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -360,9 +339,9 @@ const VisualImprovements: React.FC = () => {
       <div className="h-64 p-4">
         <svg width="100%" height="100%" viewBox="0 0 400 200">
           {/* Grid lines */}
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 5 }, (_, i) => (
             <line
-              key={`grid-${i}`}
+              key={`grid-line-y-${40 + (i * 32)}`}
               x1="40"
               y1={40 + (i * 32)}
               x2="360"
@@ -394,7 +373,7 @@ const VisualImprovements: React.FC = () => {
             const y = 200 - ((value - minValue) / range) * 120 - 40;
             return (
               <motion.circle
-                key={`point-${index}`}
+                key={`${viz.id}-point-${index}-${value}`}
                 cx={x}
                 cy={y}
                 r="4"
@@ -442,7 +421,7 @@ const VisualImprovements: React.FC = () => {
 
             return (
               <motion.path
-                key={`segment-${index}`}
+                key={`${viz.id}-segment-${index}-${value}`}
                 d={pathData}
                 fill={viz.colors[index]}
                 initial={{ opacity: 0, scale: 0 }}
@@ -510,12 +489,13 @@ const VisualImprovements: React.FC = () => {
     }
   };
 
-  const getMoodIcon = (mood: string) => {
-    switch (mood.toLowerCase()) {
-      case 'happy': return <Smile className="w-5 h-5 text-green-500" />;
-      case 'sad': return <Frown className="w-5 h-5 text-red-500" />;
-      case 'anxious': return <Meh className="w-5 h-5 text-yellow-500" />;
-      default: return <Meh className="w-5 h-5 text-blue-500" />;
+  const getInsightColor = (index: number): string => {
+    const colorIndex = index % 4;
+    switch (colorIndex) {
+      case 0: return 'bg-blue-500';
+      case 1: return 'bg-green-500';
+      case 2: return 'bg-yellow-500';
+      default: return 'bg-red-500';
     }
   };
 
@@ -528,13 +508,12 @@ const VisualImprovements: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6" style={{ fontFamily: theme.customFont }}>
+    <div className="max-w-6xl mx-auto p-6 space-y-6" data-font-family={theme.customFont}>
       {/* Particle Background */}
       {animations.particleEffects && showParticles && (
         <canvas
           ref={canvasRef}
-          className="fixed inset-0 pointer-events-none z-0"
-          style={{ opacity: 0.1 }}
+          className="fixed inset-0 pointer-events-none z-0 opacity-10"
         />
       )}
 
@@ -653,13 +632,25 @@ const VisualImprovements: React.FC = () => {
                     <p className="text-gray-600">{viz.metric} • {viz.period}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Download visualization"
+                      aria-label="Download visualization"
+                    >
                       <Download className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Share visualization"
+                      aria-label="Share visualization"
+                    >
                       <Share className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button 
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Filter data"
+                      aria-label="Filter data"
+                    >
                       <Filter className="w-4 h-4" />
                     </button>
                   </div>
@@ -672,16 +663,13 @@ const VisualImprovements: React.FC = () => {
                   <h4 className="font-medium text-gray-700">Key Insights</h4>
                   {viz.insights.map((insight, index) => (
                     <motion.div
-                      key={index}
+                      key={`${viz.id}-insight-${index}-${insight.slice(0, 10)}`}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                       className="flex items-center gap-2 text-sm text-gray-600"
                     >
-                      <div 
-                        className="w-2 h-2 rounded-full" 
-                        style={{ backgroundColor: viz.colors[index % viz.colors.length] }}
-                      />
+                      <div className={`w-2 h-2 rounded-full ${getInsightColor(index)}`} />
                       {insight}
                     </motion.div>
                   ))}
@@ -715,13 +703,17 @@ const VisualImprovements: React.FC = () => {
                   <Volume2 className="w-4 h-4 text-gray-600" />
                   <span className="text-sm text-gray-600">Volume: {soundscape.volume}%</span>
                 </div>
+                <label htmlFor="volume-control" className="sr-only">Volume Control</label>
                 <input
+                  id="volume-control"
                   type="range"
                   min="0"
                   max="100"
                   value={soundscape.volume}
                   onChange={(e) => setSoundscape(prev => ({ ...prev, volume: parseInt(e.target.value) }))}
                   className="w-full"
+                  title={`Volume: ${soundscape.volume}%`}
+                  aria-label={`Volume control, currently at ${soundscape.volume}%`}
                 />
               </div>
             </div>

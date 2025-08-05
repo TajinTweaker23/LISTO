@@ -55,7 +55,7 @@ interface DashboardStats {
   productivityStreak: number;
   communityConnections: number;
   todaysFocus: string;
-  recentAchievements: string[];
+  recentAchievements: { title: string; description: string; icon: string; }[];
   upcomingGoals: string[];
 }
 
@@ -70,7 +70,19 @@ interface NavigationItem {
 }
 
 // Dashboard Component
-const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveView: (view: string) => void }> = ({ dashboardStats, setActiveView }) => {
+const DashboardComponent: React.FC<{ setActiveView: (view: string) => void }> = ({ setActiveView }) => {
+  const [dashboardStats] = useState<DashboardStats>({
+    wellnessScore: 85,
+    productivityStreak: 7,
+    communityConnections: 12,
+    todaysFocus: "Complete project proposal",
+    recentAchievements: [
+      { title: "Meditation Streak", description: "7 days in a row!", icon: "🧘‍♀️" },
+      { title: "Task Master", description: "Completed 10 tasks", icon: "✅" },
+      { title: "Team Player", description: "Helped 3 colleagues", icon: "🤝" }
+    ],
+    upcomingGoals: ["Finish quarterly review", "Start new wellness program"]
+  });
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
@@ -175,18 +187,21 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
             Recent Achievements
           </h3>
           <div className="space-y-3">
-            {dashboardStats.recentAchievements.map((achievement) => (
+            {dashboardStats.recentAchievements.map((achievement, index) => (
               <motion.div
-                key={achievement}
+                key={achievement.title}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + dashboardStats.recentAchievements.indexOf(achievement) * 0.1 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
                 className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg"
               >
                 <div className="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-yellow-600" />
+                  <span className="text-lg">{achievement.icon}</span>
                 </div>
-                <span className="text-gray-700">{achievement}</span>
+                <div>
+                  <span className="font-medium text-gray-900">{achievement.title}</span>
+                  <p className="text-sm text-gray-600">{achievement.description}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -263,6 +278,14 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
   );
 };
 
+// Separate component for dashboard
+const DashboardWrapper: React.FC<{
+  dashboardStats: DashboardStats;
+  setActiveView: (view: string) => void;
+}> = ({ dashboardStats, setActiveView }) => (
+  <DashboardComponent setActiveView={setActiveView} />
+);
+
 const ListoMainApp: React.FC = () => {
   const [activeView, setActiveView] = useState<string>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -283,7 +306,7 @@ const ListoMainApp: React.FC = () => {
       id: 'dashboard',
       label: 'LISTO Hub',
       icon: Home,
-      component: () => <DashboardComponent dashboardStats={dashboardStats} setActiveView={setActiveView} />,
+      component: DashboardWrapper,
       description: 'Your personalized wellness command center'
     },
     {
@@ -400,19 +423,20 @@ const ListoMainApp: React.FC = () => {
     }
   };
 
-  const ActiveComponent = navigationItems.find(item => item.id === activeView)?.component || DashboardComponent;
-
   const getCurrentTitle = () => {
     const currentItem = navigationItems.find(item => item.id === activeView);
     return currentItem ? currentItem.label : 'LISTO Hub';
   };
 
-// Dashboard Component
-const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveView: (view: string) => void }> = ({ dashboardStats, setActiveView }) => {
+  const getCurrentComponent = () => {
+    const item = navigationItems.find(item => item.id === activeView);
+    return item?.component || DashboardComponent;
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <motion.div
+    <div className="bg-gray-50 min-h-screen font-sans">
+      <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-20 border-b border-gray-200">
+        <div className="max-w-screen-2xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Title */}
             <div className="flex items-center gap-4">
@@ -480,7 +504,7 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
       <div className="flex">
         {/* Sidebar */}
         <AnimatePresence>
-          {(sidebarOpen || window.innerWidth >= 1024) && (
+          {sidebarOpen && (
             <motion.aside
               initial={{ x: -300 }}
               animate={{ x: 0 }}
@@ -636,14 +660,3 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
 };
 
 export default ListoMainApp;
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                {activeView === 'dashboard' ? (
-                  <DashboardComponent dashboardStats={dashboardStats} setActiveView={setActiveView} />
-                ) : (
-                  <ActiveComponent />
-                )}
-              </motion.div>
-            </AnimatePresence>
