@@ -50,4 +50,37 @@ const MEDICAL_MICRO_CONTENT = [
 ];
 
 const MEDICAL_ADMIN_TIPS = [
-// ...existing code...
+  {
+    id: 1,
+    title: "Electronic Health Records",
+    description: "Understanding EHR systems and documentation best practices for healthcare providers.",
+    difficulty: "beginner",
+    category: "administration",
+    brainRotLevel: 2,
+    medicalAccuracy: 9,
+    emoji: '📋',
+    timeToRead: 15
+  },
+  {
+    id: 2,
+    title: "Medical Billing Basics",
+    description: "Introduction to medical coding, insurance claims, and healthcare reimbursement processes.",
+    difficulty: "intermediate",
+    category: "administration",
+    brainRotLevel: 3,
+    medicalAccuracy: 8,
+    emoji: '💰',
+    timeToRead: 20
+  },
+  {
+    id: 3,
+    title: "Patient Privacy (HIPAA)",
+    description: "Essential guidelines for protecting patient information and maintaining healthcare privacy compliance.",
+    difficulty: "beginner",
+    category: "administration",
+    brainRotLevel: 1,
+    medicalAccuracy: 10,
+    emoji: '🔒',
+    timeToRead: 12
+  }
+];

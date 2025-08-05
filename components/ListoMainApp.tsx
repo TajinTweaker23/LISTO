@@ -400,13 +400,7 @@ const ListoMainApp: React.FC = () => {
     }
   };
 
-  const getCurrentComponent = () => {
-    const currentItem = navigationItems.find(item => item.id === activeView);
-    if (currentItem && activeView === 'dashboard') {
-      return () => <DashboardComponent dashboardStats={dashboardStats} setActiveView={setActiveView} />;
-    }
-    return currentItem ? currentItem.component : () => <DashboardComponent dashboardStats={dashboardStats} setActiveView={setActiveView} />;
-  };
+  const ActiveComponent = navigationItems.find(item => item.id === activeView)?.component || DashboardComponent;
 
   const getCurrentTitle = () => {
     const currentItem = navigationItems.find(item => item.id === activeView);
@@ -419,199 +413,6 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
     <div className="space-y-6">
       {/* Welcome Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 text-white"
-      >
-        <div className="flex items-center gap-4 mb-4">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          >
-            <Sparkles className="w-12 h-12" />
-          </motion.div>
-          <div>
-            <h1 className="text-4xl font-bold">Welcome to LISTO</h1>
-            <p className="text-xl opacity-90">Life Intelligence & Support Through Optimization</p>
-          </div>
-        </div>
-        <p className="text-lg opacity-80">
-          Your personalized neurodivergent-friendly wellness ecosystem. 
-          Today's focus: <strong>{dashboardStats.todaysFocus}</strong>
-        </p>
-      </motion.div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <Heart className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">Wellness Score</h3>
-              <p className="text-2xl font-bold text-green-600">{dashboardStats.wellnessScore}/100</p>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <motion.div
-              className="bg-green-500 h-2 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${dashboardStats.wellnessScore}%` }}
-              transition={{ duration: 1, ease: 'easeOut' }}
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Zap className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">Focus Streak</h3>
-              <p className="text-2xl font-bold text-blue-600">{dashboardStats.productivityStreak} days</p>
-            </div>
-          </div>
-          <p className="text-sm text-gray-600">Keep it up! You're building great habits.</p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-purple-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">Resonance Network</h3>
-              <p className="text-2xl font-bold text-purple-600">{dashboardStats.communityConnections}</p>
-            </div>
-          </div>
-          <p className="text-sm text-gray-600">Anonymous connections sharing your energy</p>
-        </motion.div>
-      </div>
-
-      {/* Recent Activity & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Achievements */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Award className="w-5 h-5 text-yellow-500" />
-            Recent Achievements
-          </h3>
-          <div className="space-y-3">
-            {dashboardStats.recentAchievements.map((achievement) => (
-              <motion.div
-                key={achievement}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + dashboardStats.recentAchievements.indexOf(achievement) * 0.1 }}
-                className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg"
-              >
-                <div className="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-yellow-600" />
-                </div>
-                <span className="text-gray-700">{achievement}</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-indigo-500" />
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: Brain, label: 'Check Insights', action: () => setActiveView('insights'), color: 'blue' },
-              { icon: Users, label: 'Find Resonance', action: () => setActiveView('resonance'), color: 'purple' },
-              { icon: Heart, label: 'Take Break', action: () => setActiveView('wellness'), color: 'green' },
-              { icon: Target, label: 'Review Goals', action: () => setActiveView('goals'), color: 'orange' }
-            ].map(({ icon: Icon, label, action, color }) => (
-              <motion.button
-                key={label}
-                onClick={action}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`flex flex-col items-center gap-2 p-4 bg-${color}-50 text-${color}-700 rounded-lg hover:bg-${color}-100 transition-colors`}
-              >
-                <Icon className="w-6 h-6" />
-                <span className="text-sm font-medium">{label}</span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Feature Highlights - Using navigationItems from parent would need props */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6"
-      >
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Explore LISTO Features</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { id: 'resonance', label: 'Resonance Circles', icon: Users, description: 'Anonymous energy-based social connections', isNew: true },
-            { id: 'insights', label: 'Insights Lab', icon: Brain, description: 'AI-powered life pattern analysis' },
-            { id: 'wellness', label: 'Wellness Studio', icon: Heart, description: 'Intelligent breaks and sensory optimization' }
-          ].map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 + index * 0.1 }}
-              onClick={() => setActiveView(item.id)}
-              className="cursor-pointer p-4 bg-white rounded-lg hover:shadow-md transition-all group"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <item.icon className="w-5 h-5 text-indigo-600 group-hover:text-indigo-700" />
-                <span className="font-medium text-gray-800">{item.label}</span>
-                {item.isNew && (
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">NEW</span>
-                )}
-              </div>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Title */}
             <div className="flex items-center gap-4">
@@ -835,3 +636,14 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
 };
 
 export default ListoMainApp;
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {activeView === 'dashboard' ? (
+                  <DashboardComponent dashboardStats={dashboardStats} setActiveView={setActiveView} />
+                ) : (
+                  <ActiveComponent />
+                )}
+              </motion.div>
+            </AnimatePresence>

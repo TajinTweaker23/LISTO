@@ -85,7 +85,7 @@ const FilterButton = ({
         : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
     }`}
     onClick={onClick}
-    aria-pressed={active}
+    aria-pressed={active ? "true" : "false"}
   >
     <span>{emoji}</span>
     {label}
@@ -113,7 +113,9 @@ export default function Gallery() {
 
     setImages((prev) => [...prev, ...newImages]);
     setFilter("All");
-    uploadRef.current.value = "";
+    if (uploadRef.current) {
+      uploadRef.current.value = "";
+    }
   };
 
   const filteredImages =
