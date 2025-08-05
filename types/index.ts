@@ -185,10 +185,10 @@ export interface UseFocusTimerReturn {
   timeRemaining: number;
   type: 'focus' | 'break';
   progress: number;
+  sessionsCompleted: number;
   start: (type?: 'focus' | 'break') => void;
-  pause: () => void;
   stop: () => void;
-  skip: () => void;
+  reset: () => void;
 }
 
 // Event Types
