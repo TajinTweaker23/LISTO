@@ -88,7 +88,7 @@ const ResonanceCircles: React.FC = () => {
   };
 
   const generateProductivityPattern = (focusData: number): number[] => {
-    const pattern = [];
+    const pattern: number[] = [];
     const baseEnergy = Math.min(focusData / 10, 10); // Normalize focus sessions
     for (let i = 0; i < 24; i++) {
       const hourlyEnergy = Math.sin(i * Math.PI / 12) * baseEnergy + baseEnergy;
@@ -98,7 +98,7 @@ const ResonanceCircles: React.FC = () => {
   };
 
   const generateEmotionalPattern = (healthData: any): number[] => {
-    const pattern = [];
+    const pattern: number[] = [];
     for (let i = 0; i < 10; i++) {
       pattern.push(Math.random() * 100);
     }
@@ -106,7 +106,7 @@ const ResonanceCircles: React.FC = () => {
   };
 
   const generateActivismPattern = (activismData: any): number[] => {
-    const pattern = [];
+    const pattern: number[] = [];
     for (let i = 0; i < 7; i++) {
       pattern.push(Math.random() * 100);
     }

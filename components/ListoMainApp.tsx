@@ -289,14 +289,6 @@ const DashboardWrapper: React.FC<{
 const ListoMainApp: React.FC = () => {
   const [activeView, setActiveView] = useState<string>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
-    wellnessScore: 78,
-    productivityStreak: 5,
-    communityConnections: 12,
-    todaysFocus: 'Morning Routine Optimization',
-    recentAchievements: ['7-day meditation streak', 'Perfect focus session', 'New resonance connection'],
-    upcomingGoals: ['Complete health check-in', 'Join community challenge', 'Review weekly patterns']
-  });
   const [notifications] = useState(3);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -378,7 +370,6 @@ const ListoMainApp: React.FC = () => {
 
   useEffect(() => {
     loadUserProfile();
-    loadDashboardStats();
     checkFirstTime();
   }, []);
 
@@ -392,27 +383,6 @@ const ListoMainApp: React.FC = () => {
       // First time user
       setShowWelcome(true);
     }
-  };
-
-  const loadDashboardStats = () => {
-    // In a real app, this would fetch from various feature modules
-    const stats = {
-      wellnessScore: Math.floor(Math.random() * 40) + 60,
-      productivityStreak: Math.floor(Math.random() * 10) + 1,
-      communityConnections: Math.floor(Math.random() * 20) + 5,
-      todaysFocus: 'Optimizing your daily flow',
-      recentAchievements: [
-        'Completed mindful break session',
-        'Maintained focus for 90 minutes',
-        'Connected with resonance match'
-      ],
-      upcomingGoals: [
-        'Log evening mood check',
-        'Review weekly insights',
-        'Participate in community challenge'
-      ]
-    };
-    setDashboardStats(stats);
   };
 
   const checkFirstTime = () => {
