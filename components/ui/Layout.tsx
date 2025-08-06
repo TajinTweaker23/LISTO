@@ -156,7 +156,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   const { shapes, tables, handleInsertShape, handleInsertTable } = useWhiteboard();
   
   // Enhanced Design System Hooks
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const { achievements, unlockAchievement } = useAchievements();
   const { currentSoundscape, setSoundscape, muted, toggleMute } = useSoundscape();
   const { parallax } = useParallax();
@@ -229,7 +229,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
 
   const handleFocusTimerComplete = () => {
     stopFocusTimer();
-    showToast("Focus session complete! Great work! 🎉", 'success');
+    addToast("Focus session complete! Great work! 🎉", 'success');
     setMascotAction("cheer");
     triggerEmojiRain();
     unlockAchievement("focus-master");
@@ -272,10 +272,11 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         {/* Enhanced Toast System */}
         <EnhancedToast 
           toast={{ 
-            show: false, 
+            id: 0,
             message: '', 
             type: 'info', 
-            duration: 3000
+            duration: 3000,
+            timestamp: Date.now()
           }}
         />
         
@@ -349,7 +350,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
             { name: "Insert Table", action: () => handleInsertTable(2, 2) },
             { name: "Toggle Theme", action: () => setTheme(theme === "dark" ? "light" : "dark") },
             { name: "Open Settings", action: () => setShowSettings(true) },
-            { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); showToast("🎉 Party Mode!", 'info'); } },
+            { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); addToast("🎉 Party Mode!", 'info'); } },
             { name: "Start Focus Timer", action: () => startFocusTimer("focus") },
             { name: "Toggle Reading Ruler", action: () => setReadingRuler((r) => !r) },
             { name: muted ? "Unmute Soundscape" : "Mute Soundscape", action: () => toggleMute() },
@@ -459,7 +460,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           </ErrorBoundary>
         </motion.main>
 
-        <QuickAddButton onClick={() => showToast("Quick Add coming soon! ✨", 'info')} />
+        <QuickAddButton onClick={() => addToast("Quick Add coming soon! ✨", 'info')} />
 
         {/* Enhanced Footer */}
         <footer className="glass-footer text-center p-3 text-xs text-sage-dark rounded-t-xl mt-4 shadow-inner transition-all duration-300 flex items-center justify-center gap-2 pb-20 md:pb-3">

@@ -11,10 +11,10 @@ import {
   Shield
 } from 'lucide-react';
 import ListoLandingPage from '../components/ListoLandingPage';
-import ListoMainHub from '../components/ListoMainHub';
+import ListoMainApp from '../components/ListoMainApp';
 
 export default function HomePage() {
-  const [currentView, setCurrentView] = useState<'landing' | 'app'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'app'>('app');
 
   if (currentView === 'app') {
     return (
@@ -24,7 +24,7 @@ export default function HomePage() {
           <meta name="description" content="The world's first neurodivergent-friendly wellness ecosystem combining anonymous social connections, AI-powered insights, and comprehensive accessibility features." />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <ListoMainHub />
+        <ListoMainApp />
       </>
     );
   }
