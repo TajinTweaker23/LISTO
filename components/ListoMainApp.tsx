@@ -85,25 +85,25 @@ const DashboardComponent: React.FC<{ setActiveView: (view: string) => void }> = 
   });
   return (
     <div className="space-y-6">
-      {/* Welcome Header */}
+      {/* Welcome Header - Reduced for desktop */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 text-white"
+        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-6 text-white"
       >
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-3">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           >
-            <Sparkles className="w-12 h-12" />
+            <Sparkles className="w-8 h-8" />
           </motion.div>
           <div>
-            <h1 className="text-4xl font-bold">Welcome to LISTO</h1>
-            <p className="text-xl opacity-90">Life Intelligence & Support Through Optimization</p>
+            <h1 className="text-2xl md:text-3xl font-bold">Welcome to LISTO</h1>
+            <p className="text-sm md:text-lg opacity-90">Life Intelligence & Support Through Optimization</p>
           </div>
         </div>
-        <p className="text-lg opacity-80">
+        <p className="text-sm md:text-base opacity-80">
           Your personalized neurodivergent-friendly wellness ecosystem. 
           Today's focus: <strong>{dashboardStats.todaysFocus}</strong>
         </p>

@@ -97,7 +97,7 @@ const DashboardComponent: React.FC<{ dashboardStats: DashboardStats; setActiveVi
               <p className="text-2xl font-bold text-blue-600">{dashboardStats.productivityStreak} days</p>
             </div>
           </div>
-          <p className="text-sm text-gray-600">Keep it up! You're building great habits.</p>
+          <p className="text-sm text-gray-600">Consistent daily progress.</p>
         </motion.div>
 
         <motion.div
@@ -335,7 +335,7 @@ const ListoMainHub: React.FC = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to LISTO!</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to LISTO</h2>
                 <p className="text-gray-600">
                   Your neurodivergent-friendly wellness ecosystem. Experience the future of accessible, AI-powered personal optimization.
                 </p>

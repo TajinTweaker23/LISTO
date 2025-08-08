@@ -179,6 +179,6 @@ Revolutionary, evidence-based health tracking system integrated into LISTO produ
 
 ---
 
-**Built with evidence-based research and neurodivergent user needs in mind. No sappy shit, just science-backed health tracking that respects your complexity.**
+**Built with evidence-based research and neurodivergent user needs in mind. Science-backed health tracking that respects your complexity.**
 
 *Last updated: January 2024*

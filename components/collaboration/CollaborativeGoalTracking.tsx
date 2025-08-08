@@ -181,7 +181,7 @@ const CollaborativeGoalTracking: React.FC = () => {
             isCompleted: true,
             completedBy: 'current-user',
             completedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-            celebrationMessage: '🎉 Amazing! First week down!'
+            celebrationMessage: 'First week completed'
           },
           {
             id: 'milestone-2',
@@ -194,7 +194,7 @@ const CollaborativeGoalTracking: React.FC = () => {
           {
             id: 'msg-1',
             from: 'Alex Runner',
-            content: 'You\'re doing amazing! Keep up the great work! 💪',
+            content: 'Solid progress. Keep the consistency going',
             type: 'encouragement',
             timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
             reactions: [
