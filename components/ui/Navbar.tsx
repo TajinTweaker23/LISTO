@@ -278,7 +278,10 @@ export default function Navbar({
   const navLinks = [
     { label: "Home", href: "/", icon: <HomeIcon className="h-5 w-5" /> },
     user && { label: "Dashboard", href: "/dashboard", icon: <LayoutGrid className="h-5 w-5" /> },
+    user && { label: "Health Hub", href: "/health", icon: <LayoutGrid className="h-5 w-5" /> },
+    user && { label: "Dopamine Garden", href: "/dopamine-garden", icon: <LayoutGrid className="h-5 w-5" /> },
     user && { label: "Profile", href: "/profile", icon: <UserIcon className="h-5 w-5" /> },
+    { label: "Features", href: "/features", icon: <LayoutGrid className="h-5 w-5" /> },
     { label: "Vision Board", href: "/vision-board", icon: <LayoutGrid className="h-5 w-5" /> },
     { label: "Explore", href: "/explore", icon: <LayoutGrid className="h-5 w-5" /> },
     { label: "UI Demo", href: "/mobile-ui-demo", icon: <LayoutGrid className="h-5 w-5" /> },

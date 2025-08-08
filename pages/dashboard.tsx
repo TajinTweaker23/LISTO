@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { getFirestore, collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { Clock, Save, Cloud, ExternalLink } from "lucide-react";
+import EnhancedAppLayout from "../components/layout/EnhancedAppLayout";
 
 // Cloud storage providers
 const cloudStorageProviders = [
@@ -104,7 +105,7 @@ const createSnapshotHandler = (type, setRecentActivity) => {
 export default function Dashboard() {
   const { user } = useAuth();
   const [recentActivity, setRecentActivity] = useState([]);
-  const [lastVisit, setLastVisit] = useState(null);
+  const [lastVisit, setLastVisit] = useState<string | null>(null);
   const [showCloudStorage, setShowCloudStorage] = useState(false);
 
   useEffect(() => {
@@ -120,7 +121,7 @@ export default function Dashboard() {
       { collection: 'visionItems', type: 'Vision Item' }
     ];
 
-    const unsubscribes = [];
+    const unsubscribes: any[] = [];
     recentQueries.forEach(({ collection: collectionName, type }) => {
       const q = query(
         collection(db, collectionName),
@@ -133,7 +134,7 @@ export default function Dashboard() {
     });
 
     // Update last visit
-    setLastVisit(localStorage.getItem('lastVisit'));
+    setLastVisit(localStorage.getItem('lastVisit') || null);
     localStorage.setItem('lastVisit', new Date().toISOString());
 
     return () => unsubscribes.forEach(unsub => unsub());
@@ -150,8 +151,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 via-white to-warm-gray-50 pt-24 pb-12">
-      <div className="max-w-6xl mx-auto px-6">
+    <EnhancedAppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 via-white to-warm-gray-50 pt-24 pb-12">
+        <div className="max-w-6xl mx-auto px-6">
         
         {/* Welcome Back Header */}
         <motion.div className="mb-8" {...fadeIn}>
@@ -314,7 +316,8 @@ export default function Dashboard() {
             ))}
           </div>
         </motion.div>
+        </div>
       </div>
-    </div>
+    </EnhancedAppLayout>
   );
 }

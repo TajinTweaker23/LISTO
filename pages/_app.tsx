@@ -7,7 +7,7 @@ import "../styles/premium-effects.css";
 import type { AppProps } from "next/app";
 import { AuthProvider } from "../context/AuthContext";
 import Layout from "../components/ui/Layout";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WhiteboardProvider } from '../context/WhiteboardContext';
 import { HealthProvider } from '../context/HealthContext';
@@ -22,26 +22,7 @@ import { NotificationProvider } from '../components/ui/NotificationSystem';
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [theme, setTheme] = useState("light");
-
-  // Effect to load and apply the saved theme on initial load
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
-
-  // Function to update theme state, local storage, and DOM
-  const handleSetTheme = (newTheme: string) => {
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(newTheme);
-  };
-
-  // If a page has a specific layout, use it. Otherwise, use the default.
-  // This is a common pattern for pages that shouldn't have a sidebar (e.g., a login page).
-  const getLayout = (page: React.ReactElement) => (
+  return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <HealthProvider>
@@ -52,8 +33,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <ParallaxProvider>
                     <NotificationProvider>
                       <WhiteboardProvider>
-                        <Layout theme={theme} setTheme={handleSetTheme}>
-                          {page}
+                        <Layout>
+                          <Component {...pageProps} />
                         </Layout>
                       </WhiteboardProvider>
                     </NotificationProvider>
@@ -66,8 +47,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </AuthProvider>
     </QueryClientProvider>
   );
-
-  return getLayout(<Component {...pageProps} />);
 }
 
 export default MyApp;

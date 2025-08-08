@@ -14,10 +14,11 @@ import {
 import CycleTracker from '../components/health/CycleTracker';
 import MenopauseTracker from '../components/health/MenopauseTracker';
 import MoodWeatherTracker from '../components/health/MoodWeatherTracker';
+import WellnessDashboard from '../components/ui/WellnessDashboard';
 import { useHealth } from '../context/HealthContext';
 import { HealthInsight } from '../types/health';
 
-type HealthSection = 'overview' | 'cycle' | 'menopause' | 'mood-weather' | 'empathy-echoes';
+type HealthSection = 'overview' | 'wellness' | 'cycle' | 'menopause' | 'mood-weather' | 'empathy-echoes';
 
 interface OverviewDashboardProps {
   insights: HealthInsight[];
@@ -43,7 +44,7 @@ const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ insights, onSecti
       </div>
       <p className="text-xl text-sage-600 max-w-3xl mx-auto">
         Evidence-based, neurodivergent-friendly health tracking that respects your complexity. 
-        No sappy shit, just research-backed insights for your reproductive health, mental wellness, and environmental correlations.
+        Research-backed insights for your reproductive health, mental wellness, and environmental correlations.
       </p>
     </motion.div>
 
@@ -83,6 +84,14 @@ const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ insights, onSecti
     >
       {[
         {
+          id: 'wellness' as const,
+          title: 'Daily Wellness',
+          description: 'Energy, mood, and focus tracking for optimal wellbeing',
+          icon: <Heart className="w-6 h-6" />,
+          color: 'rose',
+          stats: 'Track today'
+        },
+        {
           id: 'cycle' as const,
           title: 'Cycle Tracking',
           description: 'Comprehensive menstrual health monitoring',
@@ -117,6 +126,13 @@ const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ insights, onSecti
       ].map((section) => {
         const getColorClasses = (color: string) => {
           switch (color) {
+            case 'rose':
+              return {
+                bg: 'bg-rose-50',
+                border: 'border-rose-200',
+                text: 'text-rose-800',
+                accent: 'text-rose-600'
+              };
             case 'pink':
               return {
                 bg: 'bg-pink-50',
@@ -322,6 +338,8 @@ const HealthDashboard: React.FC = () => {
 
   const renderContent = () => {
     switch (activeSection) {
+      case 'wellness':
+        return <WellnessDashboard />;
       case 'cycle':
         return <CycleTracker />;
       case 'menopause':
