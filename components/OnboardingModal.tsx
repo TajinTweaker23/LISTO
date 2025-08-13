@@ -1,20 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
-import AvatarPicker, { getAvatarSVG } from "./AvatarPicker";
-import { AnimatePresence, motion } from "framer-motion";
+import AvatarPicker, { defaultAvatar, getAvatarSVG } from "./ui/AvatarPicker";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Sound effect (put a short mp3 in /public/sounds/success.mp3)
+// --- Sound effect ---
 const playSound = () => {
-  const audio = new Audio("/sounds/success.mp3");
-  audio.volume = 0.5;
-  audio.play();
+  try {
+    const audio = new Audio("/sounds/success.mp3");
+    audio.volume = 0.5;
+    audio.play();
+  } catch { }
 };
 
+const THEME_OPTIONS = [
+  { label: "Blue/Teal", value: "bg-gradient-to-r from-blue-900 to-teal-600" },
+  {
+    label: "Pink/Yellow",
+    value: "bg-gradient-to-r from-pink-500 to-yellow-300",
+  },
+  { label: "Green/Blue", value: "bg-gradient-to-r from-green-400 to-blue-500" },
+  { label: "Minimal", value: "bg-gray-100" },
+];
+
+const MUSIC_OPTIONS = [
+  { label: "None", value: "" },
+  { label: "Rain", value: "/sounds/rain.mp3" },
+  { label: "Café", value: "/sounds/cafe.mp3" },
+  { label: "Forest", value: "/sounds/forest.mp3" },
+];
+
+// --- Onboarding steps, now with icons/emoji! ---
 const steps = [
-  { key: "welcome" },
-  { key: "name" },
-  { key: "avatar" },
-  { key: "theme" },
-  { key: "finish" },
+  { key: "welcome", icon: "👋", label: "Welcome" },
+  { key: "name", icon: "📝", label: "Name" },
+  { key: "avatar", icon: "🧑‍🎤", label: "Avatar" },
+  { key: "theme", icon: "🎨", label: "Theme" },
+  { key: "music", icon: "🎵", label: "Music" },
+  { key: "finish", icon: "🚀", label: "Finish" },
 ];
 
 // --- Seasonal/Easter Egg Vortex Themes ---
@@ -22,34 +43,60 @@ function getSeasonalVortexImages() {
   const now = new Date();
   const month = now.getMonth();
   const day = now.getDate();
-  // Halloween
-  if (month === 9 && day >= 25 || month === 9 && day <= 31) {
+  if ((month === 9 && day >= 25) || (month === 9 && day <= 31)) {
     return ["🎃", "👻", "🦇", "🍬", "🕸️", "🧙‍♂️", "🧛‍♂️"];
   }
-  // Christmas
   if (month === 11) {
     return ["🎄", "🎅", "🤶", "⛄", "❄️", "🦌", "🧦", "🎁"];
   }
-  // New Year
   if (month === 0 && day <= 7) {
     return ["🎆", "🎉", "🥂", "🕛", "✨", "🎊"];
   }
-  // Default/Brand
   return [
-    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#fbbf24"/><text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">🚀</text></svg>,
-    <svg width="48" height="48" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1"/><text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">🎨</text></svg>,
-    "🪐", "🌟", "✨", "🧠", "💡", "🎵", "📚", "🎲", "🦄", "🌈"
+    <svg width="48" height="48" viewBox="0 0 48 48" key="rocket">
+      <circle cx="24" cy="24" r="20" fill="#fbbf24" />
+      <text x="24" y="30" textAnchor="middle" fontSize="24" fill="#fff">
+        🚀
+      </text>
+    </svg>,
+    <svg width="48" height="48" viewBox="0 0 48 48" key="art">
+      <rect x="8" y="8" width="32" height="32" rx="8" fill="#6366f1" />
+      <text x="24" y="32" textAnchor="middle" fontSize="24" fill="#fff">
+        🎨
+      </text>
+    </svg>,
+    "🪐",
+    "🌟",
+    "✨",
+    "🧠",
+    "💡",
+    "🎵",
+    "📚",
+    "🎲",
+    "🦄",
+    "🌈",
   ];
 }
 
-// --- Vortex Background with Gamified Progress & Accessibility ---
-function VortexBackground({ step, finished, reduceMotion }: { step: number; finished: boolean; reduceMotion: boolean }) {
+// --- Vortex Animated Background ---
+function VortexBackground({
+  step,
+  finished,
+  reduceMotion,
+}: {
+  readonly step: number;
+  readonly finished: boolean;
+  readonly reduceMotion: boolean;
+}) {
   const [tick, setTick] = useState(0);
   const [burst, setBurst] = useState(false);
   const vortexImages = getSeasonalVortexImages();
-
-  // Gamified: More images as you progress
-  const imagesToShow = finished ? vortexImages.length : Math.max(3, Math.floor(((step + 1) / steps.length) * vortexImages.length));
+  const imagesToShow = finished
+    ? vortexImages.length
+    : Math.max(
+      3,
+      Math.floor(((step + 1) / steps.length) * vortexImages.length)
+    );
 
   useEffect(() => {
     if (finished) {
@@ -60,13 +107,12 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
 
   useEffect(() => {
     if (!reduceMotion) {
-      const interval = setInterval(() => setTick(t => t + 1), 40);
+      const interval = setInterval(() => setTick((t) => t + 1), 40);
       return () => clearInterval(interval);
     }
   }, [reduceMotion]);
 
   if (reduceMotion) return null;
-
   return (
     <div
       aria-hidden="true"
@@ -87,7 +133,7 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
         const blur = 1 + 2 * Math.abs(Math.cos(angle));
         return (
           <motion.div
-            key={i}
+            key={typeof img === "string" ? `${img}-${i}` : img.key}
             style={{
               position: "absolute",
               left: `calc(50vw + ${x}px - 32px)`,
@@ -99,7 +145,7 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
               zIndex: 0,
               userSelect: "none",
               pointerEvents: "none",
-              transition: "filter 0.2s, opacity 0.2s, transform 0.2s"
+              transition: "filter 0.2s, opacity 0.2s, transform 0.2s",
             }}
           >
             {img}
@@ -110,22 +156,85 @@ function VortexBackground({ step, finished, reduceMotion }: { step: number; fini
   );
 }
 
-export default function OnboardingModal({
+// --- Progress Stepper ---
+function ProgressStepper({ current }: { readonly current: number }) {
+  return (
+    <div className="flex items-center justify-center gap-2 my-4 select-none">
+      {steps.map((step, idx) => (
+        <motion.div
+          key={step.key}
+          initial={false}
+          animate={idx === current ? { scale: 1.2, y: -2 } : { scale: 1, y: 0 }}
+          className={`flex flex-col items-center transition`}
+        >
+          <div
+            className={`text-2xl ${idx === current ? "text-pink-500" : "text-gray-400"
+              }`}
+          >
+            {step.icon}
+          </div>
+          <div
+            className={`text-xs mt-1 ${idx === current ? "font-bold text-blue-600" : "text-gray-400"
+              }`}
+          >
+            {step.label}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// --- Main Modal ---
+function OnboardingModalInternal({
   onClose,
   onComplete,
 }: {
-  onClose: () => void;
-  onComplete: (avatar: any | null, theme?: string) => void;
-}) {
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
+  readonly onClose: () => void;
+  readonly onComplete: (
+    avatar: any | null,
+    theme?: string,
+    music?: string
+  ) => void;
+}): React.JSX.Element {
+  // --- Persistent state! ---
+  const [step, setStep] = useState(() => {
+    const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
+    return typeof draft.step === "number" ? draft.step : 0;
+  });
+  const [name, setName] = useState(() => {
+    const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
+    return draft.name || "";
+  });
   const [error, setError] = useState("");
-  const [avatar, setAvatar] = useState<any>(null);
-  const [theme, setTheme] = useState("bg-gradient-to-r from-blue-900 to-teal-600");
+  const [avatar, setAvatar] = useState(() => {
+    const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
+    return draft.avatar || defaultAvatar;
+  });
+  const [theme, setTheme] = useState(() => {
+    const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
+    return draft.theme || THEME_OPTIONS[0].value;
+  });
+  const [music, setMusic] = useState(() => {
+    const draft = JSON.parse(localStorage.getItem("onboardingDraft") || "{}");
+    return draft.music || MUSIC_OPTIONS[0].value;
+  });
   const [finished, setFinished] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+  const [showNetworkToast, setShowNetworkToast] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showEmojiRain, setShowEmojiRain] = useState(false);
+
+  // Save draft state to localStorage on change
+  useEffect(() => {
+    localStorage.setItem(
+      "onboardingDraft",
+      JSON.stringify({ step, name, avatar, theme, music })
+    );
+  }, [step, name, avatar, theme, music]);
 
   // Show only once: check localStorage
   useEffect(() => {
@@ -139,52 +248,50 @@ export default function OnboardingModal({
     if (steps[step].key === "name") inputRef.current?.focus();
   }, [step]);
 
-  // Sound on finish
+  // Sound & confetti on finish
   useEffect(() => {
     if (finished && !reduceMotion) {
       playSound();
+      setShowConfetti(true);
+      setShowEmojiRain(true);
+      setTimeout(() => setShowConfetti(false), 1700);
+      setTimeout(() => setShowEmojiRain(false), 2000);
       setTimeout(() => setFinished(false), 1800);
     }
   }, [finished, reduceMotion]);
 
-  // Keyboard navigation
+  // Keyboard navigation & focus trap
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
-
-  // Trap focus inside modal
-  useEffect(() => {
-    const focusableSelectors = [
-      'button:not([disabled])',
-      'input:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
-    ];
     const handleTab = (e: KeyboardEvent) => {
       if (!modalRef.current) return;
-      const focusableEls = modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors.join(','));
+      const focusableEls = modalRef.current.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex='-1'])"
+      );
       const first = focusableEls[0];
       const last = focusableEls[focusableEls.length - 1];
       if (e.key === "Tab") {
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
         }
       }
     };
+    window.addEventListener("keydown", handleEsc);
     document.addEventListener("keydown", handleTab);
-    return () => document.removeEventListener("keydown", handleTab);
-  }, []);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.removeEventListener("keydown", handleTab);
+    };
+  }, [onClose]);
+
+  // Progress bar % for mobile or screen readers
+  const progress = Math.floor(((step + 1) / steps.length) * 100);
 
   // Step handlers
   const handleNext = () => {
@@ -196,341 +303,558 @@ export default function OnboardingModal({
       }
       setError("");
     }
-    setStep((s) => Math.min(s + 1, steps.length - 1));
+    setStep((s: number) => Math.min(s + 1, steps.length - 1));
   };
-
-  const handleBack = () => setStep((s) => Math.max(s - 1, 0));
-
+  const handleBack = () => setStep((s: number) => Math.max(s - 1, 0));
   const handleFinish = () => {
     localStorage.setItem("listoUserName", name.trim());
     if (avatar) localStorage.setItem("listoAvatar", JSON.stringify(avatar));
     localStorage.setItem("listoTheme", theme);
+    localStorage.setItem("listoMusic", music);
     localStorage.setItem("seenOnboarding", "true");
+    localStorage.removeItem("onboardingDraft");
     setFinished(true);
     setTimeout(() => {
-      onComplete(avatar, theme);
+      onComplete(avatar, theme, music);
       onClose();
-    }, 1200);
+    }, 1300);
   };
-
   const handleSkip = () => {
     localStorage.setItem("seenOnboarding", "true");
-    onComplete(null, theme);
+    localStorage.removeItem("onboardingDraft");
+    onComplete(null, theme, music);
+    onClose();
+  };
+  const handleContinueLater = () => {
+    localStorage.setItem(
+      "onboardingDraft",
+      JSON.stringify({ step, name, avatar, theme, music })
+    );
     onClose();
   };
 
-  // Progress calculation
-  const progress = ((step + 1) / steps.length) * 100;
+  // Online/offline awareness
+  useEffect(() => {
+    const goOnline = () => {
+      setIsOnline(true);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1000);
+    };
+    const goOffline = () => {
+      setIsOnline(false);
+      setShowNetworkToast(true);
+      setTimeout(() => setShowNetworkToast(false), 1000);
+    };
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    setIsOnline(navigator.onLine);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
 
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
-      aria-modal="true"
-      role="dialog"
-      tabIndex={-1}
-    >
-      {/* Vortex background */}
-      <VortexBackground step={step} finished={finished} reduceMotion={reduceMotion} />
+  // --- Emoji Rain micro-animation on finish
+  function EmojiRain({ show }: { readonly show: boolean }) {
+    const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
+    return (
+      <AnimatePresence>
+        {show &&
+          Array.from({ length: 15 }).map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ y: -60, opacity: 0 }}
+              animate={{ y: "100vh", opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 1.2 + Math.random() * 1.6,
+                delay: Math.random() * 0.4,
+              }}
+              className="fixed left-0 pointer-events-none z-[99]"
+              style={{
+                left: `${Math.random() * 100}%`,
+                fontSize: `${24 + Math.random() * 32}px`,
+                top: 0,
+              }}
+            >
+              {emojis[Math.floor(Math.random() * emojis.length)]}
+            </motion.div>
+          ))}
+      </AnimatePresence>
+    );
+  }
 
-      <motion.div
-        ref={modalRef}
-        className="bg-white rounded-2xl shadow-2xl max-w-md w-full px-10 py-8 flex flex-col items-center relative z-50"
-        role="document"
-        initial={{ opacity: 0, scale: 0.92, y: 60 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 60 }}
-        transition={{ type: "spring", duration: 0.7 }}
-      >
-        {/* Accessibility Toggle */}
-        <button
-          className="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 rounded shadow text-xs hover:bg-gray-200 transition"
-          onClick={() => setReduceMotion(r => !r)}
-          aria-label={reduceMotion ? "Enable animations" : "Reduce motion / disable vortex"}
-        >
-          {reduceMotion ? "Enable Animations" : "Reduce Motion"}
-        </button>
-        <AnimatePresence mode="wait">
-          {/* Welcome Step */}
-          {steps[step].key === "welcome" && (
-            <motion.div
-              key="welcome"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-8 text-center"
-              aria-labelledby="onboarding-title"
-              aria-describedby="onboarding-desc"
-            >
-              <h2
-                id="onboarding-title"
-                className="text-4xl font-poppins font-extrabold mb-3 tracking-tight bg-gradient-to-r from-blue-700 via-pink-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg"
-              >
-                Welcome to LISTO!
-              </h2>
-              <p
-                id="onboarding-desc"
-                className="mb-8 text-lg text-gray-700 font-medium tracking-wide"
-              >
-                Let’s get you set up for your journey.
-              </p>
-              <div className="flex gap-4 w-full justify-center mb-4">
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold text-lg"
-                  onClick={handleNext}
-                  aria-label="Start onboarding"
-                >
-                  Get Started
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg shadow hover:bg-gray-200 transition font-semibold text-lg"
-                  onClick={handleSkip}
-                  aria-label="Skip onboarding"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          )}
-          {/* Name Step */}
-          {steps[step].key === "name" && (
-            <motion.div
-              key="name"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-8"
-            >
-              <label
-                htmlFor="onboard-name"
-                className="block text-2xl font-poppins font-bold mb-2 text-center text-blue-700 tracking-tight"
-              >
-                What should we call you?
-              </label>
-              <input
-                ref={inputRef}
-                id="onboard-name"
-                type="text"
-                className="w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-center font-medium tracking-wide"
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError("");
-                }}
-                aria-label="Your name"
-                maxLength={32}
-                onKeyDown={e => {
-                  if (e.key === "Enter") handleNext();
-                }}
-              />
-              {error && (
-                <div className="text-red-500 text-sm mt-1 text-center">{error}</div>
-              )}
-              <div className="flex gap-4 justify-center mt-8">
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                  disabled={step === 0}
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleSkip}
-                  aria-label="Skip onboarding"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          )}
-          {/* Avatar Step */}
-          {steps[step].key === "avatar" && (
-            <motion.div
-              key="avatar"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-            >
-              <div className="mb-6">
-                <div className="flex flex-col items-center">
-                  <p className="mb-2 font-semibold text-gray-800">
-                    Choose your avatar{" "}
-                    <span className="text-gray-500 font-normal">(optional)</span>
-                  </p>
-                  <div className="w-full flex flex-col items-center">
-                    <AvatarPicker value={avatar} onChange={setAvatar} />
-                    {!avatar && (
-                      <div className="text-center text-gray-400 text-sm mt-4">
-                        <span className="text-3xl block mb-2">🙂</span>
-                        <span>
-                          No avatar yet. You can always create one later from your
-                          profile page!
-                        </span>
-                      </div>
-                    )}
-                    {avatar && (
-                      <div className="mt-4 flex flex-col items-center">
-                        <span className="text-3xl block mb-2">
-                          {getAvatarSVG(avatar)}
-                        </span>
-                        <span className="text-xs text-gray-500">Looking good!</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-4 justify-center mt-2">
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleSkip}
-                  aria-label="Skip onboarding"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          )}
-          {/* Theme Step */}
-          {steps[step].key === "theme" && (
-            <motion.div
-              key="theme"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-              className="mb-6"
-            >
-              <h3 className="text-xl font-semibold mb-2 text-center">Pick a Profile Theme</h3>
-              <div className="flex gap-2 flex-wrap justify-center mb-4">
-                <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-blue-900 to-teal-600" ? "bg-blue-600 text-white" : "bg-white text-blue-600"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-blue-900 to-teal-600")}
-                  aria-label="Blue/Teal theme"
-                >
-                  Blue/Teal
-                </button>
-                <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-pink-500 to-yellow-300" ? "bg-pink-500 text-white" : "bg-white text-pink-500"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-pink-500 to-yellow-300")}
-                  aria-label="Pink/Yellow theme"
-                >
-                  Pink/Yellow
-                </button>
-                <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gradient-to-r from-green-400 to-blue-500" ? "bg-green-500 text-white" : "bg-white text-green-500"}`}
-                  onClick={() => setTheme("bg-gradient-to-r from-green-400 to-blue-500")}
-                  aria-label="Green/Blue theme"
-                >
-                  Green/Blue
-                </button>
-                <button
-                  className={`px-3 py-1 rounded ${theme === "bg-gray-100" ? "bg-gray-400 text-white" : "bg-white text-gray-600"}`}
-                  onClick={() => setTheme("bg-gray-100")}
-                  aria-label="Minimal theme"
-                >
-                  Minimal
-                </button>
-              </div>
-              <div className="flex gap-4 justify-center mt-2">
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleBack}
-                  aria-label="Back"
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition text-lg font-semibold"
-                  onClick={handleNext}
-                  aria-label="Next step"
-                >
-                  Next
-                </button>
-                <button
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition text-lg"
-                  onClick={handleSkip}
-                  aria-label="Skip onboarding"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          )}
-          {/* Finish Step */}
-          {steps[step].key === "finish" && (
-            <motion.div
-              key="finish"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.5, type: "spring" }}
-              className="mb-8 text-center"
-            >
-              <h2 className="text-3xl font-poppins font-extrabold mb-2 bg-gradient-to-r from-green-500 via-blue-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">
-                You're all set!
-              </h2>
-              <p className="mb-4 text-lg text-gray-700 font-medium">
-                Welcome to <span className="font-bold text-blue-700">{name || "friend"}</span>!
-              </p>
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1.1 }}
-                transition={{ type: "spring", duration: 0.6 }}
-                className="flex justify-center mb-4"
-              >
-                {getAvatarSVG(avatar)}
-              </motion.div>
-              <button
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition text-lg font-semibold"
-                onClick={handleFinish}
-                aria-label="Finish onboarding"
-              >
-                Go to Dashboard
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {/* Confetti overlay (optional, for visual delight) */}
-        {finished && !reduceMotion && (
+  // --- Confetti (simple, CSS based, fallback for prod) ---
+  function ConfettiBlast({ show }: { show: boolean }) {
+    return (
+      <AnimatePresence>
+        {show && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            style={{ zIndex: 10 }}
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
           >
-            <span className="text-6xl animate-bounce">🎉</span>
+            <span className="text-7xl animate-bounce">🎉</span>
           </motion.div>
         )}
+      </AnimatePresence>
+    );
+  }
+
+  // --- Main Modal UI ---
+  return (
+    <dialog
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+      aria-modal="true"
+      tabIndex={-1}
+    >
+      {/* Network Status Toast */}
+      <AnimatePresence>
+        {showNetworkToast && (
+          <motion.div
+            className={`fixed top-10 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl shadow-xl font-bold text-white z-[101] ${isOnline ? "bg-green-500" : "bg-pink-500"
+              }`}
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -30, opacity: 0 }}
+          >
+            {isOnline ? "Back online!" : "You're offline."}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <VortexBackground
+        step={step}
+        finished={finished}
+        reduceMotion={reduceMotion}
+      />
+      <ConfettiBlast show={showConfetti} />
+      <EmojiRain show={showEmojiRain} />
+
+      <motion.div
+        ref={modalRef}
+        className="bg-white/90 dark:bg-[#232946] rounded-3xl shadow-2xl w-full max-w-md mx-auto px-7 py-8 flex flex-col items-center relative z-50 border-2 border-blue-200"
+        style={{
+          minHeight: 500,
+          boxShadow: "0 6px 36px 0 #0ff1ce44, 0 0 40px 8px #a21caf33",
+        }}
+        initial={{ opacity: 0, scale: 0.94, y: 60 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 60 }}
+        transition={{ type: "spring", duration: 0.7 }}
+        role="document"
+        aria-label="Onboarding"
+      >
+        {/* Accessibility Toggle */}
+        <button
+          className="absolute top-4 right-4 px-3 py-1 bg-gray-100 text-gray-700 rounded shadow text-xs hover:bg-gray-200 transition"
+          onClick={() => setReduceMotion((r) => !r)}
+          aria-label={
+            reduceMotion
+              ? "Enable animations"
+              : "Reduce motion / disable vortex"
+          }
+        >
+          {reduceMotion ? "Enable Animations" : "Reduce Motion"}
+        </button>
+
+        {/* Progress stepper */}
+        <ProgressStepper current={step} />
+        <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden mb-6">
+          <div
+            className="h-2 bg-gradient-to-r from-blue-400 via-pink-400 to-yellow-400 transition-all"
+            style={{ width: `${progress}%` }}
+            aria-label={`Progress: ${progress}%`}
+            aria-valuenow={progress}
+          />
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+            className="min-h-[320px] flex flex-col"
+          >
+            <div className="flex-grow">
+              {steps[step].key === "welcome" && <WelcomeStep onNext={handleNext} onSkip={handleSkip} />}
+              {steps[step].key === "name" && (
+                <NameStep
+                  name={name}
+                  setName={setName}
+                  error={error}
+                  inputRef={inputRef}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
+              )}
+              {steps[step].key === "avatar" && (
+                <AvatarStep
+                  avatar={avatar}
+                  setAvatar={setAvatar}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
+              )}
+              {steps[step].key === "theme" && (
+                <ThemeStep
+                  theme={theme}
+                  setTheme={setTheme}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
+              )}
+              {steps[step].key === "music" && (
+                <MusicStep
+                  music={music}
+                  setMusic={setMusic}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onContinueLater={handleContinueLater}
+                />
+              )}
+              {steps[step].key === "finish" && <FinishStep name={name} />}
+            </div>
+
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+              <div>
+                {step > 0 && (
+                  <button
+                    onClick={handleBack}
+                    className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition"
+                  >
+                    Back
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleContinueLater}
+                  className="px-4 py-2 text-xs text-gray-500 hover:underline"
+                >
+                  Save & Close
+                </button>
+                {step < steps.length - 1 ? (
+                  <button
+                    onClick={handleNext}
+                    className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition shadow-md"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleFinish}
+                    className="px-8 py-3 rounded-xl bg-pink-600 text-white font-bold hover:bg-pink-700 transition shadow-lg animate-pulse"
+                  >
+                    Finish!
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        <button
+          onClick={handleSkip}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-sm"
+          aria-label="Skip onboarding"
+        >
+          Skip
+        </button>
       </motion.div>
-    </div>
+    </dialog>
   );
 }
 
+// --- Step Components ---
+const WelcomeStep = ({ onNext, onSkip }: { readonly onNext: () => void; readonly onSkip: () => void; }) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Welcome to LISTO!
+    </h2>
+    <p className="text-lg text-gray-600 mb-6">
+      Set up your space, your way.{" "}
+      <span className="font-semibold text-blue-600">Let's go!</span>
+    </p>
+    <div className="flex gap-4 justify-center">
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={onNext}
+        aria-label="Start onboarding"
+        autoFocus
+      >
+        Get Started
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold shadow-md hover:bg-gray-200 transition"
+        onClick={onSkip}
+        aria-label="Skip onboarding"
+      >
+        Skip
+      </button>
+    </div>
+  </div>
+);
 
+const NameStep = ({
+  name,
+  setName,
+  error,
+  inputRef,
+  onNext,
+  onBack,
+  onContinueLater,
+}: {
+  readonly name: string;
+  readonly setName: (name: string) => void;
+  readonly error: string;
+  readonly inputRef: React.RefObject<HTMLInputElement | null>;
+  readonly onNext: () => void;
+  readonly onBack: () => void;
+  readonly onContinueLater: () => void;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      What should we call you?
+    </h2>
+    <input
+      ref={inputRef}
+      type="text"
+      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+      placeholder="Type your name…"
+      value={name}
+      onChange={(e) => {
+        setName(e.target.value);
+        // setError(""); // This was causing an error, assuming it should be removed or handled differently
+      }}
+      aria-label="Your name"
+      maxLength={32}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") onNext();
+      }}
+    />
+    {error && (
+      <div className="text-red-500 text-sm mt-2 text-center">{error}</div>
+    )}
+    <div className="flex gap-4 justify-center mt-6">
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={onNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const AvatarStep = ({
+  avatar,
+  setAvatar,
+  onBack,
+  onNext,
+  onContinueLater,
+}: {
+  readonly avatar: any;
+  readonly setAvatar: (avatar: any) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
+}) => (
+  <div className="p-4 text-center">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">Choose an Avatar</h2>
+    <div className="flex flex-col items-center">
+      {/* AvatarPicker does both Cartoon & ReadyPlayerMe */}
+      <AvatarPicker value={avatar} onChange={setAvatar} />
+    </div>
+    <p className="text-xs mt-2 text-gray-500">
+      Want to stand out? Choose a cartoon or a 3D avatar!
+      <br />
+      You can always change this later from your profile.
+    </p>
+    <div className="flex gap-4 justify-center mt-6">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={onNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const ThemeStep = ({
+  theme,
+  setTheme,
+  onBack,
+  onNext,
+  onContinueLater,
+}: {
+  readonly theme: string;
+  readonly setTheme: (theme: string) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Pick a Profile Theme
+    </h2>
+    <div className="flex gap-2 flex-wrap justify-center mb-4">
+      {THEME_OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          className={`px-3 py-1 rounded transition border ${theme === opt.value
+              ? "bg-blue-600 text-white border-blue-800"
+              : "bg-white text-blue-600 border-blue-200"
+            }`}
+          onClick={() => setTheme(opt.value)}
+          aria-label={opt.label}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+    <div className="w-full mb-2">
+      <div
+        className="rounded-xl p-2 font-semibold text-center text-sm text-gray-600 dark:text-gray-100"
+        style={{
+          background: "linear-gradient(90deg, #e0eafc, #cfdef3 80%)",
+          ...(theme.startsWith("bg-") ? {} : { background: theme }),
+        }}
+      >
+        Live Preview!
+      </div>
+    </div>
+    <div className="flex gap-4 justify-center mt-2">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={onNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const MusicStep = ({
+  music,
+  setMusic,
+  onBack,
+  onNext,
+  onContinueLater,
+}: {
+  readonly music: string;
+  readonly setMusic: (music: string) => void;
+  readonly onBack: () => void;
+  readonly onNext: () => void;
+  readonly onContinueLater: () => void;
+}) => (
+  <div className="p-4">
+    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      Theme Music (Optional)
+    </h2>
+    <div className="flex gap-2 flex-wrap justify-center mb-4">
+      {MUSIC_OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          className={`px-3 py-1 rounded transition border ${music === opt.value
+              ? "bg-pink-500 text-white border-pink-800"
+              : "bg-white text-pink-500 border-pink-200"
+            }`}
+          onClick={() => setMusic(opt.value)}
+          aria-label={opt.label}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+    <div className="flex gap-4 justify-center mt-2">
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onBack}
+        aria-label="Back"
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition"
+        onClick={onNext}
+        aria-label="Next step"
+      >
+        Next
+      </button>
+      <button
+        className="px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition"
+        onClick={onContinueLater}
+        aria-label="Continue later"
+      >
+        Continue Later
+      </button>
+    </div>
+  </div>
+);
+
+const FinishStep = ({ name }: { readonly name: string }) => (
+  <div className="text-center p-4">
+    <h2 className="text-4xl font-bold text-gray-800 mb-2">
+      You're all set!
+    </h2>
+    <p className="text-lg text-gray-600">
+      Ready to achieve your dreams, {name}?
+    </p>
+    <div className="mt-6 text-6xl animate-pulse">🚀</div>
+  </div>
+);
+
+export default React.memo(OnboardingModalInternal);

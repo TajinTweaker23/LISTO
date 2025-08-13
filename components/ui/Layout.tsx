@@ -1,58 +1,64 @@
 import { Roboto_Mono } from "next/font/google";
-import React, { ReactNode, useState, useEffect, useRef } from "react";
-import Confetti from "react-confetti";
-import { Dialog, Combobox } from "@headlessui/react";
-import "./globals.css";
+import React, {
+  ReactNode,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import "../../styles/layout.css"; // Import layout styles
+
+// Enhanced Design System Imports
+import { useToast } from "../../hooks/useToast";
+import { useAchievements } from "../../hooks/useAchievements";
+import { useSoundscape } from "../../hooks/useSoundscape";
+import { useParallax } from "../../hooks/useParallax";
+import { useFocusTimer } from "../../hooks/useFocusTimer";
+import { ThemeProvider } from "../providers/ThemeProvider";
+
+// UI Components
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
-import { motion, AnimatePresence } from "framer-motion";
-import CustomizationPanel from "./CustomizationPanel";
 import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
-import { Howl } from "howler";
 import Mascot from "./Mascot";
+import AchievementBadge from "./AchievementBadge";
+import OnboardingModal from './OnboardingModal';
+import TabBar from "./TabBar";
+import NotificationContainer, { useNotifications } from "./NotificationSystem";
+import Sidebar from '../Sidebar';
+import ActivismHub from '../ActivismHub';
+import GreetingBar from './GreetingBar';
+import CommandPalette from './CommandPalette';
+import ActionButtons from './ActionButtons';
+import QuickAddButton from './QuickAddButton';
+import { useWhiteboard } from "../../context/WhiteboardContext";
 
+// --- Font ---
 const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
-const soundscapes = [
-  { label: "None", file: "" },
-  { label: "Rain", file: "/sounds/rain.mp3" },
-  { label: "Café", file: "/sounds/cafe.mp3" },
-  { label: "Forest", file: "/sounds/forest.mp3" },
-];
+export type LayoutProps = {
+  children: ReactNode;
+  theme: "dark" | "light";
+  setTheme: (theme: "dark" | "light") => void;
+};
 
-function Toast({ message, show }: { message: string; show: boolean }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 60, opacity: 0 }}
-          transition={{ duration: 0.4, type: "spring" }}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-pink-500 text-white px-6 py-3 rounded-xl shadow-lg z-[100] font-semibold text-sm"
-        >
-          {message}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// Emoji Rain Celebration
-function EmojiRain({ show }: { show: boolean }) {
+// --- Enhanced Emoji Rain Component ---
+function EmojiRain({ show }: { readonly show: boolean }) {
   const emojis = ["🎉", "✨", "🥳", "💡", "🚀", "🎈"];
   return (
     <AnimatePresence>
       {show &&
-        Array.from({ length: 18 }).map((_, i) => (
+        Array.from({ length: 18 }, (_, i) => ({ id: `emoji-${i}`, index: i })).map((item) => (
           <motion.div
-            key={i}
+            key={item.id}
             initial={{ y: -60, opacity: 0 }}
             animate={{ y: "100vh", opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2 + Math.random(), delay: Math.random() * 0.5 }}
+            transition={{
+              duration: 2 + Math.random(),
+              delay: Math.random() * 0.5,
+            }}
             className="fixed left-0 pointer-events-none z-[99]"
             style={{
               left: `${Math.random() * 100}%`,
@@ -67,34 +73,8 @@ function EmojiRain({ show }: { show: boolean }) {
   );
 }
 
-// Focus Timer Progress Bar
-function FocusTimer({ show, onEnd }: { show: boolean; onEnd: () => void }) {
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    if (!show) return;
-    setProgress(0);
-    const interval = setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          clearInterval(interval);
-          onEnd();
-          return 100;
-        }
-        return p + 0.5;
-      });
-    }, 300);
-    return () => clearInterval(interval);
-  }, [show, onEnd]);
-  if (!show) return null;
-  return (
-    <div className="fixed top-0 left-0 w-full z-[99]">
-      <div className="h-2 bg-gradient-to-r from-blue-400 via-pink-400 to-yellow-400 rounded-b-full shadow-lg transition-all" style={{ width: `${progress}%` }} />
-    </div>
-  );
-}
-
-// Reading Ruler
-function ReadingRuler({ enabled }: { enabled: boolean }) {
+// --- Enhanced Reading Ruler Component ---
+function ReadingRuler({ enabled }: { readonly enabled: boolean }) {
   const [y, setY] = useState(0);
   useEffect(() => {
     if (!enabled) return;
@@ -102,471 +82,389 @@ function ReadingRuler({ enabled }: { enabled: boolean }) {
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
   }, [enabled]);
+  
   if (!enabled) return null;
+  
   return (
     <div
-      className="fixed left-0 w-full pointer-events-none z-[98]"
-      style={{
-        top: y - 24,
-        height: 48,
-        background: "rgba(255,255,0,0.13)",
-        borderTop: "1.5px solid #ffe066",
-        borderBottom: "1.5px solid #ffe066",
-        transition: "top 0.1s",
-      }}
+      className="fixed left-0 w-full pointer-events-none z-[98] reading-ruler"
+      style={{ top: y - 24 }}
     />
   );
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState("light");
-  const [settings, setSettings] = useState({
-    fontFamily: "Space Grotesk, sans-serif",
-    fontColor: "#e4e6fb",
-    bgColor: "#1a1b23",
-    fontSize: 17,
-    musicUrl: "",
-    textToSpeech: false,
-    highContrast: false,
-    deafMode: false,
-    blindMode: false,
-  });
-  const [shapes, setShapes] = useState<string[]>([]);
-  const [tables, setTables] = useState<{ rows: number; cols: number }[]>([]);
+// --- Error Boundary ---
+class ErrorBoundary extends React.Component<
+  { readonly children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(_: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, info: any) {
+    // Log error for analytics/reporting if needed
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="text-6xl mb-2">🚨</div>
+          <div className="text-2xl font-bold">Something went wrong.</div>
+          <div className="text-gray-600">Try refreshing the page.</div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/**
+ * The `Layout` component serves as the main application wrapper for LISTO, providing global UI features,
+ * accessibility enhancements, and interactive elements with an enhanced sage-themed design system.
+ * 
+ * Features include:
+ * - Sage color palette with theme customization
+ * - Enhanced toast notifications with TTS support
+ * - Achievement system with persistence
+ * - Ambient soundscapes with volume control
+ * - Performance-optimized parallax effects
+ * - Pomodoro focus timer with notifications
+ * - Glass morphism UI elements
+ * - Responsive design with mobile support
+ *
+ * @component
+ * @param {LayoutProps} props - The props for the Layout component.
+ * @param {React.ReactNode} props.children - The main content to be rendered within the layout.
+ * @param {"light" | "dark"} props.theme - The current theme mode.
+ * @param {(theme: "light" | "dark") => void} props.setTheme - Function to update the theme mode.
+ */
+const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
+  const { notifications, removeNotification } = useNotifications();
+  const { shapes, tables, handleInsertShape, handleInsertTable } = useWhiteboard();
+  
+  // Enhanced Design System Hooks
+  const { addToast } = useToast();
+  const { achievements } = useAchievements();
+  // Remove unused variable assignments
+  const { muted, toggleMute } = useSoundscape();
+  const { parallax } = useParallax();
+  const { isActive: isFocusTimerActive, progress: focusProgress, start: startFocusTimer } = useFocusTimer();
+
+  // Local State (removed unused settings)
   const [focusMode, setFocusMode] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [showEmojiRain, setShowEmojiRain] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [toast, setToast] = useState<{ message: string; show: boolean }>({ message: "", show: false });
-  const [soundscape, setSoundscape] = useState(soundscapes[0].file);
-  const [sound, setSound] = useState<Howl | null>(null);
-  const [showFocusTimer, setShowFocusTimer] = useState(false);
   const [readingRuler, setReadingRuler] = useState(false);
-  const [greeting, setGreeting] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('dashboard');
 
-  // Mascot reactions
+  // Mascot state
   const mascotRef = useRef<any>(null);
   const [mascotAction, setMascotAction] = useState<"idle" | "cheer" | "party">("idle");
 
-  // Personalized greeting
+  // Check for first-time user
   useEffect(() => {
-    const hour = new Date().getHours();
-    let greet = "Welcome";
-    if (hour < 5) greet = "Burning the midnight oil?";
-    else if (hour < 12) greet = "Good morning";
-    else if (hour < 18) greet = "Good afternoon";
-    else greet = "Good evening";
-    setGreeting(greet);
+    const hasOnboarded = localStorage.getItem('hasOnboarded');
+    if (!hasOnboarded) {
+      setShowOnboarding(true);
+    }
+
+    // Listen for view change events from dashboard
+    const handleViewChange = (event: CustomEvent) => {
+      setCurrentView(event.detail);
+    };
+
+    window.addEventListener('changeView', handleViewChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('changeView', handleViewChange as EventListener);
+    };
   }, []);
 
-  // Confetti trigger
-  const triggerConfetti = () => {
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
+  const handleCloseOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem('hasOnboarded', 'true');
   };
 
-  // Toast trigger
-  const triggerToast = (message: string) => {
-    setToast({ message, show: true });
-    setTimeout(() => setToast({ message: "", show: false }), 1800);
-  };
-
-  // Celebration trigger
+  // Enhanced trigger functions with new toast system
   const triggerEmojiRain = () => {
     setShowEmojiRain(true);
     setTimeout(() => setShowEmojiRain(false), 2200);
   };
 
-  // Update shape/table handlers to trigger confetti, toast, mascot, and emoji rain
-  const handleInsertShape = (shape: string) => {
-    setShapes([...shapes, shape]);
-    triggerConfetti();
-    triggerToast(`Shape "${shape}" added!`);
-    setMascotAction("cheer");
-    if ((shapes.length + 1) % 5 === 0) triggerEmojiRain();
-  };
-  const handleInsertTable = (rows: number, cols: number) => {
-    setTables([...tables, { rows, cols }]);
-    triggerConfetti();
-    triggerToast(`Table ${rows}x${cols} added!`);
-    setMascotAction("cheer");
-    if ((tables.length + 1) % 5 === 0) triggerEmojiRain();
-  };
+  // Enhanced interaction handlers removed unused functions
 
-  // Command palette actions (with party mode easter egg)
-  const actions = [
-    { name: "Toggle Focus Mode", action: () => setFocusMode(f => !f) },
-    { name: "Insert Circle", action: () => handleInsertShape("circle") },
-    { name: "Insert Square", action: () => handleInsertShape("square") },
-    { name: "Insert Triangle", action: () => handleInsertShape("triangle") },
-    { name: "Insert Table", action: () => handleInsertTable(2, 2) },
-    { name: "Toggle Theme", action: () => setTheme(theme === "dark" ? "light" : "dark") },
-    { name: "Open Settings", action: () => setShowSettings(true) },
-    { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); triggerToast("🎉 Party Mode!"); } }, // Easter egg
-    { name: "Start Focus Timer", action: () => setShowFocusTimer(true) },
-    { name: "Toggle Reading Ruler", action: () => setReadingRuler(r => !r) },
-  ];
-  const [query, setQuery] = useState("");
-  const filteredActions = actions.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
-
-  // Theme Scheduler
-  useEffect(() => {
-    const schedule = JSON.parse(localStorage.getItem("themeSchedule") || "{}");
-    if (schedule.enabled) {
-      const now = new Date();
-      const hour = now.getHours();
-      if (hour >= schedule.nightStart || hour < schedule.dayStart) setTheme("dark");
-      else setTheme("light");
+  // Render content based on current view
+  const renderContent = () => {
+    if (currentView === 'activism') {
+      return <ActivismHub theme={theme} />;
     }
-  }, []);
-
-  // Soundscape logic
-  useEffect(() => {
-    if (sound) {
-      sound.stop();
-      setSound(null);
+    if (currentView === 'health') {
+      return (
+        <div className="p-6 bg-sage-50 rounded-lg">
+          <h2 className="text-2xl font-bold text-sage-800 mb-4">Health Dashboard</h2>
+          <p className="text-sage-600">Health tracking features coming soon...</p>
+        </div>
+      );
     }
-    if (soundscape) {
-      const newSound = new Howl({ src: [soundscape], loop: true, volume: 0.3 });
-      newSound.play();
-      setSound(newSound);
-    }
-    return () => {
-      if (sound) sound.stop();
-    };
-    // eslint-disable-next-line
-  }, [soundscape]);
-
-  // Parallax effect for background shapes
-  const [parallax, setParallax] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setParallax({
-        x: (e.clientX / window.innerWidth - 0.5) * 40,
-        y: (e.clientY / window.innerHeight - 0.5) * 40,
-      });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  // Keyboard shortcut for command palette
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setCommandOpen(true);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
-  // Focus timer end
-  const handleFocusTimerEnd = () => {
-    setShowFocusTimer(false);
-    triggerToast("Focus session complete!");
-    setMascotAction("cheer");
-    triggerEmojiRain();
+    return children;
   };
 
-  // Futuristic gradient backgrounds with parallax
-  const bgGradient =
-    theme === "dark"
-      ? "bg-gradient-to-br from-[#171824] via-[#24305e] to-[#0f2027]"
-      : "bg-gradient-to-br from-[#e0eafc] via-[#cfdef3] to-[#f8f9f3]";
+  // Enhanced background gradient with sage theme
+  const bgGradient = theme === "dark"
+    ? "bg-gradient-to-br from-[#1a2318] via-[#2d3e2b] to-[#1e2b1c]"
+    : "bg-gradient-to-br from-[#f0f4f0] via-[#e8f0e8] to-[#f5f8f5]";
 
-  // Glassmorphism card style for main content
-  const glassCard =
-    "backdrop-blur-2xl bg-white/10 dark:bg-[#232946]/60 rounded-[2.5rem] shadow-2xl border border-cyan-400/20 dark:border-fuchsia-400/30 ring-2 ring-blue-400/20 dark:ring-pink-400/10";
+  const glassCard = "backdrop-blur-2xl glass-card rounded-3xl shadow-xl border border-sage-light/20";
 
   return (
-    <div
-      className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} ${robotoMono.className} relative overflow-x-hidden`}
-      style={
-        focusMode
-          ? { filter: "blur(2.5px) brightness(0.6) grayscale(0.3)" }
-          : {}
-      }
-    >
-      {/* Confetti & Emoji Rain */}
-      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
-      <EmojiRain show={showEmojiRain} />
-      <Toast message={toast.message} show={toast.show} />
-      <FocusTimer show={showFocusTimer} onEnd={handleFocusTimerEnd} />
-      <ReadingRuler enabled={readingRuler} />
-
-      {/* Personalized greeting */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 mt-4 flex items-center gap-3 bg-white/70 dark:bg-black/60 px-6 py-2 rounded-full shadow-lg border border-blue-400/10 text-lg font-bold text-gray-700 dark:text-gray-100 backdrop-blur-lg animate-fade-in">
-        <span role="img" aria-label="wave">👋</span>
-        {greeting}, <span className="text-blue-500">LISTO User!</span>
-      </div>
-
-      {/* Mascot */}
-      <div className="fixed bottom-32 right-10 z-40 flex flex-col items-center">
-        <Mascot />
-      </div>
-
-      <Navbar theme={theme} />
-
-      {/* Animated, layered, glowing background shapes with parallax */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-        <motion.div
-          className="absolute top-[-80px] left-[-80px] w-[320px] h-[320px] bg-gradient-to-br from-indigo-500 via-purple-700 to-pink-500 opacity-40 rounded-full blur-3xl animate-pulse"
-          style={{ x: parallax.x, y: parallax.y }}
-        />
-        <motion.div
-          className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-gradient-to-tr from-cyan-300 via-teal-300 to-blue-600 opacity-30 rounded-full blur-3xl animate-pulse"
-          style={{ x: -parallax.x, y: -parallax.y }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-[180px] h-[180px] bg-gradient-to-br from-pink-400 via-fuchsia-600 to-sky-400 opacity-20 rounded-full blur-2xl animate-spin-slow"
-          style={{ x: parallax.x / 2, y: parallax.y / 2 }}
-        />
-      </div>
-      <ThemeToggle theme={theme} setTheme={setTheme} />
-
-      {/* Focus Mode Toggle Button */}
-      <button
-        onClick={() => setFocusMode(f => !f)}
-        className="fixed top-8 left-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
-        aria-label="Toggle Focus Mode"
+    <ThemeProvider>
+      <div
+        className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} ${robotoMono.className} relative overflow-x-hidden design-system-theme ${focusMode ? 'focus-blur-effect' : ''}`}
+        aria-live="polite"
       >
-        <span className="mr-2">🧘</span>
-        {focusMode ? "Exit Focus Mode" : "Focus Mode"}
-        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[F]</span>
-      </button>
+        <link rel="stylesheet" href="/styles/design-system.css" />
+        
+        <Sidebar 
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          currentView={currentView}
+          onViewChange={setCurrentView}
+        />
 
-      {/* Command Palette (Ctrl+K to open) */}
-      <button
-        onClick={() => setCommandOpen(true)}
-        className="fixed top-8 right-8 z-30 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-fuchsia-500 text-white font-bold shadow-lg hover:scale-105 focus:outline-none transition group"
-        aria-label="Open Command Palette"
-      >
-        ⌨️ Command Palette
-        <span className="ml-2 text-xs opacity-60 group-hover:opacity-100 transition">[Ctrl+K]</span>
-      </button>
-      <Dialog open={commandOpen} onClose={() => setCommandOpen(false)} className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-        <div className="relative bg-white dark:bg-[#1a1b23] rounded-2xl shadow-2xl p-7 w-full max-w-xl mx-auto border border-sky-400/20">
-          <Combobox value={null} onChange={a => { a.action(); setCommandOpen(false); }}>
-            <Combobox.Input
-              className="w-full p-3 border-none rounded-xl mb-4 bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-blue-400 text-gray-800 dark:text-gray-100 outline-none text-lg"
-              placeholder="Type a command..."
-              onChange={e => setQuery(e.target.value)}
-              autoFocus
-            />
-            <Combobox.Options>
-              {filteredActions.map((a, idx) => (
-                <Combobox.Option
-                  key={idx}
-                  value={a}
-                  className="p-3 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900 cursor-pointer transition"
-                >
-                  {a.name}
-                </Combobox.Option>
-              ))}
-            </Combobox.Options>
-          </Combobox>
-        </div>
-      </Dialog>
-
-      {/* Floating Settings Button */}
-      <button
-        onClick={() => setShowSettings(s => !s)}
-        className="fixed bottom-10 left-10 p-5 bg-gradient-to-br from-gray-200 via-blue-200 to-pink-200 dark:from-gray-800 dark:via-blue-900 dark:to-pink-900 text-blue-700 dark:text-pink-200 rounded-full shadow-xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-blue-400/10 focus:outline-none group"
-        aria-label="Open Settings"
-        tabIndex={0}
-      >
-        <span className="animate-spin-slow text-2xl">⚙️</span>
-        <span className="absolute left-full ml-2 opacity-0 group-hover:opacity-100 bg-black text-white text-xs px-2 py-1 rounded shadow pointer-events-none z-10 transition">
-          Settings
-        </span>
-      </button>
-      <AnimatePresence>
-        {showSettings && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
-            onClick={() => setShowSettings(false)}
-          >
+        {/* Effects & Global Elements - removed confetti */}
+        <EmojiRain show={showEmojiRain} />
+        
+        {/* Enhanced Toast System - using context provider instead */}
+        {/* Toast notifications are handled by ToastProvider in app context */}
+        
+        {/* Focus Timer Progress Bar */}
+        {isFocusTimerActive && (
+          <div className="fixed top-0 left-0 w-full z-[99]">
             <div
-              className="bg-white dark:bg-[#232946] rounded-2xl shadow-2xl p-8 border border-blue-400/20"
-              onClick={e => e.stopPropagation()}
-            >
-              <CustomizationPanel settings={settings} onChange={setSettings} />
-              {/* Soundscape Picker */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Ambient Soundscape</label>
-                <select
-                  value={soundscape}
-                  onChange={e => setSoundscape(e.target.value)}
-                  className="w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-400 transition"
-                >
-                  {soundscapes.map(s => (
-                    <option key={s.file} value={s.file}>{s.label}</option>
-                  ))}
-                </select>
-              </div>
-              {/* Theme Scheduler */}
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Theme Scheduler</label>
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    id="theme-scheduler"
-                    onChange={e => {
-                      const enabled = e.target.checked;
-                      const dayStart = parseInt(prompt("Day mode starts at hour (0-23)?", "7") || "7", 10);
-                      const nightStart = parseInt(prompt("Night mode starts at hour (0-23)?", "19") || "19", 10);
-                      localStorage.setItem("themeSchedule", JSON.stringify({ enabled, dayStart, nightStart }));
-                    }}
-                  />
-                  <label htmlFor="theme-scheduler" className="text-xs">Enable automatic theme switching</label>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+              className="focus-timer-progress"
+              style={{ width: `${focusProgress}%` }}
+            />
+          </div>
         )}
-      </AnimatePresence>
+        
+        <ReadingRuler enabled={readingRuler} />
+        <OnboardingModal show={showOnboarding} onClose={handleCloseOnboarding} />
 
-      <motion.main
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`flex-1 container mx-auto px-4 py-12 z-10 ${glassCard} shadow-neon`}
-        style={{
-          boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37), 0 0 40px 4px #a21caf33, 0 0 60px 8px #0ff1ce22",
-          border: "1.5px solid rgba(255,255,255,0.18)",
-        }}
-      >
-        <ShapeInsert onInsert={handleInsertShape} />
-        <TableInsert onInsert={handleInsertTable} />
-
-        <div className="my-6 flex gap-6 flex-wrap justify-center">
-          <AnimatePresence>
-            {shapes.map((shape, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="transition-transform hover:scale-110"
-              >
-                {shape === "circle" && (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 via-fuchsia-500 to-cyan-400 shadow-lg border-2 border-white/30" />
-                )}
-                {shape === "square" && (
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-green-400 via-blue-400 to-pink-400 shadow-lg border-2 border-white/30" />
-                )}
-                {shape === "triangle" && (
-                  <div
-                    style={{
-                      width: 0,
-                      height: 0,
-                      borderLeft: "40px solid transparent",
-                      borderRight: "40px solid transparent",
-                      borderBottom: "70px solid #facc15",
-                      filter: "drop-shadow(0 0 16px #facc15cc)",
-                    }}
-                  />
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          <AnimatePresence>
-            {tables.map((table, idx) => (
-              <motion.table
-                key={idx}
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="border-separate border-spacing-1 border border-sky-400/60 bg-white/30 dark:bg-[#232946]/40 rounded-xl shadow-lg mx-4 animate-fade-in"
-                style={{ minWidth: 90 }}
-              >
-                <tbody>
-                  {Array.from({ length: table.rows }).map((_, r) => (
-                    <tr key={r}>
-                      {Array.from({ length: table.cols }).map((_, c) => (
-                        <td
-                          key={c}
-                          className="border border-sky-400/40 w-10 h-10 rounded-lg bg-white/60 dark:bg-[#2d2f4a]/60 shadow-inner"
-                        ></td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </motion.table>
-            ))}
-          </AnimatePresence>
-        </div>
-        {children}
-      </motion.main>
-
-      {/* Futuristic floating action button with neon glow */}
-      <motion.button
-        type="button"
-        className="fixed bottom-10 right-10 p-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-pink-500/60 transition-all duration-300 border-4 border-white/20 z-20 ring-4 ring-pink-400/30 focus:outline-none focus:ring-8 focus:ring-blue-400/40 animate-fab-pulse"
-        aria-label="Add"
-        tabIndex={0}
-        whileHover={{ scale: 1.13, boxShadow: "0 0 32px #f472b6" }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-8 w-8 drop-shadow-neon"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4v16m8-8H4"
+        {/* Achievement Display */}
+        {Object.entries(achievements).map(([name, achievement]) => (
+          <AchievementBadge
+            key={name}
+            name={achievement.name}
+            description={achievement.description}
+            icon={achievement.icon}
+            show={achievement.unlocked}
           />
-        </svg>
-        <span className="absolute left-full ml-2 opacity-0 group-hover:opacity-100 bg-black text-white text-xs px-2 py-1 rounded shadow pointer-events-none z-10 transition">
-          Quick Add
-        </span>
-      </motion.button>
+        ))}
 
-      {/* Sleek, minimal footer */}
-      <footer className="bg-white/40 dark:bg-black/30 text-center p-3 text-xs text-slate-500 rounded-t-xl mt-4 shadow-inner hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100 dark:hover:from-gray-800 dark:hover:to-pink-900 transition-all duration-300 flex items-center justify-center gap-2">
-        <span className="animate-pulse text-blue-400">✨</span>
-        <span>
-          © {new Date().getFullYear()} <span className="font-bold tracking-wide">LISTO</span>
-        </span>
-        <span className="animate-pulse text-pink-400">✨</span>
-      </footer>
-      <style>{`
-        .animate-spin-slow {
-          animation: spin 2.5s linear infinite;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        .animate-fab-pulse {
-          animation: fabPulse 2.2s infinite alternate;
-        }
-        @keyframes fabPulse {
-          0% { box-shadow: 0 0 0 0 #f472b6; }
-          100% { box-shadow: 0 0 32px 8px #f472b6; }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.7s;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
-    </div>
+        <GreetingBar greeting="Welcome to LISTO!" isOnline={true} />
+
+        {/* Enhanced Mascot with better positioning */}
+        <div className="fixed bottom-32 right-10 z-40 flex flex-col items-center">
+          <Mascot ref={mascotRef} action={mascotAction} />
+        </div>
+
+        <Navbar theme={theme} setTheme={setTheme} onMenuClick={() => setSidebarOpen(true)} />
+
+        {/* Enhanced Parallax Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+          <motion.div
+            className="absolute top-[-80px] left-[-80px] w-[320px] h-[320px] bg-gradient-to-br from-sage via-sage-light to-terracotta opacity-40 rounded-full blur-3xl animate-pulse"
+            style={{ x: parallax.x, y: parallax.y }}
+          />
+          <motion.div
+            className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-gradient-to-tr from-sage-light via-lavender to-sage opacity-30 rounded-full blur-3xl animate-pulse"
+            style={{ x: -parallax.x, y: -parallax.y }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 w-[180px] h-[180px] bg-gradient-to-br from-terracotta via-lavender to-sage-light opacity-20 rounded-full blur-2xl animate-spin-slow"
+            style={{ x: parallax.x / 2, y: parallax.y / 2 }}
+          />
+        </div>
+
+        <ThemeToggle theme={theme} setTheme={setTheme} />
+
+        <ActionButtons
+          onFocusClick={() => setFocusMode((f) => !f)}
+          onCommandClick={() => setCommandOpen(true)}
+          isFocusMode={focusMode}
+        />
+
+        <CommandPalette
+          isOpen={commandOpen}
+          onClose={() => setCommandOpen(false)}
+          query=""
+          setQuery={() => {}}
+          actions={[
+            { name: "Toggle Focus Mode", action: () => setFocusMode((f) => !f) },
+            { name: "Insert Circle", action: () => handleInsertShape("circle") },
+            { name: "Insert Square", action: () => handleInsertShape("square") },
+            { name: "Insert Triangle", action: () => handleInsertShape("triangle") },
+            { name: "Insert Table", action: () => handleInsertTable(2, 2) },
+            { name: "Toggle Theme", action: () => setTheme(theme === "dark" ? "light" : "dark") },
+            { name: "Open Settings", action: () => setShowSettings(true) },
+            { name: "Party Mode", action: () => { setMascotAction("party"); triggerEmojiRain(); addToast("🎉 Party Mode!", 'info'); } },
+            { name: "Start Focus Timer", action: () => startFocusTimer("focus") },
+            { name: "Toggle Reading Ruler", action: () => setReadingRuler((r) => !r) },
+            { name: muted ? "Unmute Soundscape" : "Mute Soundscape", action: () => toggleMute() },
+          ]}
+        />
+
+        {/* Settings Panel - To be integrated */}
+        {showSettings && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="glass-card p-6 max-w-md w-full mx-4">
+              <h2 className="text-xl font-bold mb-4 text-sage">Settings</h2>
+              <p className="text-sage-dark mb-4">Settings panel integration coming soon!</p>
+              <button 
+                onClick={() => setShowSettings(false)}
+                className="btn-primary w-full"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Enhanced Main Content */}
+        <motion.main
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={`flex-1 container mx-auto px-4 py-12 z-10 ${glassCard} mt-8`}
+          style={{
+            boxShadow: "0 8px 32px 0 rgba(95, 147, 95, 0.2), 0 0 40px 4px rgba(95, 147, 95, 0.1)",
+          }}
+        >
+          <ErrorBoundary>
+            <ShapeInsert onInsert={handleInsertShape} />
+            <TableInsert onInsert={handleInsertTable} />
+            
+            {/* Enhanced Shape and Table Display */}
+            <div className="my-6 flex gap-6 flex-wrap justify-center">
+              <AnimatePresence>
+                {shapes.map((shape, idx) => (
+                  <motion.div
+                    key={`shape-${idx}-${shape}`}
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.7, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="transition-transform hover:scale-110"
+                  >
+                    {shape === "circle" && (
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sage via-sage-light to-terracotta shadow-lg border-2 border-white/30" />
+                    )}
+                    {shape === "square" && (
+                      <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-sage-light via-lavender to-terracotta shadow-lg border-2 border-white/30" />
+                    )}
+                    {shape === "triangle" && (
+                      <div className="triangle-shape" />
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              
+              <AnimatePresence>
+                {tables.map((table, idx) => (
+                  <motion.table
+                    key={`table-${idx}-${table.rows}x${table.cols}`}
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.7, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="border-separate border-spacing-1 border border-sage/60 glass-table rounded-xl shadow-lg mx-4"
+                    style={{ minWidth: 90 }}
+                  >
+                    <tbody>
+                      {Array.from({ length: table.rows }).map((_, r) => (
+                        <tr key={`table-${idx}-row-${r}`}>
+                          {Array.from({ length: table.cols }).map((_, c) => (
+                            <td
+                              key={`table-${idx}-cell-${r}-${c}`}
+                              className="border border-sage/40 w-10 h-10 rounded-lg bg-sage-light/20 shadow-inner"
+                            ></td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </motion.table>
+                ))}
+              </AnimatePresence>
+            </div>
+            
+            {/* Conditional Content Rendering */}
+            {renderContent()}
+          </ErrorBoundary>
+        </motion.main>
+
+        <QuickAddButton onClick={() => addToast("Quick Add coming soon! ✨", 'info')} />
+
+        {/* Enhanced Footer */}
+        <footer className="glass-footer text-center p-3 text-xs text-sage-dark rounded-t-xl mt-4 shadow-inner transition-all duration-300 flex items-center justify-center gap-2 pb-20 md:pb-3">
+          <span className="animate-pulse text-sage">✨</span>
+          <span>
+            © {new Date().getFullYear()}{" "}
+            <span className="font-bold tracking-wide">LISTO</span>
+          </span>
+          <span className="animate-pulse text-terracotta">✨</span>
+        </footer>
+
+        {/* Mobile Tab Bar */}
+        <TabBar />
+
+        {/* Enhanced Notification Container */}
+        <NotificationContainer 
+          notifications={notifications}
+          onClose={removeNotification}
+          position="top-right"
+        />
+        
+        {/* Enhanced CSS Animations */}
+        <style>{`
+          .animate-spin-slow {
+            animation: spin 2.5s linear infinite;
+          }
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+          .animate-fab-pulse {
+            animation: fabPulse 2.2s infinite alternate;
+          }
+          @keyframes fabPulse {
+            0% { box-shadow: 0 0 0 0 var(--color-sage); }
+            100% { box-shadow: 0 0 32px 8px var(--color-sage); }
+          }
+          .glass-table {
+            background: rgba(95, 147, 95, 0.1);
+            backdrop-filter: blur(10px);
+          }
+          .glass-footer {
+            background: rgba(240, 244, 240, 0.8);
+            backdrop-filter: blur(20px);
+          }
+          .design-system-theme {
+            --color-sage: #5f935f;
+            --color-sage-light: #8fb48f;
+            --color-sage-dark: #4a7a4a;
+            --color-terracotta: #d7581c;
+            --color-lavender: #a68cff;
+          }
+        `}</style>
+      </div>
+    </ThemeProvider>
   );
-}
+};
+
+export default Layout;

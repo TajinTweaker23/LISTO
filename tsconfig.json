@@ -2,7 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     },
     "target": "es5",
     "lib": [
@@ -11,8 +13,8 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true, // Skip type checking of declaration files (e.g. for @dnd-kit/* packages)
-    "strict": false,
+    "skipLibCheck": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -24,14 +26,23 @@
     "incremental": true,
     "types": [
       "node"
-    ]
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "functions",
+    "functions/**/*"
   ]
 }

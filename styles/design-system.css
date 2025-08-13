@@ -1,0 +1,287 @@
+/* Enhanced Design System CSS - Sage Color Scheme */
+
+/* CSS Custom Properties - Default Sage Theme */
+:root {
+  /* Z-Index Scale */
+  --z-background: 0;
+  --z-content: 10;
+  --z-navbar: 20;
+  --z-sidebar: 30;
+  --z-modal: 40;
+  --z-toast: 50;
+  --z-tooltip: 60;
+
+  /* Animation Timings */
+  --animation-fast: 150ms;
+  --animation-normal: 300ms;
+  --animation-slow: 500ms;
+  --animation-very-slow: 800ms;
+  --animation-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animation-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Sage Theme Colors */
+  --color-primary: #5f935f;
+  --color-secondary: #d7581c;
+  --color-accent: #a68cff;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Background Gradients */
+  --background: linear-gradient(135deg, #fffef7 0%, #f7f9f7 50%, #faf9ff 100%);
+  --glass: rgba(255, 255, 255, 0.1);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-neon: 0 0 20px rgb(95 147 95 / 0.4), 0 0 40px rgb(95 147 95 / 0.2);
+  --shadow-glow: 0 0 30px rgb(95 147 95 / 0.4), 0 0 60px rgb(95 147 95 / 0.2);
+}
+
+/* Dark Mode */
+:root.dark {
+  --background: linear-gradient(135deg, #1a2a1a 0%, #2c312c 50%, #2f2748 100%);
+  --glass: rgba(95, 147, 95, 0.1);
+}
+
+/* Theme-specific styles */
+.theme-sage {
+  --color-primary: #5f935f;
+  --color-secondary: #d7581c;
+  --color-accent: #a68cff;
+}
+
+.theme-ocean {
+  --color-primary: #0ea5e9;
+  --color-secondary: #06b6d4;
+  --color-accent: #8b5cf6;
+}
+
+.theme-sunset {
+  --color-primary: #f97316;
+  --color-secondary: #ec4899;
+  --color-accent: #eab308;
+}
+
+.theme-forest {
+  --color-primary: #16a34a;
+  --color-secondary: #059669;
+  --color-accent: #84cc16;
+}
+
+.theme-royal {
+  --color-primary: #7c3aed;
+  --color-secondary: #c026d3;
+  --color-accent: #f59e0b;
+}
+
+/* Enhanced Glass Effect */
+.glass-morphism {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-lg);
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2.5rem;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    0 0 40px 4px rgba(var(--color-primary) / 0.1),
+    0 0 60px 8px rgba(var(--color-accent) / 0.05);
+}
+
+/* Enhanced Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(var(--color-primary) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--color-primary) / 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Utility Classes */
+.animate-fade-in-up {
+  animation: fadeInUp var(--animation-normal) var(--animation-ease) forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale var(--animation-normal) var(--animation-spring) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 3s linear infinite;
+}
+
+/* Enhanced Button Styles */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  box-shadow: var(--shadow-md);
+  transition: all var(--animation-normal) var(--animation-ease);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-primary) / 0.3);
+  transition: all var(--animation-normal) var(--animation-ease);
+}
+
+.btn-secondary:hover {
+  background: rgba(var(--color-primary) / 0.1);
+  transform: translateY(-1px);
+}
+
+/* Enhanced Focus States */
+.focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+}
+
+/* Responsive Design Tokens */
+@media (max-width: 768px) {
+  :root {
+    --animation-normal: 200ms;
+    --animation-slow: 300ms;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-float,
+  .animate-rotate-slow,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --glass: rgba(255, 255, 255, 0.95);
+  }
+  
+  :root.dark {
+    --glass: rgba(0, 0, 0, 0.95);
+  }
+  
+  .glass-morphism {
+    border-width: 2px;
+    border-color: var(--color-primary);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .glass-morphism,
+  .glass-card {
+    background: white !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  [class*="animate-"] {
+    animation: none !important;
+  }
+}

@@ -1,5 +1,0 @@
-<img src="/Digital tools and devices.avif" alt="Digital tools and devices" />
-<img src="/Modern Workspace.avif" alt="Modern Workspace" />
-<img src="/Studying.avif" alt="Studying" />
-<img src="/Wellness.avif" alt="Wellness" />
-<img src="/Work Coffee.avif" alt="Work Coffee" />

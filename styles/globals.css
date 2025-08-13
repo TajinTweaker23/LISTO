@@ -1,250 +1,136 @@
-/* globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* 1. Global Reset */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
+/* Professional Design System */
+:root {
+  --primary: #0ea5e9;
+  --primary-light: #38bdf8;
+  --primary-dark: #0284c7;
+  --secondary: #64748b;
+  --accent: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 2. Brand Color Palette + Fonts */
-:root {
-  /* --- MAIN PALETTE --- */
-  --color-bg: #FCFAF5;
-  --color-card: #E8D7C1;
-  --color-sage: #A8BBA8;
-  --color-teal: #8DAA9D;
-  --color-clay: #C9B29B;
-  --color-gold: #D6B05A;
-  --color-fog: #A7C7C7;
-  --color-moss: #7E8E7A;
-  --color-muted-clay: #BFA387;
-
-  --color-primary: #A8BBA8;   /* Sage */
-  --color-secondary: #E8D7C1; /* Tan */
-  --color-accent: #D6B05A;    /* Muted gold */
-  --color-text-title: #5B6D5B; /* Deep sage */
-  --color-text-main: #2E3A35; /* Charcoal */
-  --color-text-light: #AFAFAF; /* Warm gray */
-  --color-border: #e4e4e4;
-  --color-shadow: rgba(160,170,170,0.10);
-
-  /* Font families */
-  --font-brand: 'Poppins', 'Inter', Arial, sans-serif;
-  --font-body: 'Inter', Arial, sans-serif;
-
-  /* Rounded, shadow */
-  --rounded-md: 18px;
-  --shadow-elevated: 0 4px 32px 0 rgba(31,38,135,0.11);
-
-  /* Hopper-style gradient */
-  --gradient-bg: linear-gradient(135deg, #E8D7C1 0%, #A8BBA8 100%);
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@500;700&display=swap');
-
-/* 3. Body, Headings, Typography */
 body {
-  background: var(--color-bg);
-  color: var(--color-text-main);
-  font-family: var(--font-body);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
   line-height: 1.6;
-  scroll-behavior: smooth;
+  color: var(--text);
+  background: var(--background);
+  margin: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-brand);
-  color: var(--color-text-title);
-  letter-spacing: 0.01em;
-  margin-bottom: 0.75rem;
+@layer components {
+  .card-premium {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .professional-shadow {
+    box-shadow: var(--shadow);
+  }
+
+  .professional-shadow-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
 }
 
-h1 { font-size: 2.2rem; font-weight: 700; }
-h2 { font-size: 1.6rem; font-weight: 600; }
-h3 { font-size: 1.2rem; font-weight: 600; }
-
-p { margin-bottom: 1rem; }
-
-/* 4. Buttons */
-.button, button, .btn {
-  background: var(--color-sage);
-  color: white;
-  font-family: var(--font-brand);
-  font-weight: 600;
-  border: none;
-  border-radius: var(--rounded-md);
-  box-shadow: var(--shadow-elevated);
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.18s, box-shadow 0.18s, background 0.15s;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.button:hover, button:hover, .btn:hover {
-  background: var(--color-teal);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.13);
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* 5. Card/Panel (Glass, Hopper, Modern) */
-.card {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--rounded-md);
-  padding: 1.25rem;
-  box-shadow: var(--shadow-elevated);
-  margin-bottom: 1.2rem;
-  transition: box-shadow 0.18s, transform 0.18s;
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
 }
 
-.card:hover {
-  box-shadow: 0 12px 28px 0 rgba(31, 38, 135, 0.16);
-  transform: scale(1.025);
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
 }
 
-.grid {
-  display: grid;
-  gap: 1.5rem;
-}
-@media (min-width: 640px) {
-  .grid-2 { grid-template-columns: 1fr 1fr; }
-}
-@media (min-width: 900px) {
-  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-/* 6. Containers, Navbar, Footer */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: var(--color-sage);
-  border-bottom: 1px solid var(--color-border);
-  color: white;
-}
-footer {
-  text-align: center;
-  padding: 1rem;
-  background: var(--color-card);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-main);
-}
-
-/* 7. Gradient Backgrounds */
-.animated-gradient,
-.main-bg {
-  background: var(--gradient-bg);
-  background-size: 180% 180%;
-  animation: gradient-animate 18s ease infinite;
-}
-@keyframes gradient-animate {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* 8. Utilities */
-.text-center { text-align: center; }
-.mt-8 { margin-top: 2rem; }
-.mb-8 { margin-bottom: 2rem; }
-.rounded { border-radius: var(--rounded-md); }
-
-/* 9. Input Styles */
-input, select, textarea {
-  border: 1px solid var(--color-border);
-  border-radius: var(--rounded-md);
-  padding: 0.5rem 1rem;
-  font-family: var(--font-body);
-  background: #fff;
-  color: var(--color-text-main);
-  margin-bottom: 0.8rem;
-  font-size: 1rem;
-  transition: border 0.14s;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: var(--color-sage);
+.focus-visible:focus {
   outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
 }
 
-/* 10. Misc: Hide scrollbars for webkit (optional) */
-body::-webkit-scrollbar { display: none; }
-/* Utility grid for responsive cards */
-.grid-1 { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 600px) { .sm\:grid-2 { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 900px) { .md\:grid-3 { grid-template-columns: 1fr 1fr 1fr; } }
-@media (min-width: 1200px) { .lg\:grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; } }
-
-@layer utilities {
-  .shadow-neon {
-    box-shadow: 0 0 24px 4px #a21caf55, 0 0 8px 2px #38bdf8aa;
-  }
-  .drop-shadow-neon {
-    filter: drop-shadow(0 0 8px #a21cafcc);
-  }
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes fade-in-scale {
-  from { opacity: 0; transform: scale(0.95);}
-  to { opacity: 1; transform: scale(1);}
-}
-.animate-fade-in {
-  animation: fade-in 1s ease;
-}
-.animate-fade-in-scale {
-  animation: fade-in-scale 1s cubic-bezier(0.4,0,0.2,1);
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0);}
-  50% { transform: translateY(-30px);}
-}
-.animate-bounce-slow {
-  animation: bounce-slow 3s infinite;
+::-webkit-scrollbar-track {
+  background: var(--surface);
 }
 
-@keyframes spin-slow {
-  0% { transform: rotate(0deg);}
-  100% { transform: rotate(360deg);}
-}
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
 }
 
-@keyframes text-pop {
-  0% { transform: scale(0.8); opacity: 0;}
-  80% { transform: scale(1.1); opacity: 1;}
-  100% { transform: scale(1); opacity: 1;}
-}
-.animate-text-pop {
-  animation: text-pop 1.1s cubic-bezier(0.4,0,0.2,1);
-}
-
-@keyframes fade-in-delay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-fade-in-delay {
-  animation: fade-in-delay 1s 0.7s both;
-}
-.animate-fade-in-delay2 {
-  animation: fade-in-delay 1s 1.2s both;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
 }

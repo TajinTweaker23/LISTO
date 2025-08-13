@@ -3,7 +3,11 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: {
+        jsx: 'react-jsx',
+      },
+    }],
     '^.+\\.(js|jsx)$': 'babel-jest',
   },
   moduleNameMapper: {
@@ -19,7 +23,17 @@ module.exports = {
     '<rootDir>/node_modules/',
   ],
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/(?!(react-leaflet|@react-leaflet|leaflet)/)',
     '^.+\\.module\\.(css|sass|scss)$',
+  ],
+  collectCoverageFrom: [
+    'pages/**/*.{ts,tsx}',
+    'components/**/*.{ts,tsx}',
+    '!pages/_app.tsx',
+    '!pages/_document.tsx',
+    '!**/*.d.ts',
+  ],
+  testMatch: [
+    '<rootDir>/__tests__/**/*.(test|spec).{ts,tsx}',
   ],
 };
