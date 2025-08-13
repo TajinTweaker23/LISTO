@@ -1,0 +1,296 @@
+/* LISTO Mobile Optimization System - 2025 Device Compatibility */
+
+/* ===========================================
+   VIEWPORT & SAFE AREA HANDLING
+   ========================================== */
+
+/* Support for iPhone 14/15 Pro Max, Google Pixel 8 Pro */
+:root {
+  /* Safe area insets for notched devices */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  
+  /* Touch target minimum sizes (Apple HIG & Material Design) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  
+  /* Mobile-optimized spacing */
+  --mobile-padding: max(16px, env(safe-area-inset-left));
+  --mobile-margin: 8px;
+}
+
+/* ===========================================
+   RESPONSIVE BREAKPOINTS - 2024/2025 DEVICES
+   ========================================== */
+
+/* Small phones (iPhone SE, older Android) */
+@media screen and (max-width: 374px) {
+  :root {
+    --text-xs: 0.7rem;
+    --text-sm: 0.8rem;
+    --text-base: 0.9rem;
+  }
+  
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* Standard phones (iPhone 13/14, Galaxy S24) */
+@media screen and (min-width: 375px) and (max-width: 428px) {
+  .hero-text {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+  
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Large phones (iPhone 15 Pro Max, Pixel 8 Pro) */
+@media screen and (min-width: 429px) and (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .hero-text {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+}
+
+/* Tablets and larger */
+@media screen and (min-width: 769px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===========================================
+   TOUCH-FRIENDLY INTERACTIONS
+   ========================================== */
+
+/* Ensure all interactive elements meet minimum touch target size */
+button,
+[role="button"],
+input,
+select,
+textarea,
+.btn,
+.button,
+.interactive {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  position: relative;
+}
+
+/* Comfortable touch targets for primary actions */
+.btn-primary,
+.btn-cta,
+.action-button {
+  min-height: var(--touch-target-comfortable);
+  min-width: var(--touch-target-comfortable);
+  padding: 12px 24px;
+}
+
+/* Enhanced touch feedback */
+@media (hover: none) and (pointer: coarse) {
+  button:active,
+  .btn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Remove hover effects on touch devices */
+  button:hover,
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* ===========================================
+   TEXT SCALING & READABILITY
+   ========================================== */
+
+/* Respect user's font size preferences */
+@media (prefers-contrast: high) {
+  :root {
+    --text-contrast: 21:1;
+  }
+  
+  .text-muted {
+    opacity: 0.9;
+  }
+}
+
+/* Dynamic font scaling based on screen size */
+@media screen and (max-width: 390px) {
+  .text-6xl {
+    font-size: clamp(2.5rem, 12vw, 4rem) !important;
+  }
+  
+  .text-8xl {
+    font-size: clamp(3rem, 15vw, 5rem) !important;
+  }
+}
+
+/* ===========================================
+   PERFORMANCE OPTIMIZATIONS
+   ========================================== */
+
+/* Reduce animations on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Battery optimization */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-float,
+  .animate-pulse-slow,
+  .animate-gradient-xy {
+    will-change: transform;
+  }
+}
+
+/* ===========================================
+   SPECIFIC DEVICE OPTIMIZATIONS
+   ========================================== */
+
+/* iPhone 15 Pro Max (430×932) */
+@media screen and (width: 430px) and (height: 932px) {
+  .app-header {
+    padding-top: calc(var(--safe-area-top) + 8px);
+  }
+}
+
+/* iPhone 14 Pro (393×852) */
+@media screen and (width: 393px) and (height: 852px) {
+  .app-container {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+}
+
+/* Samsung Galaxy S24+ (411×914) */
+@media screen and (width: 411px) and (height: 914px) {
+  .card-elegant {
+    border-radius: 16px;
+  }
+}
+
+/* Google Pixel 8 Pro (448×998) */
+@media screen and (width: 448px) and (height: 998px) {
+  .glass-morphism {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* ===========================================
+   WEBKIT & PWA OPTIMIZATIONS
+   ========================================== */
+
+/* iOS Safari optimizations */
+@supports (-webkit-touch-callout: none) {
+  .glass-morphism {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  
+  /* Fix iOS input zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* PWA safe areas */
+@media (display-mode: standalone) {
+  body {
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+  }
+}
+
+/* ===========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================== */
+
+/* Focus indicators for keyboard navigation */
+@media (prefers-reduced-motion: no-preference) {
+  *:focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .card-elegant {
+    border: 1px solid ButtonText;
+  }
+  
+  .btn-primary {
+    border: 1px solid ButtonText;
+  }
+}
+
+/* ===========================================
+   LANDSCAPE ORIENTATION FIXES
+   ========================================== */
+
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .hero-section {
+    min-height: 50vh;
+  }
+  
+  .modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+/* ===========================================
+   DARK MODE MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  .glass-morphism {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(148, 163, 184, 0.1);
+  }
+  
+  /* Better contrast on OLED screens */
+  .bg-black {
+    background-color: #000000;
+  }
+}
+
+/* ===========================================
+   PRINT STYLES (for mobile browsers)
+   ========================================== */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+}
