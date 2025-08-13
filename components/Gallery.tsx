@@ -113,7 +113,9 @@ export default function Gallery() {
 
     setImages((prev) => [...prev, ...newImages]);
     setFilter("All");
-    uploadRef.current.value = "";
+    if (uploadRef.current) {
+      uploadRef.current.value = "";
+    }
   };
 
   const filteredImages =

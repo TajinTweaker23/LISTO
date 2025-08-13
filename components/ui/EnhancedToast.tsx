@@ -35,34 +35,32 @@ const toastStyles = {
  * Enhanced Toast component with better styling and accessibility
  */
 const EnhancedToast: React.FC<EnhancedToastProps> = ({ toast, onClose }) => {
-  const { message, show, type = 'info' } = toast;
+  const { message, type = 'info' } = toast;
   const style = toastStyles[type];
 
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ y: 100, opacity: 0, scale: 0.8 }}
-          animate={{ 
-            y: 0, 
-            opacity: 1, 
-            scale: 1,
-            transition: {
-              type: 'spring',
-              stiffness: 300,
-              damping: 20,
-              duration: 0.4,
-            }
-          }}
-          exit={{ 
-            y: 100, 
-            opacity: 0, 
-            scale: 0.8,
-            transition: {
-              duration: 0.3,
-              ease: 'easeInOut',
-            }
-          }}
+    <motion.div
+      initial={{ y: 100, opacity: 0, scale: 0.8 }}
+      animate={{ 
+        y: 0, 
+        opacity: 1, 
+        scale: 1,
+        transition: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 20,
+          duration: 0.4,
+        }
+      }}
+      exit={{ 
+        y: 100, 
+        opacity: 0, 
+        scale: 0.8,
+        transition: {
+          duration: 0.3,
+          ease: 'easeInOut',
+        }
+      }}
           className={`
             fixed bottom-8 left-1/2 -translate-x-1/2 z-[${designTokens.zIndex.toast}]
             ${style.bg} ${style.border}
@@ -95,8 +93,6 @@ const EnhancedToast: React.FC<EnhancedToastProps> = ({ toast, onClose }) => {
             </button>
           )}
         </motion.div>
-      )}
-    </AnimatePresence>
   );
 };
 

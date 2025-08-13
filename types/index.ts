@@ -1,9 +1,9 @@
 // Core Type Definitions for LISTO App
 
 export interface ToastState {
+  id: number;
   message: string;
-  show: boolean;
-  type?: 'success' | 'error' | 'info' | 'warning';
+  type: 'success' | 'error' | 'info' | 'warning';
   duration?: number;
 }
 
@@ -151,9 +151,10 @@ export interface AppState {
 
 // Hook Return Types
 export interface UseToastReturn {
-  toast: ToastState;
-  showToast: (message: string, type?: ToastState['type'], duration?: number) => void;
-  hideToast: () => void;
+  toasts: ToastState[];
+  addToast: (message: string, type?: ToastState['type'], duration?: number) => number;
+  removeToast: (id: number) => void;
+  clearAllToasts: () => void;
 }
 
 export interface UseAchievementsReturn {
@@ -185,10 +186,10 @@ export interface UseFocusTimerReturn {
   timeRemaining: number;
   type: 'focus' | 'break';
   progress: number;
+  sessionsCompleted: number;
   start: (type?: 'focus' | 'break') => void;
-  pause: () => void;
   stop: () => void;
-  skip: () => void;
+  reset: () => void;
 }
 
 // Event Types

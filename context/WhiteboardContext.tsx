@@ -22,7 +22,7 @@ export const WhiteboardProvider: React.FC<{ children: ReactNode }> = ({ children
   const [tables, setTables] = useState<Table[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showEmojiRain, setShowEmojiRain] = useState(false);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   const { unlockAchievement } = useAchievements();
 
   const triggerEmojiRain = () => {
@@ -38,7 +38,7 @@ export const WhiteboardProvider: React.FC<{ children: ReactNode }> = ({ children
   const handleInsertShape = (shape: string) => {
     setShapes((prevShapes) => [...prevShapes, shape]);
     triggerConfetti();
-    showToast(`Shape "${shape}" added! ✨`, 'success');
+    addToast(`Shape "${shape}" added! ✨`, 'success');
     
     if ((shapes.length + 1) % 5 === 0) {
       triggerEmojiRain();
@@ -49,7 +49,7 @@ export const WhiteboardProvider: React.FC<{ children: ReactNode }> = ({ children
   const handleInsertTable = (rows: number, cols: number) => {
     setTables((prevTables) => [...prevTables, { rows, cols }]);
     triggerConfetti();
-    showToast(`Table ${rows}x${cols} added! 📊`, 'success');
+    addToast(`Table ${rows}x${cols} added! 📊`, 'success');
     
     if ((tables.length + 1) % 3 === 0) {
       unlockAchievement("table-master");
