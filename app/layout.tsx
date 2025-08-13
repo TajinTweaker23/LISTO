@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import '../styles/globals.css';
 import '../styles/design-system.css';
 import '../styles/neurodivergent-features.css';
+import '../styles/mobile-optimized.css';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -12,6 +13,22 @@ const inter = Inter({
 export const metadata = {
   title: 'LISTO - Your Health & Wellness Companion',
   description: 'Comprehensive health tracking with medical education, disease prevention, and administrative assistance',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: 'cover',
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f6f7f6' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'LISTO',
+  },
 };
 
 export default function RootLayout({
