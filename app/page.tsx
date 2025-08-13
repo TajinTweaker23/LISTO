@@ -71,13 +71,13 @@ export default function HomePage() {
         className="absolute top-96 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl"
       />
 
-      <div className="relative z-10 p-6 md:p-8">
+      <div className="relative z-10 p-6 md:p-8 mobile-padding">
         {/* Header with Dynamic Greeting */}
         <motion.header 
           variants={itemVariants} 
           initial="hidden"
           animate="visible"
-          className="text-center mb-16"
+          className="text-center mb-16 app-header"
         >
           <div className="glass-morphism inline-block px-4 py-2 rounded-full mb-6">
             <span className="text-sage-700 font-medium">
@@ -86,7 +86,7 @@ export default function HomePage() {
             </span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-bold mb-6">
+          <h1 className="hero-text text-6xl md:text-8xl font-bold mb-6">
             <span className="text-gradient bg-gradient-to-r from-sage-600 via-emerald-600 to-sage-800 bg-clip-text text-transparent">
               LISTO
             </span>
@@ -107,13 +107,13 @@ export default function HomePage() {
             animate="visible"
           >
             <Link href="/wellness">
-              <Button className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3 rounded-full shadow-lg">
+              <Button className="btn-cta bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3 rounded-full shadow-lg">
                 <Heart className="w-5 h-5 mr-2" />
                 Start Wellness Journey
               </Button>
             </Link>
             <Link href="/medical-hub">
-              <Button variant="outline" className="border-sage-300 text-sage-700 hover:bg-sage-50 px-8 py-3 rounded-full">
+              <Button variant="outline" className="btn-primary border-sage-300 text-sage-700 hover:bg-sage-50 px-8 py-3 rounded-full">
                 <Brain className="w-5 h-5 mr-2" />
                 Medical Hub
               </Button>
@@ -129,7 +129,7 @@ export default function HomePage() {
 
         {/* Quick Navigation Cards */}
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+          className="card-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
