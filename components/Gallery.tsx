@@ -55,15 +55,11 @@ const getRandomQuote = () => quotes[Math.floor(Math.random() * quotes.length)];
 
 const handleImageError = (
   url: string,
-  setImages: React.Dispatch<React.SetStateAction<typeof initialImages>>,
-  setModalImg: React.Dispatch<
-    React.SetStateAction<(typeof initialImages)[0] | null>
-  >
+  setImages: React.Dispatch<React.SetStateAction<typeof initialImages>>
 ) => {
   setImages((imgs) =>
     imgs.map((img) => (img.url === url ? { ...img, url: fallbackImg } : img))
   );
-  setModalImg(null);
 };
 
 // --- Reusable Components ---
@@ -85,7 +81,7 @@ const FilterButton = ({
         : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
     }`}
     onClick={onClick}
-    aria-pressed={active}
+    aria-pressed={active ? "true" : "false"}
   >
     <span>{emoji}</span>
     {label}
@@ -94,9 +90,6 @@ const FilterButton = ({
 
 export default function Gallery() {
   const [filter, setFilter] = useState("All");
-  const [modalImg, setModalImg] = useState<null | (typeof initialImages)[0]>(
-    null
-  );
   const [images, setImages] = useState(initialImages);
   const uploadRef = useRef<HTMLInputElement>(null);
 
@@ -128,7 +121,7 @@ export default function Gallery() {
         className="mb-3 text-xl font-semibold text-blue-700 bg-blue-50 rounded-lg shadow px-4 py-2 flex items-center gap-2"
         aria-live="polite"
       >
-        <span role="img" aria-label="lightbulb">
+        <span aria-label="lightbulb">
           💡
         </span>
         {getRandomQuote()}
@@ -186,7 +179,6 @@ export default function Gallery() {
             key={img.url}
             className="relative w-64 h-40 rounded-2xl overflow-hidden shadow-xl cursor-pointer group bg-white/70 backdrop-blur-md border border-blue-100 hover:shadow-2xl transition"
             whileHover={{ scale: 1.06, rotate: -2 }}
-            onClick={() => setModalImg(img)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: filteredImages.indexOf(img) * 0.05 }}
@@ -198,7 +190,7 @@ export default function Gallery() {
               style={{ objectFit: "cover" }}
               sizes="256px"
               priority={filteredImages.indexOf(img) === 0}
-              onError={() => handleImageError(img.url, setImages, setModalImg)}
+              onError={() => handleImageError(img.url, setImages)}
               loading="lazy"
             />
             {/* Remaining UI for each image */}

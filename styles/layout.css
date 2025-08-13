@@ -1,0 +1,78 @@
+/* Layout specific styles to replace inline styles */
+
+/* Scrollbar styles */
+.layout-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.layout-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.layout-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.layout-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Progress bar styles */
+.focus-timer-progress {
+  height: 4px;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 0 0 2px 2px;
+  transition: width 0.3s ease;
+}
+
+/* Centered content */
+.content-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #9ca3af;
+}
+
+/* Glass effect container */
+.glass-container {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+
+/* Floating panel */
+.floating-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+/* Reading ruler */
+.reading-ruler {
+  height: 48px;
+  background: rgba(95, 147, 95, 0.2);
+  border-top: 1.5px solid var(--color-primary);
+  border-bottom: 1.5px solid var(--color-primary);
+  transition: top 0.1s;
+}
+
+/* Focus mode blur effect */
+.focus-blur-effect {
+  filter: blur(2.5px) brightness(0.6) grayscale(0.3);
+}
+
+/* Triangle shape */
+.triangle-shape {
+  width: 0;
+  height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid var(--color-sage);
+  filter: drop-shadow(0 0 16px rgba(95, 147, 95, 0.6));
+}

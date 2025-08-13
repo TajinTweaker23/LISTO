@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Button } from '../../components/ui/button';
 import MedicalMicroLearning from '../../components/medical/MedicalMicroLearning';
 import MedicalAdminAssistant from '../../components/medical/MedicalAdminAssistant';
 import DiseasePreventionHub from '../../components/medical/DiseasePreventionHub';
@@ -9,7 +10,8 @@ import {
   Shield, 
   Brain, 
   GraduationCap,
-  HeartHandshake
+  HeartHandshake,
+  ArrowLeft
 } from 'lucide-react';
 
 const TABS = [
@@ -82,16 +84,17 @@ export default function MedicalHub() {
             {TABS.map((tab) => {
               const Icon = tab.icon;
               return (
-                <button
+                <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative px-6 py-4 rounded-xl transition-all duration-300 flex items-center gap-3 group ${
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  className={`relative px-6 py-4 transition-all duration-300 flex items-center gap-3 group ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg'
                       : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
                   }`}
+                  leftIcon={<Icon className="w-5 h-5" />}
                 >
-                  <Icon className="w-5 h-5" />
                   <div className="text-left">
                     <div className="font-medium">{tab.label}</div>
                     <div className={`text-xs opacity-80 ${
@@ -108,7 +111,7 @@ export default function MedicalHub() {
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>

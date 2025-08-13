@@ -32,9 +32,9 @@ const DefaultCalendar = () => {
     <div className="device">
       <header>
         <div className="month-nav">
-          <button onClick={handlePrevMonth}><ChevronLeft /></button>
+          <button onClick={handlePrevMonth} aria-label="Previous month"><ChevronLeft /></button>
           <h2 className="month">{date.toLocaleString('default', { month: 'long' })} {date.getFullYear()}</h2>
-          <button onClick={handleNextMonth}><ChevronRight /></button>
+          <button onClick={handleNextMonth} aria-label="Next month"><ChevronRight /></button>
         </div>
         <div className="header-weekdays">
           <span>sun</span><span>mon</span><span>tue</span><span>wed</span><span>thu</span><span>fri</span><span>sat</span>

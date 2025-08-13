@@ -85,8 +85,8 @@ function ThemeToggleButton({
   theme,
   setTheme,
 }: {
-  readonly theme: string;
-  readonly setTheme?: (theme: string) => void;
+  readonly theme: "dark" | "light";
+  readonly setTheme?: (theme: "dark" | "light") => void;
 }) {
   if (!setTheme) return null;
   return (
@@ -240,8 +240,8 @@ function MobileDrawer({
 }
 
 interface NavbarProps {
-  readonly theme: string;
-  readonly setTheme: (theme: string) => void;
+  readonly theme: "dark" | "light";
+  readonly setTheme: (theme: "dark" | "light") => void;
 }
 
 interface MobileMenuItemProps {
@@ -263,8 +263,8 @@ export default function Navbar({
   secondaryColor = "#f472b6",
   gradient = "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #fbbf24)",
 }: {
-  readonly theme: string;
-  readonly setTheme?: (theme: string) => void;
+  readonly theme: "dark" | "light";
+  readonly setTheme?: (theme: "dark" | "light") => void;
   readonly logoSrc?: string;
   readonly onMenuClick?: () => void; // Add this
   readonly primaryColor?: string;

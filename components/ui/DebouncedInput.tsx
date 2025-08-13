@@ -27,7 +27,7 @@ function DebouncedInput() {
   );
 }
 
-export function formatDate(dateStr, locale = "en-US") {
+export function formatDate(dateStr: string | Date, locale: string = "en-US") {
   return new Date(dateStr).toLocaleDateString(locale, {
     year: "numeric",
     month: "short",

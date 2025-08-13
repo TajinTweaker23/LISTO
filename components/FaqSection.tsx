@@ -26,14 +26,14 @@ const faqData = {
 
 const FaqSection = () => {
   const [activeFilter, setActiveFilter] = useState('one');
-  const [openItem, setOpenItem] = useState(0); // Default to the first item being open
+  const [openItem, setOpenItem] = useState<number | null>(0); // Default to the first item being open
 
-  const handleFilterClick = (filter) => {
+  const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
     setOpenItem(0); // Reset to the first item when changing categories
   };
 
-  const handleItemClick = (index) => {
+  const handleItemClick = (index: number) => {
     setOpenItem(openItem === index ? null : index); // Toggle open/closed
   };
 

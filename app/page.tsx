@@ -1,181 +1,99 @@
-'use client';
+import Link from 'next/link';
+import { Button } from '../components/ui/button';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-import { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import FaqSection from "../components/FaqSection";
-
-// Advanced landing page component with stunning visuals
 export default function HomePage() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorTrail, setCursorTrail] = useState<Array<{x: number, y: number, id: number}>>([]);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 300], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-  const y3 = useTransform(scrollY, [0, 500], [0, 150]);
-  const y4 = useTransform(scrollY, [0, 800], [0, -200]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      
-      // Create cursor trail effect
-      const newTrail = {
-        x: e.clientX,
-        y: e.clientY,
-        id: Date.now()
-      };
-      
-      setCursorTrail(prev => {
-        const updated = [...prev, newTrail];
-        return updated.slice(-8); // Keep only last 8 trail points
-      });
-    };
-    
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = scrollTop / docHeight;
-      setScrollProgress(scrollPercent);
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  
-  // Clean up cursor trail
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCursorTrail(prev => prev.filter(trail => Date.now() - trail.id < 500));
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-y-auto"
-      style={{
-        background: `linear-gradient(${scrollProgress * 360}deg, 
-          rgba(99, 102, 241, ${0.1 + scrollProgress * 0.05}) 0%, 
-          rgba(255, 255, 255, 1) 50%, 
-          rgba(168, 85, 247, ${0.1 + scrollProgress * 0.05}) 100%)`
-      }}
-    >
-      {/* Animated background grid with interaction */}
-      <div className="absolute inset-0 opacity-40" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`
-      }}></div>
-      
-      {/* Cursor trail effects */}
-      {cursorTrail.map((trail, index) => (
-        <motion.div
-          key={trail.id}
-          className="fixed w-3 h-3 rounded-full pointer-events-none z-50"
-          style={{
-            left: trail.x - 6,
-            top: trail.y - 6,
-            background: `radial-gradient(circle, ${
-              index % 3 === 0 ? 'rgba(99, 102, 241, 0.8)' :
-              index % 3 === 1 ? 'rgba(168, 85, 247, 0.8)' :
-              'rgba(236, 72, 153, 0.8)'
-            }, transparent)`
-          }}
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: [0, 1, 0], opacity: [1, 0.6, 0] }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-      ))}
-      
-      {/* Enhanced mouse follower effect */}
-      <motion.div
-        className="fixed w-96 h-96 rounded-full pointer-events-none z-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.1) 50%, transparent 70%)',
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
-      
-      {/* Hero Section */}
-      <div className="min-h-screen flex items-center justify-center relative">
-        <div className="text-center z-20 px-6 max-w-6xl mx-auto">
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-7xl md:text-9xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-8">
-              LISTO
-            </h1>
-            <p className="text-2xl md:text-3xl text-gray-700 mb-12 leading-relaxed">
-              Life Intelligence System & Task Optimizer
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="space-y-6"
-          >
-            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">
-              An advanced personal productivity and wellness ecosystem that combines AI-powered task management, 
-              health tracking, and neurodivergent-friendly features to optimize your daily life.
-            </p>
-            
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => window.location.href = '/medical-hub'}
-              >
-                Explore Medical Hub
-              </motion.button>
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white border-2 border-purple-600 text-purple-600 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-purple-50"
-                onClick={() => window.location.href = '/dashboard'}
-              >
-                View Dashboard
-              </motion.button>
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-sage-100 p-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="text-center mb-12">
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-sage-600 to-brand-primary bg-clip-text text-transparent mb-4">
+            LISTO
+          </h1>
+          <p className="text-xl text-sage-700 max-w-2xl mx-auto">
+            Your comprehensive health & wellness companion - rebuilt and working!
+          </p>
+        </header>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <Link href="/medical-hub" className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow block group">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span className="text-2xl">🏥</span>
             </div>
-          </motion.div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Medical Hub</h3>
+            <p className="text-sage-600">AI-powered health insights and disease prevention</p>
+          </Link>
+
+          <Link href="/wellness" className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow block group">
+            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span className="text-2xl">❤️</span>
+            </div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Wellness Tracker</h3>
+            <p className="text-sage-600">Holistic health monitoring and mood tracking</p>
+          </Link>
+
+          <Link href="/optimizer" className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow block group">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span className="text-2xl">🎯</span>
+            </div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Life Optimizer</h3>
+            <p className="text-sage-600">Smart productivity system and focus tools</p>
+          </Link>
+
+          <Link href="/vision-board" className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow block group">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span className="text-2xl">💭</span>
+            </div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Vision Board</h3>
+            <p className="text-sage-600">Visualize and track your goals and dreams</p>
+          </Link>
+
+          <Link href="/dashboard" className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow block group">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span className="text-2xl">📊</span>
+            </div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Dashboard</h3>
+            <p className="text-sage-600">Comprehensive overview of all your data</p>
+          </Link>
+
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-sage-200 hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-2xl">✊</span>
+            </div>
+            <h3 className="text-xl font-semibold text-sage-900 mb-2">Activism Hub</h3>
+            <p className="text-sage-600">Stay informed and take action on important causes</p>
+          </div>
         </div>
-        
-        {/* Floating elements */}
-        <motion.div
-          style={{ y: y1 }}
-          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full opacity-20 blur-xl"
-        />
-        <motion.div
-          style={{ y: y2 }}
-          className="absolute bottom-32 right-32 w-96 h-96 bg-gradient-to-br from-pink-400 to-red-500 rounded-full opacity-20 blur-xl"
-        />
-        <motion.div
-          style={{ y: y3 }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20 blur-xl"
-        />
+
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-sage-900">Quick Navigation</h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button 
+              onClick={() => window.location.href = '/test-styling'}
+              variant="default"
+              className="bg-brand-primary hover:bg-brand-dark"
+              rightIcon={<ArrowRight className="w-4 h-4" />}
+            >
+              View Color Palette
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/button-demo'}
+              variant="outline"
+              className="border-sage-600 text-sage-600 hover:bg-sage-50"
+              rightIcon={<Sparkles className="w-4 h-4" />}
+            >
+              Button Showcase
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/simple-test'}
+              variant="ghost"
+              className="text-accent-primary hover:bg-accent-primary/10"
+            >
+              Simple Test
+            </Button>
+          </div>
+        </div>
       </div>
-      
-      {/* FAQ Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="py-20 px-6 bg-white/50 backdrop-blur-sm"
-      >
-        <FaqSection />
-      </motion.div>
     </div>
   );
 }

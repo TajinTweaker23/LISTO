@@ -35,7 +35,7 @@ const SunIcon = () => (
   </svg>
 );
 
-type Props = { theme: string; setTheme: (t: string) => void };
+type Props = { theme: "dark" | "light"; setTheme: (t: "dark" | "light") => void };
 
 // Confetti colors extracted for reusability
 const confettiColors = {

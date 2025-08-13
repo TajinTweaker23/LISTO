@@ -3,6 +3,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent massive images globally */
+img, svg, video {
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 500px !important;
+}
+
+/* Specifically prevent oversized icons and logos */
+.logo, .icon, [class*="icon"], [class*="logo"] {
+  max-width: 200px !important;
+  max-height: 200px !important;
+}
+
 /* Professional Design System */
 :root {
   --primary: #0ea5e9;
@@ -38,6 +51,46 @@ body {
   color: var(--text);
   background: var(--background);
   margin: 0;
+}
+
+/* Prevent massive images */
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+  max-height: 500px; /* Prevent massive images */
+}
+
+/* Ensure reasonable maximum sizes for all visual elements */
+img {
+  max-height: 500px; /* Stricter limit */
+}
+
+svg {
+  max-width: 100%;
+  max-height: 200px; /* Much smaller for icons/logos */
+}
+
+/* Specifically target common icon/logo classes */
+.logo, .icon, [class*="icon"], [class*="logo"], 
+[class*="google"], [class*="sign"] svg {
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
+/* Ensure icons stay reasonable sizes */
+.icon, [class*="icon"], svg.w-5, svg.h-5 {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+svg.w-6, svg.h-6 {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+svg.w-8, svg.h-8 {
+  width: 2rem !important;
+  height: 2rem !important;
 }
 
 @layer components {

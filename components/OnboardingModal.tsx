@@ -303,9 +303,9 @@ function OnboardingModalInternal({
       }
       setError("");
     }
-    setStep((s) => Math.min(s + 1, steps.length - 1));
+    setStep((s: number) => Math.min(s + 1, steps.length - 1));
   };
-  const handleBack = () => setStep((s) => Math.max(s - 1, 0));
+  const handleBack = () => setStep((s: number) => Math.max(s - 1, 0));
   const handleFinish = () => {
     localStorage.setItem("listoUserName", name.trim());
     if (avatar) localStorage.setItem("listoAvatar", JSON.stringify(avatar));

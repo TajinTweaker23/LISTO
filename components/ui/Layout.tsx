@@ -5,8 +5,8 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import Confetti from "react-confetti";
 import { AnimatePresence, motion } from "framer-motion";
+import "../../styles/layout.css"; // Import layout styles
 
 // Enhanced Design System Imports
 import { useToast } from "../../hooks/useToast";
@@ -39,8 +39,8 @@ const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
 export type LayoutProps = {
   children: ReactNode;
-  theme: string;
-  setTheme: (theme: string) => void;
+  theme: "dark" | "light";
+  setTheme: (theme: "dark" | "light") => void;
 };
 
 // --- Enhanced Emoji Rain Component ---
@@ -49,9 +49,9 @@ function EmojiRain({ show }: { readonly show: boolean }) {
   return (
     <AnimatePresence>
       {show &&
-        Array.from({ length: 18 }).map((_, i) => (
+        Array.from({ length: 18 }, (_, i) => ({ id: `emoji-${i}`, index: i })).map((item) => (
           <motion.div
-            key={i}
+            key={item.id}
             initial={{ y: -60, opacity: 0 }}
             animate={{ y: "100vh", opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -87,15 +87,8 @@ function ReadingRuler({ enabled }: { readonly enabled: boolean }) {
   
   return (
     <div
-      className="fixed left-0 w-full pointer-events-none z-[98]"
-      style={{
-        top: y - 24,
-        height: 48,
-        background: "rgba(95, 147, 95, 0.2)", // Sage color with transparency
-        borderTop: "1.5px solid var(--color-primary)",
-        borderBottom: "1.5px solid var(--color-primary)",
-        transition: "top 0.1s",
-      }}
+      className="fixed left-0 w-full pointer-events-none z-[98] reading-ruler"
+      style={{ top: y - 24 }}
     />
   );
 }
@@ -155,26 +148,14 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   
   // Enhanced Design System Hooks
   const { addToast } = useToast();
-  const { achievements, unlockAchievement } = useAchievements();
-  const { currentSoundscape, setSoundscape, muted, toggleMute } = useSoundscape();
+  const { achievements } = useAchievements();
+  // Remove unused variable assignments
+  const { muted, toggleMute } = useSoundscape();
   const { parallax } = useParallax();
-  const { isActive: isFocusTimerActive, progress: focusProgress, start: startFocusTimer, stop: stopFocusTimer } = useFocusTimer();
+  const { isActive: isFocusTimerActive, progress: focusProgress, start: startFocusTimer } = useFocusTimer();
 
-  // Local State
-  const [settings, setSettings] = useState({
-    fontFamily: "Space Grotesk, sans-serif",
-    fontColor: "#e4e6fb",
-    bgColor: "#1a1b23",
-    fontSize: 17,
-    musicUrl: "",
-    textToSpeech: false,
-    highContrast: false,
-    deafMode: false,
-    blindMode: false,
-  });
-  
+  // Local State (removed unused settings)
   const [focusMode, setFocusMode] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [showEmojiRain, setShowEmojiRain] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -217,20 +198,22 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
     setTimeout(() => setShowEmojiRain(false), 2200);
   };
 
-  const triggerConfetti = () => {
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
-  };
+  // Enhanced interaction handlers removed unused functions
 
-  // Enhanced interaction handlers
-  
-
-  const handleFocusTimerComplete = () => {
-    stopFocusTimer();
-    addToast("Focus session complete! Great work! 🎉", 'success');
-    setMascotAction("cheer");
-    triggerEmojiRain();
-    unlockAchievement("focus-master");
+  // Render content based on current view
+  const renderContent = () => {
+    if (currentView === 'activism') {
+      return <ActivismHub theme={theme} />;
+    }
+    if (currentView === 'health') {
+      return (
+        <div className="p-6 bg-sage-50 rounded-lg">
+          <h2 className="text-2xl font-bold text-sage-800 mb-4">Health Dashboard</h2>
+          <p className="text-sage-600">Health tracking features coming soon...</p>
+        </div>
+      );
+    }
+    return children;
   };
 
   // Enhanced background gradient with sage theme
@@ -243,12 +226,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   return (
     <ThemeProvider>
       <div
-        className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} ${robotoMono.className} relative overflow-x-hidden design-system-theme`}
-        style={
-          focusMode
-            ? { filter: "blur(2.5px) brightness(0.6) grayscale(0.3)" }
-            : {}
-        }
+        className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} ${robotoMono.className} relative overflow-x-hidden design-system-theme ${focusMode ? 'focus-blur-effect' : ''}`}
         aria-live="polite"
       >
         <link rel="stylesheet" href="/styles/design-system.css" />
@@ -260,11 +238,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
           onViewChange={setCurrentView}
         />
 
-        {/* Effects & Global Elements */}
-        {showConfetti && typeof window !== "undefined" && (
-          <Confetti width={window.innerWidth} height={window.innerHeight} />
-        )}
-        
+        {/* Effects & Global Elements - removed confetti */}
         <EmojiRain show={showEmojiRain} />
         
         {/* Enhanced Toast System - using context provider instead */}
@@ -274,7 +248,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         {isFocusTimerActive && (
           <div className="fixed top-0 left-0 w-full z-[99]">
             <div
-              className="h-2 bg-gradient-to-r from-sage-light via-sage to-sage-dark rounded-b-full shadow-lg transition-all duration-300"
+              className="focus-timer-progress"
               style={{ width: `${focusProgress}%` }}
             />
           </div>
@@ -396,16 +370,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
                       <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-sage-light via-lavender to-terracotta shadow-lg border-2 border-white/30" />
                     )}
                     {shape === "triangle" && (
-                      <div
-                        style={{
-                          width: 0,
-                          height: 0,
-                          borderLeft: "40px solid transparent",
-                          borderRight: "40px solid transparent",
-                          borderBottom: "70px solid var(--color-sage)",
-                          filter: "drop-shadow(0 0 16px rgba(95, 147, 95, 0.6))",
-                        }}
-                      />
+                      <div className="triangle-shape" />
                     )}
                   </motion.div>
                 ))}
@@ -440,16 +405,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
             </div>
             
             {/* Conditional Content Rendering */}
-            {currentView === 'activism' ? (
-              <ActivismHub theme={theme} />
-            ) : currentView === 'health' ? (
-              <div className="p-6 bg-sage-50 rounded-lg">
-                <h2 className="text-2xl font-bold text-sage-800 mb-4">Health Dashboard</h2>
-                <p className="text-sage-600">Health tracking features coming soon...</p>
-              </div>
-            ) : (
-              children
-            )}
+            {renderContent()}
           </ErrorBoundary>
         </motion.main>
 

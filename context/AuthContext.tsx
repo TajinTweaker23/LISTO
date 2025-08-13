@@ -1,5 +1,7 @@
 // context/AuthContext.tsx
-import {
+"use client";
+
+import React, {
   createContext,
   useContext,
   useState,
