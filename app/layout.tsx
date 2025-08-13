@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google';
-import '../styles/globals.css';
+import './globals.css';
 import '../styles/design-system.css';
 import '../styles/neurodivergent-features.css';
 import '../styles/mobile-optimized.css';
