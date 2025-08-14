@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CreatePost from './CreatePost';
 import { ThumbsUp, MessageSquare } from 'lucide-react';
 
@@ -32,44 +32,52 @@ const PostCard = ({ post }) => {
 
 
 const TalaveraFeed = () => {
-  // Placeholder data moved to state
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Art as a Form of Protest",
-      content: "Exploring how street art and murals have been used to convey powerful political messages throughout history.",
-      imageUrl: "https://source.unsplash.com/random/800x600?street-art",
-      author: "Artivist",
-      timestamp: "2025-08-12T10:00:00Z",
-    },
-    {
-      id: 2,
-      title: "Upcoming Rally for Climate Action",
-      content: "Join us this Saturday at City Hall to demand stronger environmental policies. Your voice matters!",
-      imageUrl: null,
-      author: "ClimateNow",
-      timestamp: "2025-08-11T15:30:00Z",
-    },
-    {
-        id: 3,
-        title: "The Philosophy of Stoicism",
-        content: "A brief introduction to Stoic philosophy and how its principles can be applied to modern life for greater resilience and tranquility.",
-        imageUrl: "https://source.unsplash.com/random/800x600?philosophy",
-        author: "Modern Stoic",
-        timestamp: "2025-08-10T09:00:00Z",
-    }
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddPost = (newPost) => {
-    setPosts([newPost, ...posts]);
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('/api/posts');
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleAddPost = async (newPost) => {
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPost),
+      });
+      if (response.ok) {
+        fetchPosts(); // Refetch posts to include the new one
+      }
+    } catch (error) {
+      console.error("Failed to create post:", error);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto">
       <CreatePost onAddPost={handleAddPost} />
-      {posts.map(post => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      {loading ? (
+        <p>Loading posts...</p>
+      ) : (
+        posts.map(post => (
+          <PostCard key={post.id} post={post} />
+        ))
+      )}
     </div>
   );
 };
