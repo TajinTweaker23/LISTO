@@ -12,6 +12,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+    { id: 'talavera', label: 'Talavera', icon: Users, href: '/talavera' },
     { id: 'explore', label: 'Explore', icon: Users, href: '/explore' },
     { id: 'health', label: 'Health Hub', icon: Heart, href: '/health' },
     { id: 'calendar', label: 'Calendar', icon: Calendar, href: '/calendar' },

@@ -1,9 +1,7 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Button } from '../components/ui/button';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -13,23 +11,15 @@ import {
   Timer,
   Target,
   Shield,
-  Zap,
   Calendar,
-  Star,
-  Bell,
-  BarChart,
-  Lightbulb,
-  TrendingUp,
-  Beaker,
-  Settings,
-  MessageCircle
+  Star
 } from 'lucide-react';
 
 export default function HomePage() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 300], [0, -50]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
+  const y1 = useTransform(scrollY, [0, 500], [0, -100]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -69,106 +59,43 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-emerald-50 relative overflow-hidden">
-      <div className="relative z-10 p-6 md:p-8">
-        {/* Header with Dynamic Greeting */}
-        <header className="text-center mb-16">
-          <div className="card-glass inline-block px-4 py-2 rounded-full mb-6">
-            <span className="text-sage-700 font-medium">
-              {getGreeting()}, Welcome back! 
-              <span className="ml-2">✨</span>
-            </span>
-          </div>
-          
-          <h1 className="hero-text text-6xl md:text-8xl font-bold mb-6">
-            <span className="text-gradient bg-gradient-to-r from-sage-600 via-emerald-600 to-sage-800 bg-clip-text text-transparent">
-              LISTO
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-sage-700 max-w-3xl mx-auto mb-8">
-            Your neurodivergent-friendly companion for 
-            <span className="text-emerald-600 font-semibold"> growth</span>, 
-            <span className="text-purple-600 font-semibold"> wellness</span>, and 
-            <span className="text-blue-600 font-semibold"> meaningful connections</span>
-          </p>
-
-          {/* Quick Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <Link href="/wellness">
-              <Button className="btn-premium bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3 rounded-full shadow-lg">
-                <Heart className="w-5 h-5 mr-2" />
-                Start Wellness Journey
-              </Button>
-            </Link>
-            <Link href="/medical-hub">
-              <Button variant="outline" className="border-sage-300 text-sage-700 hover:bg-sage-50 px-8 py-3 rounded-full">
-                <Brain className="w-5 h-5 mr-2" />
-                Medical Hub
-              </Button>
-            </Link>
-          </div>
-        </header>
-
-        {/* Basic Feature Test */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-sage-800 mb-8">Premium Design Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card-feature p-6 rounded-2xl">
-              <Heart className="w-12 h-12 mx-auto mb-4 text-emerald-500" />
-              <h3 className="text-xl font-semibold mb-2">Wellness Hub</h3>
-              <p className="text-sage-600">Track your health and wellness journey</p>
-            </div>
-            <div className="card-feature p-6 rounded-2xl">
-              <Brain className="w-12 h-12 mx-auto mb-4 text-blue-500" />
-              <h3 className="text-xl font-semibold mb-2">Medical Hub</h3>
-              <p className="text-sage-600">Medical education and assistance</p>
-            </div>
-            <div className="card-feature p-6 rounded-2xl">
-              <Target className="w-12 h-12 mx-auto mb-4 text-purple-500" />
-              <h3 className="text-xl font-semibold mb-2">Vision Board</h3>
-              <p className="text-sage-600">Visualize and achieve your goals</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Animated Background Elements */}
-        <motion.div
-          style={{ y: y1 }}
-          className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-emerald-200/30 to-sage-200/30 rounded-full blur-3xl"
-        />
-        <motion.div
-          style={{ y: y2 }}
-          className="absolute top-96 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl"
-        />
+      {/* Animated Background Elements */}
+      <motion.div
+        style={{ y: y1 }}
+        className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-emerald-200/30 to-sage-200/30 rounded-full blur-3xl opacity-50"
+      />
+      <motion.div
+        style={{ y: y2 }}
+        className="absolute top-96 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl opacity-50"
       />
 
       <div className="relative z-10 p-6 md:p-8 mobile-padding">
         {/* Header with Dynamic Greeting */}
         <motion.header 
-          variants={itemVariants} 
+          variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="text-center mb-16 app-header"
         >
-          <div className="glass-card inline-block px-6 py-3 rounded-full mb-8">
+          <motion.div variants={itemVariants} className="glass-card inline-block px-6 py-3 rounded-full mb-8">
             <span className="text-slate-700 font-medium text-lg">
               {getGreeting()}, Welcome back! 
               <span className="ml-2">✨</span>
             </span>
-          </div>
+          </motion.div>
           
-          <h1 className="hero-text text-6xl md:text-8xl font-black mb-8">
+          <motion.h1 variants={itemVariants} className="hero-text text-6xl md:text-8xl font-black mb-8">
             <span className="text-gradient-premium bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
               LISTO
             </span>
-          </h1>
+          </motion.h1>
           
-          <p className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
-            Your neurodivergent-friendly companion for 
-            <span className="text-emerald-600 font-bold"> growth</span>, 
-            <span className="text-purple-600 font-bold"> wellness</span>, and 
+          <motion.p variants={itemVariants} className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
+            Your neurodivergent-friendly companion for{' '}
+            <span className="text-emerald-600 font-bold"> growth</span>,{' '}
+            <span className="text-purple-600 font-bold"> wellness</span>, and{' '}
             <span className="text-blue-600 font-bold"> meaningful connections</span>
-          </p>
+          </motion.p>
 
           {/* Premium Quick Action Buttons */}
           <motion.div 
@@ -177,30 +104,30 @@ export default function HomePage() {
             initial="hidden"
             animate="visible"
           >
-            <Link href="/wellness">
-              <button className="btn-premium btn-emerald px-10 py-4 text-lg">
-                <Heart className="w-6 h-6 mr-3" />
-                Start Wellness Journey
-              </button>
-            </Link>
-            <Link href="/medical-hub">
-              <button className="btn-premium btn-aurora px-10 py-4 text-lg">
-                <Brain className="w-6 h-6 mr-3" />
-                Medical Hub
-              </button>
-            </Link>
-            <Link href="/vision-board">
-              <button className="btn-premium btn-cosmic px-10 py-4 text-lg">
-                <Target className="w-6 h-6 mr-3" />
-                Vision Board
-              </button>
-            </Link>
-            <Link href="/vision-board">
-              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full shadow-lg">
-                <Sparkles className="w-5 h-5 mr-2" />
-                Vision Board
-              </Button>
-            </Link>
+            <motion.div variants={itemVariants}>
+              <Link href="/wellness">
+                <button className="btn-premium btn-emerald px-10 py-4 text-lg">
+                  <Heart className="w-6 h-6 mr-3" />
+                  Start Wellness Journey
+                </button>
+              </Link>
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <Link href="/medical-hub">
+                <button className="btn-premium btn-aurora px-10 py-4 text-lg">
+                  <Brain className="w-6 h-6 mr-3" />
+                  Medical Hub
+                </button>
+              </Link>
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <Link href="/vision-board">
+                <button className="btn-premium btn-cosmic px-10 py-4 text-lg">
+                  <Target className="w-6 h-6 mr-3" />
+                  Vision Board
+                </button>
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.header>
 
@@ -308,148 +235,10 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
 
-        {/* Premium Stats Section */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="mb-20"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-800 mb-4">
-              Trusted by the <span className="text-gradient-premium">Neurodivergent Community</span>
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Join thousands of users who've found their perfect wellness companion
-            </p>
-          </div>
-          
-          <div className="card-grid grid grid-cols-2 md:grid-cols-4 gap-8">
-            <motion.div variants={itemVariants} className="card-luxe p-8 text-center">
-              <div className="text-3xl font-black text-emerald-600 mb-2">10K+</div>
-              <div className="text-slate-600 font-medium">Active Users</div>
-            </motion.div>
-            
-            <motion.div variants={itemVariants} className="card-luxe p-8 text-center">
-              <div className="text-3xl font-black text-blue-600 mb-2">95%</div>
-              <div className="text-slate-600 font-medium">Satisfaction Rate</div>
-            </motion.div>
-            
-            <motion.div variants={itemVariants} className="card-luxe p-8 text-center">
-              <div className="text-3xl font-black text-purple-600 mb-2">24/7</div>
-              <div className="text-slate-600 font-medium">Support Available</div>
-            </motion.div>
-            
-            <motion.div variants={itemVariants} className="card-luxe p-8 text-center">
-              <div className="text-3xl font-black text-pink-600 mb-2">100%</div>
-              <div className="text-slate-600 font-medium">Privacy Focused</div>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* Dashboard Card */}
-        <motion.div variants={itemVariants} className="card-feature group">
-          <div className="flex items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center mr-6 transition-transform group-hover:scale-110 duration-300">
-              <Zap className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-800">Dashboard</h3>
-          </div>
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Your personalized command center with focus timers, quick actions, and progress tracking designed for neurodivergent minds.
-          </p>
-          
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center text-slate-600">
-              <Calendar className="w-5 h-5 mr-3 text-indigo-500" />
-              <span className="font-medium">Smart scheduling</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <Bell className="w-5 h-5 mr-3 text-indigo-500" />
-              <span className="font-medium">Gentle reminders</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <BarChart className="w-5 h-5 mr-3 text-indigo-500" />
-              <span className="font-medium">Progress visualization</span>
-            </div>
-          </div>
-          <Link href="/dashboard">
-            <button className="btn-premium btn-aurora w-full text-base">
-              Open Dashboard <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </Link>
-        </motion.div>
-
-        {/* Life Optimizer Card */}
-        <motion.div variants={itemVariants} className="card-feature group">
-          <div className="flex items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center mr-6 transition-transform group-hover:scale-110 duration-300">
-              <Target className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-800">Life Optimizer</h3>
-          </div>
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            AI-powered life optimization tools that understand neurodivergent patterns and help you work with your brain, not against it.
-          </p>
-          
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center text-slate-600">
-              <Brain className="w-5 h-5 mr-3 text-orange-500" />
-              <span className="font-medium">Pattern recognition</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <Lightbulb className="w-5 h-5 mr-3 text-orange-500" />
-              <span className="font-medium">Smart suggestions</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <TrendingUp className="w-5 h-5 mr-3 text-orange-500" />
-              <span className="font-medium">Growth tracking</span>
-            </div>
-          </div>
-          <Link href="/optimizer">
-            <button className="btn-premium btn-solar w-full text-base">
-              Optimize Life <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </Link>
-        </motion.div>
-
-        {/* Test Features Card */}
-        <motion.div variants={itemVariants} className="card-feature group">
-          <div className="flex items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center mr-6 transition-transform group-hover:scale-110 duration-300">
-              <Star className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-800">Test Features</h3>
-          </div>
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Explore new features, animations, and components in development. Perfect for testing and feedback.
-          </p>
-          
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center text-slate-600">
-              <Beaker className="w-5 h-5 mr-3 text-teal-500" />
-              <span className="font-medium">Beta features</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <Settings className="w-5 h-5 mr-3 text-teal-500" />
-              <span className="font-medium">Advanced settings</span>
-            </div>
-            <div className="flex items-center text-slate-600">
-              <MessageCircle className="w-5 h-5 mr-3 text-teal-500" />
-              <span className="font-medium">Direct feedback</span>
-            </div>
-          </div>
-          <Link href="/test-page">
-            <button className="btn-premium btn-ocean w-full text-base">
-              Test Features <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </Link>
-        </motion.div>
-
         {/* Premium Community Impact Section */}
         <motion.div 
           className="card-luxe p-12 mb-20 overflow-hidden relative"
-          variants={itemVariants}
+          variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
@@ -458,14 +247,14 @@ export default function HomePage() {
           <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
           
           <div className="relative z-10">
-            <div className="text-center mb-12">
+            <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className="text-4xl font-bold text-slate-800 mb-4">
                 Community <span className="text-gradient-premium">Impact</span>
               </h2>
               <p className="text-xl text-slate-600 max-w-2xl mx-auto">
                 Real metrics from our thriving neurodivergent community
               </p>
-            </div>
+            </motion.div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <motion.div 
