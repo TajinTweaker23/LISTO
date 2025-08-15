@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ Lunch Ordering Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-utensils"></i> Lunch Ordering Dashboard</h1>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-main">
+        <!-- Status Cards -->
+        <section class="status-section">
+            <div class="status-cards">
+                <div class="status-card voting">
+                    <div class="card-icon">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Voting Status</h3>
+                        <p id="votingStatus" class="status-text">Loading...</p>
+                        <small id="votingDeadline" class="deadline-text"></small>
+                    </div>
+                </div>
+                
+                <div class="status-card ordering">
+                    <div class="card-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Order Collection</h3>
+                        <p id="orderStatus" class="status-text">Loading...</p>
+                        <small id="orderDeadline" class="deadline-text"></small>
+                    </div>
+                </div>
+                
+                <div class="status-card restaurant">
+                    <div class="card-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Selected Restaurant</h3>
+                        <p id="selectedRestaurant" class="restaurant-name">Not selected yet</p>
+                        <small id="totalOrders" class="order-count"></small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="action-section">
+            <div class="action-buttons">
+                <button id="voteBtn" class="btn btn-primary" onclick="openVotingModal()">
+                    <i class="fas fa-vote-yea"></i> Vote for Restaurant
+                </button>
+                <button id="orderBtn" class="btn btn-success" onclick="openOrderModal()" disabled>
+                    <i class="fas fa-plus"></i> Place Order
+                </button>
+                <button id="adminBtn" class="btn btn-admin" onclick="openAdminModal()">
+                    <i class="fas fa-cog"></i> Admin Panel
+                </button>
+            </div>
+        </section>
+
+        <!-- Restaurant Options (Voting Phase) -->
+        <section id="restaurantVoting" class="voting-section" style="display: none;">
+            <h2><i class="fas fa-poll"></i> Vote for Today's Restaurant</h2>
+            <div id="restaurantOptions" class="restaurant-grid">
+                <!-- Restaurants will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Current Orders Display -->
+        <section id="currentOrders" class="orders-section">
+            <h2><i class="fas fa-list"></i> Current Orders</h2>
+            <div class="orders-container">
+                <div id="ordersList" class="orders-list">
+                    <div class="loading">Loading orders...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-section">
+            <h2><i class="fas fa-chart-bar"></i> Session Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalParticipants">0</div>
+                    <div class="stat-label">Participants</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVotes">0</div>
+                    <div class="stat-label">Votes Cast</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrderCount">0</div>
+                    <div class="stat-label">Orders Placed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="estimatedTotal">$0</div>
+                    <div class="stat-label">Estimated Total</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Voting Modal -->
+    <div id="votingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-vote-yea"></i> Vote for Restaurant</h3>
+                <span class="close" onclick="closeVotingModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="votingForm">
+                    <div class="form-group">
+                        <label for="voterName">Your Name (Optional for anonymous voting):</label>
+                        <input type="text" id="voterName" name="voterName" placeholder="Leave blank for anonymous">
+                    </div>
+                    <div class="form-group">
+                        <label>Choose a restaurant:</label>
+                        <div id="restaurantChoices" class="restaurant-choices">
+                            <!-- Radio buttons will be populated here -->
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeVotingModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Cast Vote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> Place Your Order</h3>
+                <span class="close" onclick="closeOrderModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="customerName">Your Name *:</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Email (for confirmation):</label>
+                        <input type="email" id="customerEmail" name="customerEmail">
+                    </div>
+                    <div class="form-group">
+                        <label>Restaurant:</label>
+                        <input type="text" id="orderRestaurant" name="orderRestaurant" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="menuItems">Menu Items *:</label>
+                        <textarea id="menuItems" name="menuItems" rows="4" required 
+                                placeholder="List your order items, e.g.:&#10;- Chicken Caesar Salad - $12.99&#10;- Garlic Bread - $4.99"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalCost">Estimated Total Cost:</label>
+                        <input type="number" id="totalCost" name="totalCost" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialInstructions">Special Instructions:</label>
+                        <textarea id="specialInstructions" name="specialInstructions" rows="2" 
+                                placeholder="Any dietary restrictions or special requests"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                        <button type="submit" class="btn btn-success">Place Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Admin Panel</h3>
+                <span class="close" onclick="closeAdminModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="openTab(event, 'sessionTab')">Session Management</button>
+                    <button class="tab-btn" onclick="openTab(event, 'orderTab')">Order Management</button>
+                    <button class="tab-btn" onclick="openTab(event, 'reportTab')">Reports</button>
+                </div>
+
+                <!-- Session Management Tab -->
+                <div id="sessionTab" class="tab-content active">
+                    <h4>Create New Session</h4>
+                    <form id="newSessionForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sessionDate">Session Date:</label>
+                                <input type="datetime-local" id="sessionDate" name="sessionDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="votingDeadline">Voting Deadline:</label>
+                                <input type="datetime-local" id="votingDeadlineInput" name="votingDeadline" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orderDeadline">Order Deadline:</label>
+                                <input type="datetime-local" id="orderDeadlineInput" name="orderDeadline" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="coordinator">Coordinator Email:</label>
+                                <input type="email" id="coordinator" name="coordinator" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Session</button>
+                    </form>
+                </div>
+
+                <!-- Order Management Tab -->
+                <div id="orderTab" class="tab-content">
+                    <h4>Order Actions</h4>
+                    <div class="admin-actions">
+                        <button class="btn btn-warning" onclick="generateOrderSummary()">
+                            <i class="fas fa-file-alt"></i> Generate Order Summary
+                        </button>
+                        <button class="btn btn-info" onclick="exportOrders()">
+                            <i class="fas fa-download"></i> Export Orders
+                        </button>
+                        <button class="btn btn-danger" onclick="closeOrdering()">
+                            <i class="fas fa-stop"></i> Close Order Collection
+                        </button>
+                    </div>
+                    <div id="orderSummary" class="order-summary"></div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reportTab" class="tab-content">
+                    <h4>Session Reports</h4>
+                    <div id="sessionReports" class="reports-container">
+                        <!-- Reports will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <p>&copy; 2024 Lunch Ordering System | Separate from LISTO Medical App</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

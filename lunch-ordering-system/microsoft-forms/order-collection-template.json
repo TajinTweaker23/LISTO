@@ -1,0 +1,286 @@
+{
+  "title": "Lunch Order Collection Form", 
+  "description": "Place your lunch order for today's group delivery",
+  "settings": {
+    "allowAnonymousResponses": false,
+    "oneResponsePerPerson": true,
+    "recordNames": true,
+    "shuffleQuestions": false,
+    "confirmationMessage": "Thank you for your order! You'll receive a confirmation email shortly. Orders will be placed at the deadline."
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "type": "text",
+      "title": "Your Full Name",
+      "description": "Required for order tracking and delivery",
+      "required": true,
+      "settings": {
+        "textType": "shortAnswer"
+      }
+    },
+    {
+      "id": "q2",
+      "type": "text", 
+      "title": "Email Address",
+      "description": "We'll send you an order confirmation and delivery updates",
+      "required": true,
+      "settings": {
+        "textType": "email",
+        "validation": {
+          "type": "email"
+        }
+      }
+    },
+    {
+      "id": "q3",
+      "type": "text",
+      "title": "Phone Number (Optional)",
+      "description": "In case we need to contact you about your order",
+      "required": false,
+      "settings": {
+        "textType": "shortAnswer",
+        "validation": {
+          "type": "phone"
+        }
+      }
+    },
+    {
+      "id": "q4",
+      "type": "text",
+      "title": "Selected Restaurant",
+      "description": "This will be pre-filled based on voting results",
+      "required": true,
+      "settings": {
+        "textType": "shortAnswer",
+        "readOnly": true,
+        "defaultValue": "{{SELECTED_RESTAURANT}}"
+      }
+    },
+    {
+      "id": "q5",
+      "type": "text",
+      "title": "Your Order Items",
+      "description": "List each item you want to order with prices if known. Example:\n- Chicken Caesar Salad - $12.99\n- Garlic Bread - $4.99\n- Diet Coke - $2.50",
+      "required": true,
+      "settings": {
+        "textType": "longAnswer",
+        "placeholder": "Enter your order items, one per line..."
+      }
+    },
+    {
+      "id": "q6",
+      "type": "number",
+      "title": "Estimated Total Cost",
+      "description": "Approximate total cost of your order (including tax if shown on menu). Don't include delivery fee or tip.",
+      "required": false,
+      "settings": {
+        "numberType": "decimal",
+        "min": 0,
+        "max": 200,
+        "decimalPlaces": 2,
+        "prefix": "$"
+      }
+    },
+    {
+      "id": "q7",
+      "type": "text",
+      "title": "Special Instructions",
+      "description": "Any special requests, dietary restrictions, or modifications for your order",
+      "required": false,
+      "settings": {
+        "textType": "longAnswer",
+        "placeholder": "e.g., No onions, extra sauce, gluten-free bun, etc."
+      }
+    },
+    {
+      "id": "q8",
+      "type": "choice",
+      "title": "How will you pay?",
+      "description": "Select your preferred payment method",
+      "required": true,
+      "settings": {
+        "choiceType": "radioButton"
+      },
+      "options": [
+        {
+          "text": "Cash (I'll pay the coordinator)",
+          "value": "cash"
+        },
+        {
+          "text": "Venmo/PayPal (I'll send payment)",
+          "value": "digital"
+        },
+        {
+          "text": "Company Card (if approved)",
+          "value": "company"
+        },
+        {
+          "text": "I'll handle payment directly with restaurant",
+          "value": "direct"
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "type": "text",
+      "title": "Payment Details",
+      "description": "If paying digitally, provide your username/handle. If cash, specify denomination preference.",
+      "required": false,
+      "settings": {
+        "textType": "shortAnswer"
+      }
+    },
+    {
+      "id": "q10",
+      "type": "choice",
+      "title": "Dietary Restrictions/Allergies",
+      "description": "Select any that apply to ensure your safety",
+      "required": false,
+      "settings": {
+        "choiceType": "checkbox",
+        "allowMultipleSelections": true
+      },
+      "options": [
+        {
+          "text": "Vegetarian",
+          "value": "vegetarian"
+        },
+        {
+          "text": "Vegan", 
+          "value": "vegan"
+        },
+        {
+          "text": "Gluten-Free",
+          "value": "gluten_free"
+        },
+        {
+          "text": "Dairy-Free",
+          "value": "dairy_free"
+        },
+        {
+          "text": "Nut Allergies",
+          "value": "nut_allergy"
+        },
+        {
+          "text": "Shellfish Allergy",
+          "value": "shellfish_allergy"
+        },
+        {
+          "text": "Other Food Allergies",
+          "value": "other_allergy"
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "type": "rating",
+      "title": "How satisfied are you with today's restaurant selection?",
+      "description": "This helps us improve future restaurant choices",
+      "required": false,
+      "settings": {
+        "ratingScale": 5,
+        "ratingType": "star"
+      }
+    }
+  ],
+  "integrations": {
+    "sharePoint": {
+      "enabled": true,
+      "listName": "LunchOrders",
+      "mappings": {
+        "q1": "UserName",
+        "q2": "UserEmail",
+        "q3": "UserPhone", 
+        "q4": "RestaurantName",
+        "q5": "MenuItems",
+        "q6": "TotalCost",
+        "q7": "SpecialInstructions",
+        "q8": "PaymentMethod",
+        "q9": "PaymentDetails",
+        "q10": "DietaryRestrictions",
+        "q11": "SatisfactionRating"
+      }
+    },
+    "powerAutomate": {
+      "enabled": true,
+      "flowName": "Process Order Submission", 
+      "triggerOnSubmit": true,
+      "actions": [
+        "validateOrder",
+        "sendConfirmation",
+        "updateSessionStats",
+        "notifyCoordinator"
+      ]
+    },
+    "email": {
+      "sendConfirmation": true,
+      "confirmationTemplate": "order_confirmation",
+      "confirmationDelay": 0
+    }
+  },
+  "customization": {
+    "theme": {
+      "primaryColor": "#28a745",
+      "secondaryColor": "#17a2b8", 
+      "backgroundColor": "#f8f9fa"
+    },
+    "logo": {
+      "enabled": false,
+      "url": ""
+    },
+    "headerText": "🛒 Place Your Lunch Order",
+    "footerText": "Lunch Ordering System | Questions? Contact the lunch coordinator",
+    "progressBar": true
+  },
+  "validationRules": [
+    {
+      "field": "q5",
+      "rule": "required_if_total_over_zero",
+      "message": "Please list your order items"
+    },
+    {
+      "field": "q6", 
+      "rule": "reasonable_total",
+      "min": 1,
+      "max": 150,
+      "message": "Please verify your total cost is reasonable"
+    }
+  ],
+  "deadlineSettings": {
+    "enabled": true,
+    "closeFormAtDeadline": true,
+    "deadlineMessage": "Sorry, the order deadline has passed for today's lunch. Please try again next time!",
+    "warningMessage": {
+      "enabled": true,
+      "showWhenMinutesRemaining": 30,
+      "message": "⏰ Order deadline approaching! Please submit your order soon."
+    }
+  },
+  "notifications": {
+    "submissionNotification": {
+      "enabled": true,
+      "recipients": ["lunch.coordinator@company.com"],
+      "subject": "New lunch order: {{UserName}}",
+      "includeResponseData": true,
+      "template": "order_received"
+    },
+    "duplicateOrderAlert": {
+      "enabled": true,
+      "message": "We detected you may have already placed an order. Your latest submission will override the previous one.",
+      "requireConfirmation": true
+    }
+  },
+  "orderSummary": {
+    "showToUser": true,
+    "allowEdit": true,
+    "editWindowMinutes": 30,
+    "fields": [
+      "restaurant",
+      "items", 
+      "totalCost",
+      "specialInstructions",
+      "paymentMethod"
+    ]
+  }
+}

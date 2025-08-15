@@ -1,0 +1,351 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "SharePointSite": {
+        "defaultValue": "https://your-tenant.sharepoint.com/sites/your-site",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "schedule": {
+            "hours": [
+              "11",
+              "14",
+              "17"
+            ],
+            "minutes": [
+              0
+            ]
+          }
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Get_active_sessions": {
+        "runAfter": {},
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharePointOnline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSite')",
+            "table": "LunchSessions",
+            "filter": "SessionStatus ne 'Completed' and SessionStatus ne 'Cancelled'"
+          }
+        }
+      },
+      "Process_each_session": {
+        "foreach": "@outputs('Get_active_sessions')?['body/value']",
+        "actions": {
+          "Check_session_status": {
+            "switch": {
+              "expression": "@item()?['SessionStatus']",
+              "cases": {
+                "OrderCollection": {
+                  "case": "OrderCollection",
+                  "actions": {
+                    "Check_order_deadline": {
+                      "actions": {
+                        "Get_all_orders_for_session": {
+                          "runAfter": {},
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "sharePointOnline",
+                              "operationId": "GetItems",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                            },
+                            "parameters": {
+                              "dataset": "@parameters('SharePointSite')",
+                              "table": "LunchOrders",
+                              "filter": "RestaurantName eq '@{item()?['SelectedRestaurant']}' and OrderDate eq '@{item()?['SessionDate']}' and OrderStatus eq 'Confirmed'"
+                            }
+                          }
+                        },
+                        "Generate_order_summary": {
+                          "runAfter": {
+                            "Get_all_orders_for_session": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "InitializeVariable",
+                          "inputs": {
+                            "variables": [
+                              {
+                                "name": "OrderSummary",
+                                "type": "string",
+                                "value": "@{join(map(outputs('Get_all_orders_for_session')?['body/value'], lambda('item', concat(item()['UserName'], ': ', replace(item()['MenuItems'], '\n', ' | ')))), '\n')}"
+                              }
+                            ]
+                          }
+                        },
+                        "Calculate_total_cost": {
+                          "runAfter": {
+                            "Generate_order_summary": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "InitializeVariable",
+                          "inputs": {
+                            "variables": [
+                              {
+                                "name": "TotalCost",
+                                "type": "integer",
+                                "value": "@sum(map(outputs('Get_all_orders_for_session')?['body/value'], lambda('item', int(item()['TotalCost']))))"
+                              }
+                            ]
+                          }
+                        },
+                        "Send_final_order_summary": {
+                          "runAfter": {
+                            "Calculate_total_cost": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "office365",
+                              "operationId": "SendEmailV2",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                            },
+                            "parameters": {
+                              "emailMessage/To": "@item()?['Coordinator']",
+                              "emailMessage/Subject": "📋 Final Lunch Order Summary - @{item()?['SelectedRestaurant']}",
+                              "emailMessage/Body": "<html><body><h2>Final Order Summary</h2><p><strong>Restaurant:</strong> @{item()?['SelectedRestaurant']}</p><p><strong>Order Date:</strong> @{formatDateTime(item()?['SessionDate'], 'dddd, MMMM dd, yyyy')}</p><p><strong>Total Orders:</strong> @{length(outputs('Get_all_orders_for_session')?['body/value'])}</p><p><strong>Estimated Total Cost:</strong> $@{variables('TotalCost')}</p><hr/><h3>Individual Orders:</h3><pre>@{variables('OrderSummary')}</pre><p><em>Please contact the restaurant to place the group order. Don't forget to include any delivery fees and tips in the final amount.</em></p></body></html>",
+                              "emailMessage/Importance": "High"
+                            }
+                          }
+                        },
+                        "Update_session_to_ordered": {
+                          "runAfter": {
+                            "Send_final_order_summary": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "sharePointOnline",
+                              "operationId": "PatchItem",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                            },
+                            "parameters": {
+                              "dataset": "@parameters('SharePointSite')",
+                              "table": "LunchSessions",
+                              "id": "@item()?['ID']",
+                              "item/SessionStatus": "Ordered",
+                              "item/TotalOrders": "@length(outputs('Get_all_orders_for_session')?['body/value'])"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {},
+                      "expression": {
+                        "lessOrEquals": [
+                          "@item()?['OrderDeadline']",
+                          "@utcnow()"
+                        ]
+                      },
+                      "type": "If"
+                    },
+                    "Send_order_reminder": {
+                      "actions": {
+                        "Send_reminder_email": {
+                          "runAfter": {},
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "office365",
+                              "operationId": "SendEmailV2",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                            },
+                            "parameters": {
+                              "emailMessage/To": "@item()?['Coordinator']",
+                              "emailMessage/Subject": "⏰ Order Deadline Reminder - @{item()?['SelectedRestaurant']}",
+                              "emailMessage/Body": "<html><body><h2>Order Deadline Reminder</h2><p>Don't forget - lunch orders close soon for @{item()?['SelectedRestaurant']}!</p><p><strong>Deadline:</strong> @{formatDateTime(item()?['OrderDeadline'], 'dddd, MMMM dd, yyyy hh:mm tt')}</p><p><strong>Orders received:</strong> @{item()?['TotalOrders']}</p><p>Please remind the team to place their orders if they haven't already.</p></body></html>",
+                              "emailMessage/Importance": "Normal"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Check_order_deadline": [
+                          "Succeeded",
+                          "Skipped"
+                        ]
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "greater": [
+                              "@item()?['OrderDeadline']",
+                              "@utcnow()"
+                            ]
+                          },
+                          {
+                            "lessOrEquals": [
+                              "@addHours(utcnow(), 2)",
+                              "@item()?['OrderDeadline']"
+                            ]
+                          }
+                        ]
+                      },
+                      "type": "If"
+                    }
+                  }
+                },
+                "Ordered": {
+                  "case": "Ordered",
+                  "actions": {
+                    "Check_delivery_time": {
+                      "actions": {
+                        "Send_delivery_notification": {
+                          "runAfter": {},
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "office365",
+                              "operationId": "SendEmailV2",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                            },
+                            "parameters": {
+                              "emailMessage/To": "@item()?['Coordinator']",
+                              "emailMessage/Subject": "🚚 Lunch Should Be Arriving Soon!",
+                              "emailMessage/Body": "<html><body><h2>Lunch Delivery Expected</h2><p>Based on typical delivery times, your lunch order from @{item()?['SelectedRestaurant']} should be arriving soon!</p><p><strong>Session Date:</strong> @{formatDateTime(item()?['SessionDate'], 'dddd, MMMM dd, yyyy')}</p><p><strong>Total Orders:</strong> @{item()?['TotalOrders']}</p><p>Please be ready to distribute the orders when they arrive.</p></body></html>",
+                              "emailMessage/Importance": "Normal"
+                            }
+                          }
+                        },
+                        "Update_session_to_delivered": {
+                          "runAfter": {
+                            "Send_delivery_notification": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "sharePointOnline",
+                              "operationId": "PatchItem",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                            },
+                            "parameters": {
+                              "dataset": "@parameters('SharePointSite')",
+                              "table": "LunchSessions",
+                              "id": "@item()?['ID']",
+                              "item/SessionStatus": "Completed"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {},
+                      "expression": {
+                        "greater": [
+                          "@utcnow()",
+                          "@addMinutes(item()?['SessionDate'], 45)"
+                        ]
+                      },
+                      "type": "If"
+                    }
+                  }
+                }
+              },
+              "default": {
+                "actions": {}
+              }
+            },
+            "runAfter": {},
+            "type": "Switch"
+          }
+        },
+        "runAfter": {
+          "Get_active_sessions": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      },
+      "Daily_cleanup": {
+        "runAfter": {
+          "Process_each_session": [
+            "Succeeded"
+          ]
+        },
+        "type": "Scope",
+        "actions": {
+          "Get_old_completed_sessions": {
+            "runAfter": {},
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "sharePointOnline",
+                "operationId": "GetItems",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@parameters('SharePointSite')",
+                "table": "LunchSessions",
+                "filter": "SessionStatus eq 'Completed' and SessionDate lt '@{addDays(utcnow(), -30)}'"
+              }
+            }
+          },
+          "Archive_old_data": {
+            "foreach": "@outputs('Get_old_completed_sessions')?['body/value']",
+            "actions": {
+              "Delete_old_session": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "DeleteItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchSessions",
+                    "id": "@item()?['ID']"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Get_old_completed_sessions": [
+                "Succeeded"
+              ]
+            },
+            "type": "Foreach"
+          }
+        }
+      }
+    }
+  },
+  "connectionReferences": {
+    "sharePointOnline": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/sharePointOnline"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/sharePointOnline"
+      }
+    },
+    "office365": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/office365"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/office365"
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "restaurants": [
+    {
+      "name": "Mario's Pizza Palace",
+      "cuisine": "Italian", 
+      "menuUrl": "https://mariospizza.com/menu",
+      "phoneNumber": "555-0123",
+      "deliveryFee": 3.99,
+      "minimumOrder": 15.00,
+      "averageDeliveryTime": "30-45 minutes",
+      "popularItems": [
+        "Margherita Pizza - $12.99",
+        "Pepperoni Pizza - $14.99", 
+        "Caesar Salad - $8.99",
+        "Garlic Bread - $4.99"
+      ]
+    },
+    {
+      "name": "Taco Fiesta",
+      "cuisine": "Mexican",
+      "menuUrl": "https://tacofiesta.com/menu", 
+      "phoneNumber": "555-0124",
+      "deliveryFee": 2.99,
+      "minimumOrder": 12.00,
+      "averageDeliveryTime": "25-35 minutes",
+      "popularItems": [
+        "Chicken Tacos (3) - $9.99",
+        "Beef Burrito - $11.99",
+        "Nachos Supreme - $10.99",
+        "Guacamole & Chips - $6.99"
+      ]
+    },
+    {
+      "name": "Dragon Garden",
+      "cuisine": "Chinese",
+      "menuUrl": "https://dragongarden.com/menu",
+      "phoneNumber": "555-0125", 
+      "deliveryFee": 4.50,
+      "minimumOrder": 20.00,
+      "averageDeliveryTime": "35-50 minutes",
+      "popularItems": [
+        "General Tso's Chicken - $13.99",
+        "Sweet & Sour Pork - $12.99",
+        "Vegetable Fried Rice - $8.99",
+        "Spring Rolls (4) - $5.99"
+      ]
+    }
+  ],
+  "testUsers": [
+    {
+      "name": "John Smith",
+      "email": "john.smith@company.com",
+      "preferences": ["Italian", "Mexican"],
+      "dietaryRestrictions": []
+    },
+    {
+      "name": "Sarah Johnson", 
+      "email": "sarah.johnson@company.com",
+      "preferences": ["Chinese", "Thai"],
+      "dietaryRestrictions": ["Vegetarian"]
+    },
+    {
+      "name": "Mike Davis",
+      "email": "mike.davis@company.com",
+      "preferences": ["American", "Italian"],
+      "dietaryRestrictions": ["No seafood"]
+    }
+  ],
+  "sampleOrders": [
+    {
+      "userName": "John Smith",
+      "restaurant": "Mario's Pizza Palace",
+      "items": [
+        "Margherita Pizza - $12.99",
+        "Caesar Salad - $8.99"
+      ],
+      "totalCost": 21.98,
+      "specialInstructions": "Extra cheese on pizza"
+    },
+    {
+      "userName": "Sarah Johnson",
+      "restaurant": "Taco Fiesta", 
+      "items": [
+        "Veggie Burrito - $10.99",
+        "Guacamole & Chips - $6.99"
+      ],
+      "totalCost": 17.98,
+      "specialInstructions": "No sour cream please"
+    }
+  ],
+  "sampleVotingSession": {
+    "sessionDate": "2024-08-16T12:00:00Z",
+    "votingDeadline": "2024-08-15T10:00:00Z",
+    "orderDeadline": "2024-08-15T11:30:00Z",
+    "restaurants": [
+      {
+        "name": "Mario's Pizza Palace",
+        "votes": 5
+      },
+      {
+        "name": "Taco Fiesta", 
+        "votes": 3
+      },
+      {
+        "name": "Dragon Garden",
+        "votes": 7
+      }
+    ]
+  }
+}

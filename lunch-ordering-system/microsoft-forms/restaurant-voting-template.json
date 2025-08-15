@@ -1,0 +1,173 @@
+{
+  "title": "Restaurant Voting Form",
+  "description": "Vote for your preferred restaurant for today's lunch order",
+  "settings": {
+    "allowAnonymousResponses": true,
+    "oneResponsePerPerson": true,
+    "recordNames": false,
+    "shuffleQuestions": false,
+    "confirmationMessage": "Thank you for voting! The results will be announced soon."
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "title": "What's your name? (Optional - for tracking purposes only)",
+      "description": "You can leave this blank to vote anonymously",
+      "required": false,
+      "settings": {
+        "choiceType": "text",
+        "allowOtherOption": false
+      },
+      "options": []
+    },
+    {
+      "id": "q2", 
+      "type": "choice",
+      "title": "Which restaurant would you prefer for today's lunch?",
+      "description": "Choose one option. Click the restaurant name to view their menu if available.",
+      "required": true,
+      "settings": {
+        "choiceType": "radioButton",
+        "allowOtherOption": true,
+        "otherOptionLabel": "Suggest another restaurant"
+      },
+      "options": [
+        {
+          "text": "Mario's Pizza Palace - Italian Cuisine",
+          "value": "marios_pizza"
+        },
+        {
+          "text": "Taco Fiesta - Mexican Cuisine", 
+          "value": "taco_fiesta"
+        },
+        {
+          "text": "Dragon Garden - Chinese Cuisine",
+          "value": "dragon_garden"
+        },
+        {
+          "text": "Subway - American Fast Food",
+          "value": "subway"
+        },
+        {
+          "text": "Panda Express - Chinese Fast Food",
+          "value": "panda_express"
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "choice", 
+      "title": "What type of cuisine are you in the mood for?",
+      "description": "This helps us understand preferences for future sessions",
+      "required": false,
+      "settings": {
+        "choiceType": "checkbox",
+        "allowMultipleSelections": true
+      },
+      "options": [
+        {
+          "text": "Italian",
+          "value": "italian"
+        },
+        {
+          "text": "Mexican",
+          "value": "mexican"
+        },
+        {
+          "text": "Chinese",
+          "value": "chinese"
+        },
+        {
+          "text": "American",
+          "value": "american"
+        },
+        {
+          "text": "Thai",
+          "value": "thai"
+        },
+        {
+          "text": "Indian",
+          "value": "indian"
+        },
+        {
+          "text": "Mediterranean",
+          "value": "mediterranean"
+        },
+        {
+          "text": "Japanese",
+          "value": "japanese"
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "text",
+      "title": "Any dietary restrictions or preferences we should consider?",
+      "description": "e.g., vegetarian, gluten-free, allergies, etc. This information helps with restaurant selection.",
+      "required": false,
+      "settings": {
+        "textType": "longAnswer"
+      }
+    },
+    {
+      "id": "q5",
+      "type": "rating",
+      "title": "How important is delivery speed to you today?",
+      "description": "1 = Not important, 5 = Very important",
+      "required": false,
+      "settings": {
+        "ratingScale": 5,
+        "ratingType": "star"
+      }
+    }
+  ],
+  "integrations": {
+    "sharePoint": {
+      "enabled": true,
+      "listName": "LunchVoting",
+      "mappings": {
+        "q1": "VoterName",
+        "q2": "RestaurantChoice", 
+        "q3": "CuisinePreferences",
+        "q4": "DietaryRestrictions",
+        "q5": "DeliverySpeedImportance"
+      }
+    },
+    "powerAutomate": {
+      "enabled": true,
+      "flowName": "Process Voting Response",
+      "triggerOnSubmit": true
+    },
+    "email": {
+      "sendConfirmation": true,
+      "confirmationTemplate": "voting_confirmation"
+    }
+  },
+  "customization": {
+    "theme": {
+      "primaryColor": "#ff6b35",
+      "secondaryColor": "#4ecdc4",
+      "backgroundColor": "#f8f9fa"
+    },
+    "logo": {
+      "enabled": false,
+      "url": ""
+    },
+    "headerText": "🍽️ Lunch Voting",
+    "footerText": "Powered by the Lunch Ordering System - Separate from LISTO Medical App"
+  },
+  "notifications": {
+    "submissionNotification": {
+      "enabled": true,
+      "recipients": ["lunch.coordinator@company.com"],
+      "subject": "New lunch vote submitted",
+      "includeResponseData": true
+    },
+    "deadlineReminder": {
+      "enabled": true,
+      "reminderTimes": [60, 30, 15],
+      "recipients": "all_employees"
+    }
+  }
+}
