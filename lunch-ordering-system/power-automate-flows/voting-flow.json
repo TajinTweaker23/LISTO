@@ -1,0 +1,229 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "SharePointSite": {
+        "defaultValue": "https://your-tenant.sharepoint.com/sites/your-site",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "schedule": {
+            "hours": [
+              "9"
+            ],
+            "minutes": [
+              0
+            ]
+          }
+        },
+        "type": "Recurrence"
+      }
+    },
+    "actions": {
+      "Initialize_variable_-_Current_Date": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "CurrentDate",
+              "type": "string",
+              "value": "@utcnow()"
+            }
+          ]
+        }
+      },
+      "Get_active_lunch_sessions": {
+        "runAfter": {
+          "Initialize_variable_-_Current_Date": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharePointOnline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSite')",
+            "table": "LunchSessions",
+            "filter": "SessionStatus eq 'Voting'"
+          }
+        }
+      },
+      "Apply_to_each_session": {
+        "foreach": "@outputs('Get_active_lunch_sessions')?['body/value']",
+        "actions": {
+          "Check_voting_deadline": {
+            "actions": {
+              "Get_voting_results": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchVoting",
+                    "filter": "VotingDate eq '@{item()?['SessionDate']}'"
+                  }
+                }
+              },
+              "Determine_winner": {
+                "runAfter": {
+                  "Get_voting_results": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "InitializeVariable",
+                "inputs": {
+                  "variables": [
+                    {
+                      "name": "WinningRestaurant",
+                      "type": "string",
+                      "value": "@{first(sort(outputs('Get_voting_results')?['body/value'], 'VoteCount desc'))?['RestaurantName']}"
+                    }
+                  ]
+                }
+              },
+              "Update_session_with_winner": {
+                "runAfter": {
+                  "Determine_winner": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchSessions",
+                    "id": "@item()?['ID']",
+                    "item/SelectedRestaurant": "@variables('WinningRestaurant')",
+                    "item/SessionStatus": "OrderCollection"
+                  }
+                }
+              },
+              "Send_voting_results_notification": {
+                "runAfter": {
+                  "Update_session_with_winner": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "office365",
+                    "operationId": "SendEmailV2",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                  },
+                  "parameters": {
+                    "emailMessage/To": "@item()?['Coordinator']",
+                    "emailMessage/Subject": "🍽️ Lunch Voting Results - @{variables('WinningRestaurant')} Wins!",
+                    "emailMessage/Body": "<html><body><h2>Voting Results</h2><p><strong>Winning Restaurant:</strong> @{variables('WinningRestaurant')}</p><p><strong>Session Date:</strong> @{formatDateTime(item()?['SessionDate'], 'dddd, MMMM dd, yyyy')}</p><p>Order collection is now open until @{formatDateTime(item()?['OrderDeadline'], 'hh:mm tt')}</p><p>Please inform the team that they can now place their orders!</p></body></html>",
+                    "emailMessage/Importance": "Normal"
+                  }
+                }
+              }
+            },
+            "runAfter": {},
+            "expression": {
+              "and": [
+                {
+                  "lessOrEquals": [
+                    "@item()?['VotingDeadline']",
+                    "@variables('CurrentDate')"
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Check_if_voting_reminder_needed": {
+            "actions": {
+              "Send_voting_reminder": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "office365",
+                    "operationId": "SendEmailV2",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                  },
+                  "parameters": {
+                    "emailMessage/To": "@item()?['Coordinator']",
+                    "emailMessage/Subject": "🗳️ Reminder: Lunch Voting Closes Soon",
+                    "emailMessage/Body": "<html><body><h2>Voting Reminder</h2><p>Don't forget - lunch voting closes at @{formatDateTime(item()?['VotingDeadline'], 'hh:mm tt')} today!</p><p><strong>Session Date:</strong> @{formatDateTime(item()?['SessionDate'], 'dddd, MMMM dd, yyyy')}</p><p>Please remind the team to cast their votes.</p></body></html>",
+                    "emailMessage/Importance": "Normal"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Check_voting_deadline": [
+                "Succeeded",
+                "Skipped"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "greater": [
+                    "@item()?['VotingDeadline']",
+                    "@variables('CurrentDate')"
+                  ]
+                },
+                {
+                  "lessOrEquals": [
+                    "@addHours(variables('CurrentDate'), 1)",
+                    "@item()?['VotingDeadline']"
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {
+          "Get_active_lunch_sessions": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      }
+    }
+  },
+  "connectionReferences": {
+    "sharePointOnline": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/sharePointOnline"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/sharePointOnline"
+      }
+    },
+    "office365": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/office365"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/office365"
+      }
+    }
+  }
+}

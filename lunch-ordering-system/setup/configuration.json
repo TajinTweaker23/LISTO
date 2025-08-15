@@ -1,0 +1,69 @@
+{
+  "system": {
+    "name": "Lunch Ordering System",
+    "version": "1.0.0",
+    "description": "Automated lunch ordering system for office teams"
+  },
+  "sharepoint": {
+    "siteUrl": "https://your-tenant.sharepoint.com/sites/your-site",
+    "lists": {
+      "voting": "LunchVoting",
+      "orders": "LunchOrders", 
+      "sessions": "LunchSessions",
+      "restaurants": "RestaurantMaster"
+    }
+  },
+  "powerAutomate": {
+    "flows": {
+      "voting": {
+        "name": "Lunch Voting Automation",
+        "description": "Automates restaurant voting process",
+        "triggers": ["Manual", "Scheduled"]
+      },
+      "orderCollection": {
+        "name": "Order Collection Automation", 
+        "description": "Collects and processes lunch orders",
+        "triggers": ["Form submission", "List item creation"]
+      },
+      "notifications": {
+        "name": "Lunch Notification System",
+        "description": "Sends reminders and summaries",
+        "triggers": ["Scheduled", "Status changes"]
+      }
+    }
+  },
+  "timing": {
+    "votingPeriodHours": 2,
+    "orderCollectionHours": 4,
+    "reminderIntervalMinutes": 30,
+    "defaultSessionAdvanceDays": 1
+  },
+  "notifications": {
+    "votingReminder": {
+      "enabled": true,
+      "intervals": [60, 30, 15]
+    },
+    "orderReminder": {
+      "enabled": true,
+      "intervals": [120, 60, 30]
+    },
+    "summary": {
+      "enabled": true,
+      "sendToCoordinator": true,
+      "sendToParticipants": false
+    }
+  },
+  "features": {
+    "anonymousVoting": true,
+    "guestOrdering": true,
+    "costTracking": true,
+    "menuIntegration": false,
+    "paymentTracking": false
+  },
+  "limits": {
+    "maxVotesPerPerson": 1,
+    "maxOrdersPerPerson": 1,
+    "maxRestaurantsPerVoting": 10,
+    "sessionHistoryDays": 90
+  }
+}

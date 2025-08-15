@@ -1,0 +1,304 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "SharePointSite": {
+        "defaultValue": "https://your-tenant.sharepoint.com/sites/your-site",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_an_item_is_created_or_modified": {
+        "type": "OpenApiConnectionWebhook",
+        "inputs": {
+          "host": {
+            "connectionName": "sharePointOnline",
+            "operationId": "GetOnUpdatedItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSite')",
+            "table": "LunchOrders"
+          }
+        }
+      }
+    },
+    "actions": {
+      "Get_current_session": {
+        "runAfter": {},
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharePointOnline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSite')",
+            "table": "LunchSessions",
+            "filter": "SessionStatus eq 'OrderCollection'",
+            "top": 1
+          }
+        }
+      },
+      "Process_new_order": {
+        "runAfter": {
+          "Get_current_session": [
+            "Succeeded"
+          ]
+        },
+        "type": "Scope",
+        "actions": {
+          "Validate_order_details": {
+            "actions": {
+              "Update_order_status": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchOrders",
+                    "id": "@triggerBody()?['ID']",
+                    "item/OrderStatus": "Confirmed"
+                  }
+                }
+              },
+              "Send_order_confirmation": {
+                "runAfter": {
+                  "Update_order_status": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "office365",
+                    "operationId": "SendEmailV2",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                  },
+                  "parameters": {
+                    "emailMessage/To": "@triggerBody()?['UserEmail']",
+                    "emailMessage/Subject": "✅ Order Confirmed - @{triggerBody()?['RestaurantName']}",
+                    "emailMessage/Body": "<html><body><h2>Order Confirmation</h2><p><strong>Restaurant:</strong> @{triggerBody()?['RestaurantName']}</p><p><strong>Items Ordered:</strong></p><div>@{replace(triggerBody()?['MenuItems'], '\n', '<br/>')}</div><p><strong>Estimated Cost:</strong> $@{triggerBody()?['TotalCost']}</p><p><strong>Special Instructions:</strong> @{triggerBody()?['SpecialInstructions']}</p><p>Your order has been confirmed and will be included in the group order.</p></body></html>",
+                    "emailMessage/Importance": "Normal"
+                  }
+                }
+              },
+              "Update_session_statistics": {
+                "runAfter": {
+                  "Send_order_confirmation": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchOrders",
+                    "filter": "OrderDate eq '@{first(outputs('Get_current_session')?['body/value'])?['SessionDate']}' and OrderStatus eq 'Confirmed'"
+                  }
+                }
+              },
+              "Update_session_totals": {
+                "runAfter": {
+                  "Update_session_statistics": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchSessions",
+                    "id": "@first(outputs('Get_current_session')?['body/value'])?['ID']",
+                    "item/TotalOrders": "@length(outputs('Update_session_statistics')?['body/value'])"
+                  }
+                }
+              }
+            },
+            "runAfter": {},
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@triggerBody()?['UserName']",
+                      "@null"
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "equals": [
+                      "@triggerBody()?['MenuItems']",
+                      "@null"
+                    ]
+                  }
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Check_if_order_deadline_approaching": {
+            "actions": {
+              "Send_deadline_warning": {
+                "runAfter": {},
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "office365",
+                    "operationId": "SendEmailV2",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                  },
+                  "parameters": {
+                    "emailMessage/To": "@first(outputs('Get_current_session')?['body/value'])?['Coordinator']",
+                    "emailMessage/Subject": "⏰ Order Deadline Approaching - @{triggerBody()?['RestaurantName']}",
+                    "emailMessage/Body": "<html><body><h2>Order Deadline Warning</h2><p>The order deadline for @{triggerBody()?['RestaurantName']} is approaching!</p><p><strong>Deadline:</strong> @{formatDateTime(first(outputs('Get_current_session')?['body/value'])?['OrderDeadline'], 'hh:mm tt')}</p><p><strong>Orders received so far:</strong> @{first(outputs('Get_current_session')?['body/value'])?['TotalOrders']}</p><p>Consider sending a reminder to the team if you're expecting more orders.</p></body></html>",
+                    "emailMessage/Importance": "High"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Validate_order_details": [
+                "Succeeded",
+                "Skipped"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "lessOrEquals": [
+                    "@addMinutes(utcnow(), 30)",
+                    "@first(outputs('Get_current_session')?['body/value'])?['OrderDeadline']"
+                  ]
+                },
+                {
+                  "greater": [
+                    "@first(outputs('Get_current_session')?['body/value'])?['OrderDeadline']",
+                    "@utcnow()"
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          }
+        }
+      },
+      "Check_for_duplicate_orders": {
+        "runAfter": {
+          "Process_new_order": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharePointOnline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@parameters('SharePointSite')",
+            "table": "LunchOrders",
+            "filter": "UserName eq '@{triggerBody()?['UserName']}' and OrderDate eq '@{first(outputs('Get_current_session')?['body/value'])?['SessionDate']}' and OrderStatus ne 'Cancelled'"
+          }
+        }
+      },
+      "Handle_duplicate_orders": {
+        "runAfter": {
+          "Check_for_duplicate_orders": [
+            "Succeeded"
+          ]
+        },
+        "type": "If",
+        "expression": {
+          "greater": [
+            "@length(outputs('Check_for_duplicate_orders')?['body/value'])",
+            1
+          ]
+        },
+        "actions": {
+          "Cancel_older_orders": {
+            "foreach": "@skip(outputs('Check_for_duplicate_orders')?['body/value'], 1)",
+            "actions": {
+              "Cancel_order": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "sharePointOnline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "@parameters('SharePointSite')",
+                    "table": "LunchOrders",
+                    "id": "@item()?['ID']",
+                    "item/OrderStatus": "Cancelled"
+                  }
+                }
+              }
+            },
+            "runAfter": {},
+            "type": "Foreach"
+          },
+          "Send_duplicate_notification": {
+            "runAfter": {
+              "Cancel_older_orders": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "emailMessage/To": "@triggerBody()?['UserEmail']",
+                "emailMessage/Subject": "⚠️ Duplicate Order Detected - Latest Order Kept",
+                "emailMessage/Body": "<html><body><h2>Duplicate Order Notice</h2><p>We detected that you had multiple orders for today's lunch. We've kept your most recent order and cancelled the previous ones.</p><p><strong>Current Order:</strong></p><div>@{replace(triggerBody()?['MenuItems'], '\n', '<br/>')}</div><p><strong>Restaurant:</strong> @{triggerBody()?['RestaurantName']}</p><p>If this wasn't intended, please contact the lunch coordinator.</p></body></html>",
+                "emailMessage/Importance": "Normal"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "connectionReferences": {
+    "sharePointOnline": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/sharePointOnline"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/sharePointOnline"
+      }
+    },
+    "office365": {
+      "connection": {
+        "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/office365"
+      },
+      "api": {
+        "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/office365"
+      }
+    }
+  }
+}
