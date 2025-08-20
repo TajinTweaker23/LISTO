@@ -100,7 +100,7 @@ export const colorPalette = {
     950: '#3d1908',
   },
 
-  // Accent Lavender (for magical touches)
+  // Accent Lavender (for special highlights)
   lavender: {
     50: '#faf9ff',
     100: '#f4f2ff',

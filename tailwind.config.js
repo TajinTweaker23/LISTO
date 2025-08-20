@@ -4,10 +4,59 @@ module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./styles/**/*.{css,scss}",
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'monospace'],
+      },
       colors: {
+        // Primary brand colors
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+        },
+        // Legacy brand colors (keeping for compatibility)
+        'brand-background': '#1A1A1A',
+        'brand-surface': '#252525',
+        'brand-primary': '#4A90E2',
+        'brand-secondary': '#50E3C2',
+        'brand-warning': '#F5A623',
+        'brand-border': '#333333',
+        'brand-text-primary': '#FFFFFF',
+        'brand-text-secondary': '#A0A0A0',
+        // New design system colors
+        accent: {
+          success: '#10b981',
+          warning: '#f59e0b',
+          purple: '#a78bfa',
+          coral: '#fb7185',
+        },
+        // Neurodivergent-friendly grays
+        gray: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+        },
+        // Dark mode colors
+        dark: {
+          'bg-primary': '#0f0f23',
+          'bg-secondary': '#16213e',
+          'surface': '#1e2749',
+          'text': '#e2e8f0',
+        },
+        // Existing colors
         cream:   "#FFF7E0",
         blush:   "#FBE4E4",
         sky:     "#E0ECF7",
@@ -42,9 +91,17 @@ module.exports = {
           950: '#0c0a09',
         },
       },
-      fontFamily: {
-        'inter': ['Inter', 'system-ui', 'sans-serif'],
-        'sf-pro': ['SF Pro Display', 'system-ui', 'sans-serif'],
+      fontSize: {
+        'xs': '.75rem',
+        'sm': '.875rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+        '6xl': '4rem',
       },
       backdropBlur: {
         'xs': '2px',

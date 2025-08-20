@@ -27,7 +27,7 @@ export default function MobileUIDemo() {
   const progressSteps = ["Setup", "Profile", "Preferences", "Complete"];
   
   const sampleImages = [
-    { src: "/Modern Workspace.avif", alt: "Modern Workspace", caption: "Inspiring workspace setup" },
+    { src: "/Modern Workspace.avif", alt: "Modern Workspace", caption: "Professional workspace setup" },
     { src: "/Digital tools and devices.avif", alt: "Digital Tools", caption: "Essential digital tools" },
     { src: "/Work Coffee.avif", alt: "Work & Coffee", caption: "Perfect work atmosphere" },
     { src: "/Night Sky.jpg", alt: "Night Sky", caption: "Peaceful night inspiration" },

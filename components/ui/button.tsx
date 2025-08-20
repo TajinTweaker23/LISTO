@@ -7,16 +7,40 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-400",
-        ghost:
-          "bg-transparent text-blue-600 hover:underline focus:ring-blue-200",
-        outline:
-          "border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-400",
-        danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-400",
+        // Primary - Modern gradient with neurodivergent-friendly colors
+        default: "bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700 focus:ring-sky-400 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Primary solid - Clean, accessible
+        primary: "bg-sky-500 text-white hover:bg-sky-600 focus:ring-sky-400 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Gentle - Neurodivergent-friendly soft variant
+        gentle: "bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 hover:border-purple-300 focus:ring-purple-400 transition-all duration-200",
+        
+        // Success - Achievement focused
+        success: "bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-600 hover:to-green-700 focus:ring-emerald-400 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Warning - Attention without alarm
+        warning: "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 focus:ring-amber-400 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Ghost - Minimal interaction
+        ghost: "bg-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-800 focus:ring-gray-200 transition-all duration-200",
+        
+        // Outline - Clean borders
+        outline: "border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-gray-400 transition-all duration-200",
+        
+        // Danger - Error states
+        danger: "bg-gradient-to-r from-red-500 to-rose-600 text-white hover:from-red-600 hover:to-rose-700 focus:ring-red-400 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Glassmorphism - Modern card-like
+        glass: "bg-white/80 backdrop-blur-md border border-white/20 text-gray-800 hover:bg-white/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200",
+        
+        // Glow - Special effects
         glow: "text-green-400 bg-gray-800 border border-gray-600 rounded-2xl uppercase tracking-wider font-bold hover:shadow-[0_0_10px_#34d399,0_0_25px_#2dd4bf,0_0_50px_#34d399] hover:text-white transition-shadow duration-300 delay-[0.6s]",
-        spinner: "", // Add an empty class for spinner
-        dots: "", // Add an empty class for dots
-        bars: "", // Add an empty class for bars
+        
+        // Loading states
+        spinner: "",
+        dots: "",
+        bars: "",
       },
       size: {
         sm: "h-8 px-3",
@@ -178,9 +202,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             z-index: 1;
           }
           .ripple-default { background: rgba(255,255,255,0.3);}
-          .ripple-outline { background: rgba(59,130,246,0.15);}
-          .ripple-ghost { background: rgba(59,130,246,0.10);}
-          .ripple-danger { background: rgba(255,0,0,0.15);}
+          .ripple-primary { background: rgba(255,255,255,0.3);}
+          .ripple-gentle { background: rgba(147,51,234,0.15);}
+          .ripple-success { background: rgba(255,255,255,0.3);}
+          .ripple-warning { background: rgba(255,255,255,0.3);}
+          .ripple-ghost { background: rgba(107,114,128,0.10);}
+          .ripple-outline { background: rgba(107,114,128,0.15);}
+          .ripple-danger { background: rgba(255,255,255,0.3);}
+          .ripple-glass { background: rgba(107,114,128,0.15);}
+          .ripple-glow { background: rgba(52,211,153,0.3);}
           @keyframes ripple {
             to {
               transform: scale(2.5);

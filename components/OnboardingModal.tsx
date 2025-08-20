@@ -614,7 +614,7 @@ const NameStep = ({
   readonly name: string;
   readonly setName: (name: string) => void;
   readonly error: string;
-  readonly inputRef: React.RefObject<HTMLInputElement>;
+  readonly inputRef: React.RefObject<HTMLInputElement | null>;
   readonly onNext: () => void;
   readonly onBack: () => void;
   readonly onContinueLater: () => void;
