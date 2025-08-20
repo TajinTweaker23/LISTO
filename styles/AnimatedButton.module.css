@@ -1,0 +1,144 @@
+/* Animated Button Styles with Customizable Accent Colors */
+.animatedButton {
+  position: relative;
+  padding: 1em 1.8em;
+  outline: none;
+  border: 1px solid #444;
+  background: #282c34;
+  color: var(--accent-color, #ae00ff);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 15px;
+  overflow: hidden;
+  transition: 0.2s;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.animatedButton:hover {
+  box-shadow: 
+    0 0 10px var(--accent-color, #ae00ff), 
+    0 0 25px var(--secondary-color, #001eff), 
+    0 0 50px var(--accent-color, #ae00ff);
+  transition-delay: 0.6s;
+}
+
+.animatedButton span {
+  position: absolute;
+}
+
+.animatedButton span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-color, #ae00ff));
+}
+
+.animatedButton:hover span:nth-child(1) {
+  left: 100%;
+  transition: 0.7s;
+}
+
+.animatedButton span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--secondary-color, #001eff));
+}
+
+.animatedButton:hover span:nth-child(3) {
+  right: 100%;
+  transition: 0.7s;
+  transition-delay: 0.35s;
+}
+
+.animatedButton span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, var(--accent-color, #ae00ff));
+}
+
+.animatedButton:hover span:nth-child(2) {
+  top: 100%;
+  transition: 0.7s;
+  transition-delay: 0.17s;
+}
+
+.animatedButton span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, var(--secondary-color, #001eff));
+}
+
+.animatedButton:hover span:nth-child(4) {
+  bottom: 100%;
+  transition: 0.7s;
+  transition-delay: 0.52s;
+}
+
+.animatedButton:active {
+  background: var(--accent-color, #ae00af);
+  background: linear-gradient(to top right, var(--accent-color, #ae00af), var(--secondary-color, #001eff));
+  color: #bfbfbf;
+  box-shadow: 
+    0 0 8px var(--accent-color, #ae00ff), 
+    0 0 8px var(--secondary-color, #001eff), 
+    0 0 8px var(--accent-color, #ae00ff);
+  transition: 0.1s;
+}
+
+.animatedButton:active span:nth-child(1),
+.animatedButton:active span:nth-child(2), 
+.animatedButton:active span:nth-child(3),
+.animatedButton:active span:nth-child(4) {
+  transition: none;
+  transition-delay: none;
+}
+
+/* Preset Color Themes */
+.animatedButton.theme-purple {
+  --accent-color: #ae00ff;
+  --secondary-color: #001eff;
+}
+
+.animatedButton.theme-green {
+  --accent-color: #00ff88;
+  --secondary-color: #00aaff;
+}
+
+.animatedButton.theme-red {
+  --accent-color: #ff0055;
+  --secondary-color: #ff4400;
+}
+
+.animatedButton.theme-blue {
+  --accent-color: #0088ff;
+  --secondary-color: #4400ff;
+}
+
+.animatedButton.theme-orange {
+  --accent-color: #ff6600;
+  --secondary-color: #ff0066;
+}
+
+.animatedButton.theme-pink {
+  --accent-color: #ff44aa;
+  --secondary-color: #aa00ff;
+}
+
+.animatedButton.theme-cyan {
+  --accent-color: #00aaff;
+  --secondary-color: #00ffaa;
+}
+
+.animatedButton.theme-gold {
+  --accent-color: #ffaa00;
+  --secondary-color: #ff6600;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { 
   Clock, 
@@ -7,7 +7,6 @@ import {
   Flame, 
   ShoppingCart,
   Heart,
-  Star,
   Timer,
   Utensils,
   Image as ImageIcon,
@@ -16,36 +15,8 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
-
-interface Recipe {
-  id: string;
-  title: string;
-  image: string;
-  cookTime: number;
-  servings: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  ingredients: string[];
-  instructions: string[];
-  nutrition: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-  tags: string[];
-  url?: string;
-}
-
-interface RecipeCardProps {
-  recipe: Recipe;
-  isFlipped?: boolean;
-  onFlip?: () => void;
-  onAddToCart?: (ingredients: string[]) => void;
-  onSchedule?: (recipeId: string) => void;
-  size?: 'small' | 'medium' | 'large';
-  dragConstraints?: any;
-  className?: string;
-}
+import { RecipeCardProps } from './types';
+import { DIFFICULTY_COLORS } from './constants';
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({
   recipe,
@@ -73,17 +44,12 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     large: 'w-80 h-96'
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'from-green-400 to-green-600';
-      case 'medium': return 'from-yellow-400 to-orange-500';
-      case 'hard': return 'from-red-400 to-red-600';
-      default: return 'from-gray-400 to-gray-600';
-    }
-  };
+  const getDifficultyColor = useCallback((difficulty: string) => {
+    return DIFFICULTY_COLORS[difficulty as keyof typeof DIFFICULTY_COLORS] || 'from-gray-400 to-gray-600';
+  }, []);
 
-  const handleImageLoad = () => setImageLoaded(true);
-  const handleImageError = () => setImageError(true);
+  const handleImageLoad = useCallback(() => setImageLoaded(true), []);
+  const handleImageError = useCallback(() => setImageError(true), []);
 
   return (
     <motion.div

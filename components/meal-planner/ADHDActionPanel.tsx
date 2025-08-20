@@ -1,8 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Clock, 
-  Calendar, 
   ShoppingCart, 
   Zap, 
   Timer, 
@@ -15,15 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
-
-interface ADHDActionPanelProps {
-  onQuickAdd: () => void;
-  onAutoSchedule: () => void;
-  onShoppingList: () => void;
-  onSetReminders: () => void;
-  focusMode: boolean;
-  onToggleFocus: () => void;
-}
+import { ADHDActionPanelProps } from './types';
 
 export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
   onQuickAdd,
@@ -43,7 +33,7 @@ export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
     });
   }, []);
 
-  const actionItems = [
+  const actionItems = useMemo(() => [
     {
       id: 'quick-add',
       icon: Plus,
@@ -92,7 +82,7 @@ export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
       },
       urgency: 'medium'
     }
-  ];
+  ], []); // Added useMemo dependency array
 
   return (
     <motion.div
@@ -184,8 +174,14 @@ export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
                     >
                       {/* Urgency Indicator */}
                       <div className={`absolute top-2 right-2 w-2 h-2 rounded-full ${
-                        item.urgency === 'high' ? 'bg-red-300' :
-                        item.urgency === 'medium' ? 'bg-yellow-300' : 'bg-green-300'
+                        (() => {
+                          switch (item.urgency) {
+                            case 'high': return 'bg-red-300';
+                            case 'medium': return 'bg-yellow-300';
+                            case 'low': return 'bg-green-300';
+                            default: return 'bg-gray-300';
+                          }
+                        })()
                       }`} />
                       
                       {/* Content */}

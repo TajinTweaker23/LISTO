@@ -1,19 +1,16 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
 import { 
   Calendar,
   ChevronLeft, 
   ChevronRight,
   Plus,
-  Filter,
   Search,
   Zap,
   Grid,
   List,
-  Eye,
   RotateCcw,
-  Settings,
   Brain,
   Sparkles
 } from 'lucide-react';
@@ -25,35 +22,16 @@ import { ADHDActionPanel } from './ADHDActionPanel';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 
-interface Recipe {
-  id: string;
-  title: string;
-  image: string;
-  cookTime: number;
-  servings: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  ingredients: string[];
-  instructions: string[];
-  nutrition: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-  tags: string[];
-  url?: string;
-}
-
-interface MealSlot {
-  date: Date;
-  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe?: Recipe;
-}
-
-interface EnhancedMealPlannerProps {
-  initialRecipes?: Recipe[];
-  onSave?: (meals: MealSlot[]) => void;
-}
+// Import shared types and utilities
+import { Recipe, MealSlot, EnhancedMealPlannerProps, MealType } from './types';
+import { SAMPLE_RECIPES, MEAL_TYPES, MEAL_TYPE_COLORS, FILTER_OPTIONS } from './constants';
+import { 
+  filterRecipes, 
+  findMealSlot, 
+  updateMealSlot, 
+  generateShoppingList,
+  formatMealSlotId 
+} from './utils';
 
 export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
   initialRecipes = [],
@@ -71,72 +49,31 @@ export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+  const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
   // Initialize meal slots for the week
   useEffect(() => {
     const slots: MealSlot[] = [];
     weekDays.forEach(date => {
-      mealTypes.forEach(mealType => {
+      MEAL_TYPES.forEach(mealType => {
         slots.push({ date, mealType });
       });
     });
     setMealSlots(slots);
-  }, [currentWeek]);
+  }, [weekDays]);
 
-  // Sample recipes for demo
+  // Initialize with sample recipes if none provided
   useEffect(() => {
     if (recipes.length === 0) {
-      setRecipes([
-        {
-          id: '1',
-          title: 'Mediterranean Quinoa Bowl',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
-          cookTime: 25,
-          servings: 2,
-          difficulty: 'easy',
-          ingredients: ['Quinoa', 'Chickpeas', 'Cucumber', 'Tomatoes', 'Feta cheese', 'Olive oil', 'Lemon'],
-          instructions: ['Cook quinoa', 'Mix vegetables', 'Add dressing', 'Serve'],
-          nutrition: { calories: 420, protein: 15, carbs: 60, fat: 12 },
-          tags: ['healthy', 'vegetarian', 'mediterranean']
-        },
-        {
-          id: '2',
-          title: 'Salmon Teriyaki',
-          image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400',
-          cookTime: 20,
-          servings: 2,
-          difficulty: 'medium',
-          ingredients: ['Salmon fillet', 'Teriyaki sauce', 'Rice', 'Broccoli', 'Sesame seeds'],
-          instructions: ['Cook salmon', 'Steam broccoli', 'Prepare rice', 'Serve with sauce'],
-          nutrition: { calories: 520, protein: 35, carbs: 45, fat: 18 },
-          tags: ['protein', 'fish', 'asian']
-        },
-        {
-          id: '3',
-          title: 'Avocado Toast Supreme',
-          image: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400',
-          cookTime: 10,
-          servings: 1,
-          difficulty: 'easy',
-          ingredients: ['Sourdough bread', 'Avocado', 'Eggs', 'Cherry tomatoes', 'Everything bagel seasoning'],
-          instructions: ['Toast bread', 'Mash avocado', 'Cook egg', 'Assemble'],
-          nutrition: { calories: 350, protein: 12, carbs: 25, fat: 22 },
-          tags: ['breakfast', 'quick', 'healthy']
-        }
-      ]);
+      setRecipes(SAMPLE_RECIPES);
     }
-  }, []);
+  }, [recipes.length]);
 
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesFilter = selectedFilter === 'all' || 
-                         recipe.tags.includes(selectedFilter) ||
-                         recipe.difficulty === selectedFilter;
-    return matchesSearch && matchesFilter;
-  });
+  // Memoized filtered recipes for performance
+  const filteredRecipes = useMemo(() => 
+    filterRecipes(recipes, searchQuery, selectedFilter), 
+    [recipes, searchQuery, selectedFilter]
+  );
 
   const handleCardFlip = useCallback((recipeId: string) => {
     setFlippedCards(prev => {
@@ -167,12 +104,8 @@ export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
         const [dateStr, mealType] = slotId.split('-');
         const date = new Date(dateStr);
         
-        setMealSlots(prev => prev.map(slot => {
-          if (isSameDay(slot.date, date) && slot.mealType === mealType) {
-            return { ...slot, recipe };
-          }
-          return slot;
-        }));
+        const updatedSlots = updateMealSlot(mealSlots, date, mealType as MealType, recipe);
+        setMealSlots(updatedSlots);
 
         // Celebration animation
         confetti({
@@ -229,14 +162,10 @@ export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
   };
 
   const handleShoppingList = () => {
-    const allIngredients = mealSlots
-      .filter(slot => slot.recipe)
-      .flatMap(slot => slot.recipe!.ingredients);
-    
-    const uniqueIngredients = [...new Set(allIngredients)];
+    const allIngredients = generateShoppingList(mealSlots);
     
     toast.success('Shopping list generated! 🛒', {
-      description: `${uniqueIngredients.length} ingredients added`
+      description: `${allIngredients.length} ingredients added`
     });
   };
 
@@ -246,20 +175,12 @@ export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
     });
   };
 
-  const getMealTypeColor = (mealType: string) => {
-    switch (mealType) {
-      case 'breakfast': return 'from-yellow-400 to-orange-500';
-      case 'lunch': return 'from-green-400 to-blue-500';
-      case 'dinner': return 'from-purple-400 to-pink-500';
-      case 'snack': return 'from-gray-400 to-gray-600';
-      default: return 'from-gray-300 to-gray-500';
-    }
+  const getMealTypeColor = (mealType: MealType) => {
+    return MEAL_TYPE_COLORS[mealType] || 'from-gray-300 to-gray-500';
   };
 
-  const getMealSlot = (date: Date, mealType: string) => {
-    return mealSlots.find(slot => 
-      isSameDay(slot.date, date) && slot.mealType === mealType
-    );
+  const getMealSlot = (date: Date, mealType: MealType) => {
+    return findMealSlot(mealSlots, date, mealType);
   };
 
   return (
@@ -444,7 +365,7 @@ export const EnhancedMealPlanner: React.FC<EnhancedMealPlannerProps> = ({
 
                 {/* Meal Slots */}
                 <div className="p-4">
-                  {mealTypes.map((mealType) => (
+                  {MEAL_TYPES.map((mealType) => (
                     <div key={mealType} className="mb-6">
                       <div className={`text-sm font-semibold mb-2 p-2 rounded-lg bg-gradient-to-r ${getMealTypeColor(mealType)} text-white`}>
                         {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
