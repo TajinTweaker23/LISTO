@@ -39,33 +39,34 @@ const EnhancedToast: React.FC<EnhancedToastProps> = ({ toast, onClose }) => {
   const style = toastStyles[type];
 
   return (
-    <motion.div
-      initial={{ y: 100, opacity: 0, scale: 0.8 }}
-      animate={{ 
-        y: 0, 
-        opacity: 1, 
-        scale: 1,
-        transition: {
-          type: 'spring',
-          stiffness: 300,
-          damping: 20,
-          duration: 0.4,
-        }
-      }}
-      exit={{ 
-        y: 100, 
-        opacity: 0, 
-        scale: 0.8,
-        transition: {
-          duration: 0.3,
-          ease: 'easeInOut',
-        }
-      }}
-          className={`
-            fixed bottom-8 left-1/2 -translate-x-1/2 z-[${designTokens.zIndex.toast}]
-            ${style.bg} ${style.border}
-            text-white px-6 py-4 rounded-2xl shadow-2xl
-            font-semibold text-sm backdrop-blur-sm
+    <AnimatePresence>
+      <motion.div
+        initial={{ y: 100, opacity: 0, scale: 0.8 }}
+        animate={{ 
+          y: 0, 
+          opacity: 1, 
+          scale: 1,
+          transition: {
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            duration: 0.4,
+          }
+        }}
+        exit={{ 
+          y: 100, 
+          opacity: 0, 
+          scale: 0.8,
+          transition: {
+            duration: 0.3,
+            ease: 'easeInOut',
+          }
+        }}
+        className={`
+          fixed bottom-8 left-1/2 -translate-x-1/2 z-[${designTokens.zIndex.toast}]
+          ${style.bg} ${style.border}
+          text-white px-6 py-4 rounded-2xl shadow-2xl
+          font-semibold text-sm backdrop-blur-sm
             border border-solid
             max-w-md w-auto
             flex items-center gap-3
@@ -93,6 +94,7 @@ const EnhancedToast: React.FC<EnhancedToastProps> = ({ toast, onClose }) => {
             </button>
           )}
         </motion.div>
+    </AnimatePresence>
   );
 };
 

@@ -1,0 +1,374 @@
+/* LISTO Premium Component Library - High-End Visual Components */
+
+/* ===========================================
+   PREMIUM GLASSMORPHISM SYSTEM
+   ========================================== */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  transition: all var(--duration-300) var(--ease-out-cubic);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.5);
+}
+
+.glass-card-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ===========================================
+   PREMIUM BUTTON SYSTEM
+   ========================================== */
+
+.btn-premium {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-xl);
+  font-weight: var(--font-semibold);
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition: all var(--duration-200) var(--ease-out-cubic);
+  cursor: pointer;
+  overflow: hidden;
+  border: none;
+  outline: none;
+  user-select: none;
+}
+
+.btn-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left var(--duration-500) var(--ease-out-cubic);
+}
+
+.btn-premium:hover::before {
+  left: 100%;
+}
+
+/* Premium Button Variants */
+.btn-emerald {
+  background: var(--gradient-forest);
+  color: white;
+  box-shadow: var(--shadow-emerald);
+}
+
+.btn-emerald:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cosmic {
+  background: var(--gradient-cosmic);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-cosmic:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+}
+
+.btn-aurora {
+  background: var(--gradient-aurora);
+  color: white;
+  box-shadow: var(--shadow-purple);
+}
+
+.btn-aurora:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(168, 85, 247, 0.4);
+}
+
+/* ===========================================
+   PREMIUM CARD SYSTEM
+   ========================================== */
+
+.card-luxe {
+  background: white;
+  border-radius: var(--radius-3xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-300) var(--ease-out-cubic);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-luxe::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gradient-elevation);
+}
+
+.card-luxe:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-2xl);
+}
+
+.card-feature {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  transition: all var(--duration-300) var(--ease-out-cubic);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-feature::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--duration-500) var(--ease-out-cubic);
+  pointer-events: none;
+}
+
+.card-feature:hover::after {
+  opacity: 1;
+}
+
+.card-feature:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===========================================
+   PREMIUM LOADING ANIMATIONS
+   ========================================== */
+
+@keyframes shimmer-premium {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  animation: shimmer-premium 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes float-premium {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float-premium 3s ease-in-out infinite;
+}
+
+/* ===========================================
+   PREMIUM MICRO-INTERACTIONS
+   ========================================== */
+
+.interactive-hover {
+  transition: all var(--duration-200) var(--ease-out-cubic);
+  cursor: pointer;
+}
+
+.interactive-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.scale-hover {
+  transition: transform var(--duration-200) var(--ease-out-cubic);
+}
+
+.scale-hover:hover {
+  transform: scale(1.05);
+}
+
+.tilt-hover {
+  transition: transform var(--duration-300) var(--ease-out-cubic);
+}
+
+.tilt-hover:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}
+
+/* ===========================================
+   PREMIUM TEXT EFFECTS
+   ========================================== */
+
+.text-gradient-premium {
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: var(--font-bold);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.text-emboss {
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.3), -1px -1px 0 rgba(0,0,0,0.3);
+}
+
+/* ===========================================
+   PREMIUM NAVIGATION ELEMENTS
+   ========================================== */
+
+.nav-link-premium {
+  position: relative;
+  padding: var(--space-3) var(--space-4);
+  color: var(--slate-700);
+  text-decoration: none;
+  font-weight: var(--font-medium);
+  transition: all var(--duration-200) var(--ease-out-cubic);
+  border-radius: var(--radius-lg);
+}
+
+.nav-link-premium::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-aurora);
+  transition: width var(--duration-300) var(--ease-out-cubic);
+}
+
+.nav-link-premium:hover {
+  color: var(--slate-900);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.nav-link-premium:hover::before {
+  width: 100%;
+}
+
+/* ===========================================
+   PREMIUM FORM ELEMENTS
+   ========================================== */
+
+.input-premium {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  border: 2px solid transparent;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 1rem;
+  font-weight: var(--font-medium);
+  transition: all var(--duration-200) var(--ease-out-cubic);
+  outline: none;
+}
+
+.input-premium:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* ===========================================
+   PREMIUM UTILITY CLASSES
+   ========================================== */
+
+.premium-gradient-bg {
+  background: var(--gradient-aurora);
+}
+
+.premium-blur {
+  backdrop-filter: var(--backdrop-blur-lg);
+  -webkit-backdrop-filter: var(--backdrop-blur-lg);
+}
+
+.premium-shadow {
+  box-shadow: var(--shadow-xl);
+}
+
+.premium-border {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.premium-transition {
+  transition: all var(--duration-300) var(--ease-out-cubic);
+}
+
+/* ===========================================
+   RESPONSIVE PREMIUM FEATURES
+   ========================================== */
+
+@media (max-width: 768px) {
+  .btn-premium {
+    padding: var(--space-3) var(--space-5);
+    font-size: 0.8rem;
+  }
+  
+  .card-luxe {
+    border-radius: var(--radius-2xl);
+  }
+  
+  .card-feature {
+    padding: var(--space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-animation,
+  .pulse-glow,
+  .loading-shimmer {
+    animation: none;
+  }
+  
+  .card-luxe:hover,
+  .card-feature:hover,
+  .btn-premium:hover {
+    transform: none;
+  }
+}

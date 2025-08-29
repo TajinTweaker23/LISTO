@@ -4,7 +4,8 @@ export interface ToastState {
   id: number;
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
-  duration?: number;
+  duration: number;
+  timestamp: number;
 }
 
 export interface Achievement {
@@ -152,9 +153,13 @@ export interface AppState {
 // Hook Return Types
 export interface UseToastReturn {
   toasts: ToastState[];
-  addToast: (message: string, type?: ToastState['type'], duration?: number) => number;
+  addToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', duration?: number) => number;
   removeToast: (id: number) => void;
-  clearAllToasts: () => void;
+  clearAll: () => void;
+  success: (message: string, duration?: number) => number;
+  error: (message: string, duration?: number) => number;
+  info: (message: string, duration?: number) => number;
+  warning: (message: string, duration?: number) => number;
 }
 
 export interface UseAchievementsReturn {

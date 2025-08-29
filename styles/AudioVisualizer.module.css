@@ -1,0 +1,180 @@
+/* AudioVisualizer Component Styles */
+.audioPlayerContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.audioPlayerToggle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.audioPlayerToggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.audioVisualizerWindow {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  z-index: 999;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.audioVisualizerWindow.visible {
+  transform: translateY(0);
+}
+
+.audioVisualizerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.swipeHandle {
+  width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: grab;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.swipeHandle:hover {
+  background: rgba(255, 255, 255, 0.8);
+  width: 80px;
+}
+
+.swipeHandle:active {
+  cursor: grabbing;
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Particle system canvas styles */
+canvas {
+  pointer-events: none;
+}
+
+/* Music service indicators */
+.serviceIndicator {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.serviceDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.serviceDot.spotify {
+  background: #1DB954;
+}
+
+.serviceDot.youtube {
+  background: #FF0000;
+}
+
+.serviceDot.apple {
+  background: #FA233B;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+/* Keep music playing toggle */
+.keepMusicToggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+}
+
+.keepMusicToggle input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #667eea;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .audioPlayerContainer {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .audioPlayerToggle {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  
+  .audioVisualizerWindow {
+    height: 150px;
+  }
+  
+  .serviceIndicator,
+  .keepMusicToggle {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
+
+/* Smooth animations for particle effects */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+}
+
+.particleAnimation {
+  animation: particleFloat 3s ease-in-out infinite;
+}

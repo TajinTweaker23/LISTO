@@ -197,6 +197,37 @@ export default function Gallery() {
           </motion.div>
         ))}
       </div>
+
+      {/* Modal */}
+      {modalImg && (
+        <dialog 
+          open
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 max-w-none max-h-none w-full h-full border-0"
+          onClose={() => setModalImg(null)}
+        >
+          <div className="max-w-4xl max-h-full bg-white rounded-lg p-4">
+            <div className="relative">
+              <img
+                src={modalImg.url}
+                alt={modalImg.caption}
+                className="max-w-full max-h-96 object-contain rounded"
+              />
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl bg-white rounded-full w-8 h-8 flex items-center justify-center"
+                onClick={() => setModalImg(null)}
+                aria-label="Close modal"
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold">{modalImg.caption}</h3>
+              <p className="text-sm text-gray-600">{modalImg.category}</p>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 }

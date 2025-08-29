@@ -1,12 +1,19 @@
-import React, { useState, useCallback, useRef, useEffect, createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect, ReactNode } from 'react';
 import { UseFocusTimerReturn } from '../types';
+
+const FocusTimerContext = createContext<UseFocusTimerReturn | undefined>(undefined);
+
+export function useFocusTimerContext() {
+  const context = useContext(FocusTimerContext);
+  if (context === undefined) {
+    throw new Error('useFocusTimerContext must be used within a FocusTimerProvider');
+  }
+  return context;
+}
 
 const DEFAULT_FOCUS_DURATION = 25 * 60; // 25 minutes in seconds
 const DEFAULT_BREAK_DURATION = 5 * 60;  // 5 minutes in seconds
 
-/**
- * Custom hook for managing focus timer (Pomodoro technique) with persistence and notifications
- */
 export const useFocusTimer = (): UseFocusTimerReturn => {
   const [isActive, setIsActive] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(DEFAULT_FOCUS_DURATION);
@@ -19,12 +26,10 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Calculate progress percentage
   const progress = type === 'focus'
     ? ((DEFAULT_FOCUS_DURATION - timeRemaining) / DEFAULT_FOCUS_DURATION) * 100
     : ((DEFAULT_BREAK_DURATION - timeRemaining) / DEFAULT_BREAK_DURATION) * 100;
 
-  // Cleanup interval on unmount
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
@@ -45,7 +50,6 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     setTimeRemaining(duration);
     setIsActive(true);
 
-    // Request notification permission if not granted
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
@@ -64,8 +68,25 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     setIsActive(false);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
   }, []);
+
+  const reset = useCallback(() => {
+    setIsActive(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setTimeRemaining(type === 'focus' ? DEFAULT_FOCUS_DURATION : DEFAULT_BREAK_DURATION);
+  }, [type]);
+
+  const handleFocusSessionComplete = useCallback(() => {
+    const newCount = sessionsCompleted + 1;
+    setSessionsCompleted(newCount);
+    localStorage.setItem('focus-sessions-completed', newCount.toString());
+    showNotification('Focus Session Complete! 🎉', 'Time for a well-deserved break!');
+  }, [sessionsCompleted, showNotification]);
 
   const reset = useCallback(() => {
     setIsActive(false);
@@ -87,14 +108,17 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     }
   }, [type, sessionsCompleted, showNotification]);
 
-  // Handle timer completion
   useEffect(() => {
     if (timeRemaining > 0 || !isActive) return;
 
     setIsActive(false);
-    handleSessionComplete();
 
-    // Trigger achievement check
+    if (type === 'focus') {
+      handleFocusSessionComplete();
+    } else {
+      handleBreakComplete();
+    }
+
     const event = new CustomEvent('focusSessionCompleted', {
       detail: { sessionsCompleted: type === 'focus' ? sessionsCompleted + 1 : sessionsCompleted }
     });
@@ -104,21 +128,11 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
   return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset };
 };
 
-const FocusTimerContext = createContext<UseFocusTimerReturn | undefined>(undefined);
-
-export const FocusTimerProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+export function FocusTimerProvider({ children }: { readonly children: ReactNode }) {
   const focusTimer = useFocusTimer();
   return (
     <FocusTimerContext.Provider value={focusTimer}>
       {children}
     </FocusTimerContext.Provider>
   );
-};
-
-export function useFocusTimerContext() {
-  const context = useContext(FocusTimerContext);
-  if (context === undefined) {
-    throw new Error('useFocusTimerContext must be used within a FocusTimerProvider');
-  }
-  return context;
 }

@@ -1,24 +1,54 @@
 /** @type {import('next').NextConfig} */
-const withPWA = require("next-pwa")({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
-});
-
 const nextConfig = {
   reactStrictMode: true,
-  images: {
-    domains: [
-      "images.unsplash.com"
-    ],
+  swcMinify: true,
+  
+  // PWA Configuration
+  async headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/',
+          },
+        ],
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json',
+          },
+        ],
+      },
+    ];
   },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
-  },
+  
+  // Enable experimental features for PWA
   experimental: {
-    scrollRestoration: true,
+    // Enable if you want app directory support
+    // appDir: true,
+  },
+  
+  // Webpack configuration for PWA
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+      };
+    }
+    return config;
   },
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;

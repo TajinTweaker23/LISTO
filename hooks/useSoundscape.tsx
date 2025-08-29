@@ -113,16 +113,7 @@ export const useSoundscape = (): UseSoundscapeReturn => {
     }
   }, [isMuted]);
 
-  const stop = useCallback(() => {
-    if (soundRef.current) {
-      soundRef.current.stop();
-      setIsPlaying(false);
-    }
-    setCurrentSoundscape('');
-    localStorage.removeItem('soundscape');
-  }, []);
-
-  return { currentSoundscape, setSoundscape, isPlaying, volume: volumeLevel, setVolume, muted: isMuted, toggleMute, stop };
+  return { currentSoundscape, setSoundscape, isPlaying, volume: volumeLevel, setVolume, muted: isMuted, toggleMute, stop: () => {} };
 };
 
 export const SoundscapeContext = createContext<UseSoundscapeReturn | undefined>(undefined);

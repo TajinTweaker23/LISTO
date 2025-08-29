@@ -1,20 +1,106 @@
 {
   "name": "LISTO",
   "short_name": "LISTO",
+  "description": "LISTO is your productivity hub, featuring Advanced PDF Editor Pro with AI enhancements, offline support, and large file handling up to 200MB.",
+  "version": "1.2.0",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "orientation": "any",
   "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "business"],
   "icons": [
+    { "src": "/icons/icon-72x72.png", "sizes": "72x72", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-96x96.png", "sizes": "96x96", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-128x128.png", "sizes": "128x128", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-144x144.png", "sizes": "144x144", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-152x152.png", "sizes": "152x152", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-384x384.png", "sizes": "384x384", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icons/icon-maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "name": "New PDF Edit",
+      "short_name": "New Edit",
+      "description": "Start editing a new PDF document",
+      "url": "/tools/pdf-editor?action=new",
+      "icons": [
+        { "src": "/icons/shortcut-new-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "name": "Recent Files",
+      "short_name": "Recent",
+      "description": "Access recently edited PDF files",
+      "url": "/tools/pdf-editor?action=recent",
+      "icons": [
+        { "src": "/icons/shortcut-recent-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Tutorial",
+      "short_name": "Help",
+      "description": "Learn how to use the PDF editor",
+      "url": "/tools/pdf-editor?action=tutorial",
+      "icons": [
+        { "src": "/icons/shortcut-help-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "PDF Editor interface on desktop"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "360x800",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "PDF Editor interface on mobile"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "Offline Support",
+    "AI Enhancement",
+    "Large File Support",
+    "Privacy First"
+  ],
+  "file_handlers": [
+    {
+      "action": "/tools/pdf-editor",
+      "accept": { "application/pdf": [".pdf"] },
+      "launch_type": "single-client"
+    }
+  ],
+  "share_target": {
+    "action": "/tools/pdf-editor/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        { "name": "pdf", "accept": ["application/pdf", ".pdf"] }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "pdf-edit",
+      "url": "/tools/pdf-editor?file=%s"
+    }
+  ],
+  "edge_side_panel": { "preferred_width": 400 },
+  "launch_handler": { "client_mode": "focus-existing" },
+  "prefer_related_applications": false,
+  "related_applications": []
 }

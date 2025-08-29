@@ -4,6 +4,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const DefaultCalendar = () => {
   const [date, setDate] = useState(new Date());
 
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
   const renderCalendar = () => {
     const month = date.getMonth();
     const year = date.getFullYear();
@@ -28,13 +33,16 @@ const DefaultCalendar = () => {
   const handlePrevMonth = () => setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   const handleNextMonth = () => setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
 
+  const currentMonth = date.getMonth();
+  const currentYear = date.getFullYear();
+
   return (
     <div className="device">
       <header>
         <div className="month-nav">
-          <button onClick={handlePrevMonth} aria-label="Previous month"><ChevronLeft /></button>
-          <h2 className="month">{date.toLocaleString('default', { month: 'long' })} {date.getFullYear()}</h2>
-          <button onClick={handleNextMonth} aria-label="Next month"><ChevronRight /></button>
+                    <button onClick={handlePrevMonth} title="Previous month" aria-label="Previous month"><ChevronLeft /></button>
+          <span className="month">{months[currentMonth]} {currentYear}</span>
+          <button onClick={handleNextMonth} title="Next month" aria-label="Next month"><ChevronRight /></button>
         </div>
         <div className="header-weekdays">
           <span>sun</span><span>mon</span><span>tue</span><span>wed</span><span>thu</span><span>fri</span><span>sat</span>

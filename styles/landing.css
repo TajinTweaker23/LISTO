@@ -1,411 +1,483 @@
-/*-- -------------------------- -->
-<---           Hero             -->
-<--- -------------------------- -*/
+"use client";
 
-/* Mobile - 360px */
-@media only screen and (min-width: 0rem) {
-  #hero-2274 {
-    /* 150px - 350px Top */
-    padding: clamp(9rem, 30.95vw, 21.875rem) 1rem 0;
-    overflow: hidden;
-    position: relative;
-    z-index: 10;
-  }
-  #hero-2274 .cs-container {
-    width: 100%;
-    max-width: 80rem;
-    margin: auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5.5rem;
-  }
-  #hero-2274 .cs-content {
-    /* set text align to left if content needs to be left aligned */
-    text-align: left;
-    width: 100%;
-    max-width: 39.375rem;
-    display: flex;
-    flex-direction: column;
-    /* centers content horizontally, set to flex-start to left align */
-    align-items: flex-start;
-    position: relative;
-    z-index: 10;
-  }
-  #hero-2274 .cs-title {
-    /* 39px - 61px */
-    font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
-    font-weight: 900;
-    text-transform: uppercase;
-    line-height: 1.2em;
-    width: 100%;
-    max-width: 17ch;
-    margin: 0 0 1rem;
-    color: var(--bodyTextColorWhite);
-    position: relative;
-  }
-  #hero-2274 .cs-text {
-    /* 16px - 20px */
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    line-height: 1.5em;
-    width: 100%;
-    max-width: 43.75rem;
-    /* 28px - 40px */
-    margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
-    color: var(--bodyTextColorWhite);
-    opacity: 0.8;
-  }
-  #hero-2274 .cs-button-solid {
-    font-size: 1rem;
-    text-align: center;
-    /* 46px - 56px */
-    line-height: clamp(2.875rem, 5.5vw, 3.5rem);
-    text-decoration: none;
-    font-weight: 700;
-    /* clips corners of the before element */
-    overflow: hidden;
-    margin: 0;
-    color: #fff;
-    padding: 0 1.75rem;
-    background-color: var(--primary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    position: relative;
-    z-index: 1;
-    transition: color 0.3s;
-  }
-  #hero-2274 .cs-button-solid:before {
-    content: "";
-    position: absolute;
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: #000;
-    opacity: 1;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    transition: width 0.3s;
-  }
-  #hero-2274 .cs-button-solid:hover {
-    color: #fff;
-  }
-  #hero-2274 .cs-button-solid:hover:before {
-    width: 100%;
-  }
-  #hero-2274 .cs-picture {
-    width: 100%;
-    /* 427px - 581px */
-    max-width: clamp(26.6875rem, 50vw, 36.3125rem);
-    height: auto;
-    display: flex;
-    align-items: flex-end;
-    position: relative;
-    z-index: 7;
-  }
-  #hero-2274 .cs-picture img {
-    width: 100%;
-    height: auto;
-  }
-  #hero-2274 .cs-image-group {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-  }
-  #hero-2274 .cs-background {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    z-index: 1;
-  }
-  #hero-2274 .cs-background img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  #hero-2274 .cs-background1:before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background: #000;
-    opacity: 0.72;
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  #hero-2274 .cs-background2 {
-    height: 100vw;
-    max-height: 30rem;
-    flex: none;
-  }
-}
-/* Tablet - 768px */
-@media only screen and (min-width: 48rem) {
-  #hero-2274 {
-    padding-bottom: 9.375rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5.625rem;
-  }
-  #hero-2274 .cs-container {
-    justify-content: flex-start;
-    flex-direction: row;
-  }
-  #hero-2274 .cs-content {
-    text-align: left;
-    width: 53%;
-    align-items: flex-start;
-  }
-  #hero-2274 .cs-picture {
-    width: 56%;
-    position: absolute;
-    bottom: -4.0625rem;
-    right: -1.875rem;
-  }
-  #hero-2274 .cs-image-group {
-    flex-direction: row;
-  }
-  #hero-2274 .cs-background2 {
-    width: 25vw;
-    height: 100%;
-    max-height: 100%;
-    border-left: 2px solid #FFC219;
-  }
-}
-/* Desktop - 1024px */
-@media only screen and (min-width: 64rem) {
-  #hero-2274 {
-    /* 100px - 172px */
-    padding-bottom: clamp(6.25rem, 12vw, 10.9375rem);
-  }
-  #hero-2274 .cs-picture {
-    width: 45%;
-    /* same value as the padding, but opposite */
-    bottom: calc(-1 * clamp(6.25rem, 12vw, 10.9375rem));
-    /* 32px - 80px */
-    right: clamp(2rem, 5vw, 5rem);
-  }
-  #hero-2274 .cs-background2 {
-    width: 32.8125vw;
-  }
+import React from 'react';
+import { cn } from '../../lib/utils';
+import { Card, CardContent } from '../ui/card';
+import { AdaptiveLayout } from '../ui/AdaptiveLayout';
+
+// Enhanced Hero Component with modern practices
+interface HeroProps extends React.HTMLAttributes<HTMLDivElement> {
+  title: string;
+  description: string;
+  ctaText?: string;
+  ctaHref?: string;
+  onCtaClick?: () => void;
+  heroImage?: string;
+  heroImageAlt?: string;
+  backgroundImage?: string;
+  variant?: 'default' | 'minimal' | 'gradient';
+  enableParallax?: boolean;
 }
 
-/*-- -------------------------- -->
-<---         Services           -->
-<--- -------------------------- -*/
+const Hero: React.FC<HeroProps> = ({
+  title,
+  description,
+  ctaText = "Get Started",
+  ctaHref,
+  onCtaClick,
+  heroImage,
+  heroImageAlt = "Hero image",
+  backgroundImage,
+  variant = 'default',
+  enableParallax = false,
+  className,
+  ...props
+}) => {
+  const [scrollY, setScrollY] = React.useState(0);
 
-/* Mobile - 360px */
-@media only screen and (min-width: 0rem) {
-  #Hservices-2274 {
-    width: 100%;
-    padding: var(--sectionPadding);
-    position: relative;
-    z-index: 20;
-  }
-  #Hservices-2274 .cs-container {
-    max-width: 80rem;
-    margin: auto;
-    position: relative;
-    z-index: 1;
-  }
-  #Hservices-2274 .cs-card-group {
-    width: 100%;
-    max-width: 80rem;
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    row-gap: 2rem;
-  }
-  #Hservices-2274 .cs-item {
-    text-align: left;
-    list-style: none;
-    width: 100%;
-    box-sizing: border-box;
-    grid-column: span 12;
-    position: relative;
-    z-index: 1;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  #Hservices-2274 .cs-item:last-of-type .cs-link {
-    /* 32px - 80px top & bottom */
-    /* 16px - 80px left & right */
-    padding: clamp(2rem, 7vw, 5rem) clamp(1rem, 4vw, 5rem);
-    box-sizing: border-box;
-  }
-  #Hservices-2274 .cs-item:last-of-type .cs-icon {
-    width: 4rem;
-    margin-bottom: 1.5rem;
-  }
-  #Hservices-2274 .cs-item:last-of-type .cs-h3 {
-    font-size: 1.5625rem;
-  }
-  #Hservices-2274 .cs-item:last-of-type .cs-item-text {
-    margin-bottom: 2rem;
-  }
-  #Hservices-2274 .cs-number {
-    font-size: 4.5rem;
-    line-height: 1.2em;
-    font-weight: 700;
-    margin: 0;
-    color: var(--headerColor);
-  }
-  #Hservices-2274 .cs-fake-link {
-    font-size: 1rem;
-    line-height: 1.2em;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin: 0;
-    padding: 0 0 0.25rem 0;
-    border-bottom: 1px solid var(--primary);
-    color: var(--primary);
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  #Hservices-2274 .cs-background {
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  #Hservices-2274 .cs-background:before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    opacity: 1;
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  #Hservices-2274 .cs-background img {
-    width: 100%;
-    height: 100%;
-    opacity: 0.08;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  #Hservices-2274 .cs-link {
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  #Hservices-2274 .cs-icon {
-    width: 2.5rem;
-    height: auto;
-    margin: 0 0 1.25rem 0;
-  }
-  #Hservices-2274 .cs-h3 {
-    /* 20px - 25px */
-    font-size: clamp(1.25rem, 2vw, 1.5625rem);
-    font-weight: 700;
-    text-align: inherit;
-    line-height: 1.2em;
-    margin: 0 0 0.5rem 0;
-    color: var(--headerColor);
-    transition: color 0.3s;
-  }
-  #Hservices-2274 .cs-item-text {
-    /* 14px - 16px */
-    font-size: clamp(0.875rem, 1.5vw, 1rem);
-    text-align: inherit;
-    line-height: 1.5em;
-    margin: 0;
-    color: var(--bodyTextColor);
-    transition: color 0.3s, opacity 0.3s;
-  }
+  // Parallax effect
+  React.useEffect(() => {
+    if (!enableParallax) return;
+
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [enableParallax]);
+
+  const heroVariants = {
+    default: "bg-gradient-to-br from-primary-900 via-neutral-900 to-sage-900",
+    minimal: "bg-background",
+    gradient: "bg-gradient-to-r from-sage-600 via-primary-600 to-sage-700"
+  };
+
+  return (
+    <section
+      className={cn(
+        // Base styles
+        "relative min-h-screen flex items-center justify-center overflow-hidden",
+        "pt-safe-top px-4 lg:px-8",
+        heroVariants[variant],
+        className
+      )}
+      aria-label="Hero section"
+      {...props}
+    >
+      {/* Background Image with Overlay */}
+      {backgroundImage && (
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            transform: enableParallax ? `translateY(${scrollY * 0.5}px)` : undefined
+          }}
+        >
+          <img
+            src={backgroundImage}
+            alt=""
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
+        </div>
+      )}
+
+      <AdaptiveLayout
+        className="relative z-10 w-full max-w-7xl mx-auto"
+        pattern="default"
+      >
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[80vh]">
+          
+          {/* Content Section */}
+          <div className="space-y-8 text-center lg:text-left">
+            <div className="space-y-6">
+              <h1 className={cn(
+                "font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl",
+                "leading-tight tracking-tight",
+                "text-white drop-shadow-lg",
+                "animate-slide-up"
+              )}>
+                {title.split(' ').map((word, index) => (
+                  <span
+                    key={index}
+                    className={cn(
+                      "inline-block",
+                      index === 0 && "text-primary-400"
+                    )}
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    {word}&nbsp;
+                  </span>
+                ))}
+              </h1>
+              
+              <p className={cn(
+                "text-xl lg:text-2xl text-neutral-200 max-w-2xl mx-auto lg:mx-0",
+                "leading-relaxed opacity-90",
+                "animate-slide-up animation-delay-200"
+              )}>
+                {description}
+              </p>
+            </div>
+
+            {/* CTA Button */}
+            {(ctaText && (ctaHref || onCtaClick)) && (
+              <div className="animate-slide-up animation-delay-400">
+                <button
+                  onClick={onCtaClick}
+                  className={cn(
+                    // Base styles
+                    "group relative inline-flex items-center justify-center",
+                    "px-8 py-4 text-lg font-bold text-white",
+                    "bg-primary-600 hover:bg-primary-700",
+                    "rounded-lg shadow-lg hover:shadow-xl",
+                    "transition-all duration-300",
+                    "focus:outline-none focus:ring-4 focus:ring-primary-500/50",
+                    "transform hover:scale-105 active:scale-95",
+                    // Mobile optimizations
+                    "min-h-[44px] min-w-[44px] touch-manipulation"
+                  )}
+                  aria-label={`${ctaText} - Start your journey`}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {ctaText}
+                    <svg
+                      className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
+                  </span>
+                  
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Hero Image */}
+          {heroImage && (
+            <div className="relative animate-fade-in animation-delay-600">
+              <div className={cn(
+                "relative z-10",
+                enableParallax && "transform-gpu"
+              )}
+              style={{
+                transform: enableParallax ? `translateY(${scrollY * -0.1}px)` : undefined
+              }}>
+                <img
+                  src={heroImage}
+                  alt={heroImageAlt}
+                  className="w-full max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto rounded-2xl shadow-2xl"
+                  loading="eager"
+                />
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary-400/20 rounded-full blur-xl animate-pulse" />
+              <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-sage-400/20 rounded-full blur-2xl animate-pulse animation-delay-1000" />
+            </div>
+          )}
+        </div>
+      </AdaptiveLayout>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <svg
+          className="w-6 h-6 text-white/70"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </div>
+    </section>
+  );
+};
+
+// Enhanced Services Component
+interface ServiceItem {
+  id: string;
+  title: string;
+  description: string;
+  icon?: React.ReactNode;
+  image?: string;
+  href?: string;
+  badge?: string;
+  stats?: {
+    value: string;
+    label: string;
+  };
 }
-/* Tablet - 768px */
-@media only screen and (min-width: 48rem) {
-  #Hservices-2274 .cs-card-group {
-    width: 44%;
-  }
-  #Hservices-2274 .cs-item:last-of-type {
-    width: 49%;
-    position: absolute;
-    right: 0;
-    top: calc(clamp(10rem, 20vw, 12.5rem)*-1);
-  }
+
+interface ServicesProps extends React.HTMLAttributes<HTMLDivElement> {
+  title?: string;
+  subtitle?: string;
+  services: ServiceItem[];
+  layout?: 'grid' | 'masonry' | 'carousel';
+  columns?: 2 | 3 | 4;
+  featuredService?: ServiceItem;
+  onServiceClick?: (service: ServiceItem) => void;
 }
-/* Desktop - 1024px */
-@media only screen and (min-width: 64rem) {
-  #Hservices-2274 .cs-item:last-of-type {
-    width: 37vw;
-    max-width: 25rem;
-  }
+
+const Services: React.FC<ServicesProps> = ({
+  title = "Our Services",
+  subtitle,
+  services,
+  layout = 'grid',
+  columns = 3,
+  featuredService,
+  onServiceClick,
+  className,
+  ...props
+}) => {
+  const gridCols = {
+    2: 'lg:grid-cols-2',
+    3: 'lg:grid-cols-3',
+    4: 'lg:grid-cols-4'
+  };
+
+  return (
+    <section
+      className={cn(
+        "relative py-16 lg:py-24 bg-background",
+        "safe-area-x",
+        className
+      )}
+      aria-label="Services section"
+      {...props}
+    >
+      <AdaptiveLayout className="relative z-20">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          {subtitle && (
+            <p className="text-primary-600 font-semibold text-lg tracking-wide uppercase">
+              {subtitle}
+            </p>
+          )}
+          <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
+            {title}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-12 relative">
+          
+          {/* Regular Services Grid */}
+          <div className={cn(
+            "grid grid-cols-1 gap-6",
+            !featuredService && gridCols[columns],
+            featuredService && "md:col-span-1 xl:col-span-2"
+          )}>
+            {services.map((service, index) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                index={index}
+                onClick={() => onServiceClick?.(service)}
+              />
+            ))}
+          </div>
+
+          {/* Featured Service */}
+          {featuredService && (
+            <div className="md:col-span-2 xl:col-span-1">
+              <FeaturedServiceCard
+                service={featuredService}
+                onClick={() => onServiceClick?.(featuredService)}
+              />
+            </div>
+          )}
+        </div>
+      </AdaptiveLayout>
+    </section>
+  );
+};
+
+// Service Card Component
+interface ServiceCardProps {
+  service: ServiceItem;
+  index: number;
+  onClick?: () => void;
 }
-/* Large Desktop - 1300px */
-@media only screen and (min-width: 81.25rem) {
-  #Hservices-2274 {
-    padding: 0;
-  }
-  #Hservices-2274 .cs-card-group {
-    width: 53.75rem;
-    padding: 3.75rem 0;
-    column-gap: 1.25rem;
-  }
-  #Hservices-2274 .cs-item {
-    grid-column: span 4;
-  }
-  #Hservices-2274 .cs-item:last-of-type {
-    top: auto;
-    bottom: 0;
-  }
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, index, onClick }) => (
+  <Card 
+    className={cn(
+      "group cursor-pointer h-full transition-all duration-300",
+      "hover:shadow-xl hover:-translate-y-1",
+      "border-border/50 hover:border-primary-200",
+      "animate-slide-up"
+    )}
+    style={{ animationDelay: `${index * 150}ms` }}
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    aria-label={`Learn more about ${service.title}`}
+  >
+    <CardContent className="p-6 h-full flex flex-direction-column">
+      
+      {/* Icon or Image */}
+      <div className="mb-4">
+        {service.icon ? (
+          <div className="w-12 h-12 text-primary-600 group-hover:text-primary-700 transition-colors">
+            {service.icon}
+          </div>
+        ) : service.image ? (
+          <img
+            src={service.image}
+            alt=""
+            className="w-12 h-12 object-cover rounded-lg"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+            <div className="w-6 h-6 bg-primary-600 rounded" />
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 space-y-3">
+        <div className="flex items-start justify-between">
+          <h3 className="text-xl font-bold text-foreground group-hover:text-primary-700 transition-colors">
+            {service.title}
+          </h3>
+          {service.badge && (
+            <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-medium">
+              {service.badge}
+            </span>
+          )}
+        </div>
+        
+        <p className="text-muted-foreground leading-relaxed">
+          {service.description}
+        </p>
+
+        {service.stats && (
+          <div className="pt-4 border-t border-border/50">
+            <div className="text-2xl font-bold text-primary-600">
+              {service.stats.value}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {service.stats.label}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Hover arrow */}
+      <div className="mt-4 flex items-center text-primary-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-sm">Learn More</span>
+        <svg
+          className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// Featured Service Card Component
+interface FeaturedServiceCardProps {
+  service: ServiceItem;
+  onClick?: () => void;
 }
-/* Dark Mode */
-@media only screen and (min-width: 0rem) {
-  body.dark-mode #Hservices-2274 .cs-card-group {
-    background-color: var(--dark);
-  }
-  body.dark-mode #Hservices-2274 .cs-background {
-    background-color: var(--dark);
-  }
-  body.dark-mode #Hservices-2274 .cs-background:before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    opacity: 1;
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  body.dark-mode #Hservices-2274 .cs-h3,
-  body.dark-mode #Hservices-2274 .cs-item-text,
-  body.dark-mode #Hservices-2274 .cs-number {
-    color: var(--bodyTextColorWhite);
-  }
-  body.dark-mode #Hservices-2274 .cs-text {
-    opacity: 0.8;
-  }
-}
+
+const FeaturedServiceCard: React.FC<FeaturedServiceCardProps> = ({ service, onClick }) => (
+  <Card 
+    className={cn(
+      "group cursor-pointer h-full relative overflow-hidden",
+      "bg-gradient-to-br from-primary-600 to-sage-700",
+      "text-white border-0 shadow-2xl",
+      "hover:shadow-3xl hover:scale-[1.02] transition-all duration-500",
+      "animate-slide-up animation-delay-600"
+    )}
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    aria-label={`Featured service: ${service.title}`}
+  >
+    {/* Background Pattern */}
+    <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent)]" />
+    </div>
+
+    <CardContent className="relative z-10 p-8 h-full flex flex-direction-column">
+      
+      {/* Featured Badge */}
+      <div className="mb-6">
+        <span className="bg-white/20 text-white text-sm font-bold px-3 py-1 rounded-full backdrop-blur">
+          ✨ Featured
+        </span>
+      </div>
+
+      {/* Icon */}
+      <div className="mb-6">
+        {service.icon ? (
+          <div className="w-16 h-16 text-white/90">
+            {service.icon}
+          </div>
+        ) : (
+          <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+            <div className="w-8 h-8 bg-white rounded-lg" />
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 space-y-4">
+        <h3 className="text-2xl lg:text-3xl font-bold text-white">
+          {service.title}
+        </h3>
+        
+        <p className="text-white/90 text-lg leading-relaxed">
+          {service.description}
+        </p>
+
+        {service.stats && (
+          <div className="pt-6">
+            <div className="text-4xl font-black text-white">
+              {service.stats.value}
+            </div>
+            <div className="text-white/80 font-medium">
+              {service.stats.label}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* CTA */}
+      <div className="mt-8 flex items-center text-white font-bold text-lg group-hover:translate-x-2 transition-transform">
+        <span>Explore Now</span>
+        <svg
+          className="w-6 h-6 ml-3 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export { Hero, Services, type HeroProps, type ServicesProps, type ServiceItem };
