@@ -77,4 +77,5 @@ Thumbs.db
 # Lunch Ordering System - deployment artifacts
 lunch-ordering-system/scripts/deployment-log-*.txt
 lunch-ordering-system/scripts/cleanup-log-*.txt
-lunch-ordering-system/scripts/dashboard-modified.html
+lunch-ordering-system/scripts/dashboard-modified.html.next/
+node_modules/
