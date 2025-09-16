@@ -67,31 +67,7 @@ const useDeviceCapabilities = () => {
   }, []);
 
   return capabilities;
-};
-        orientation: width > height ? 'landscape' : 'portrait',
-        viewportHeight: height,
-        safeAreaTop,
-        safeAreaBottom,
-        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-        highContrast: window.matchMedia('(prefers-contrast: high)').matches,
-        supportsHaptics: 'vibrate' in navigator,
-      });
-    };
-
-    updateCapabilities();
-    window.addEventListener('resize', updateCapabilities);
-    window.addEventListener('orientationchange', updateCapabilities);
-
-    return () => {
-      window.removeEventListener('resize', updateCapabilities);
-      window.removeEventListener('orientationchange', updateCapabilities);
-    };
-  }, []);
-
-  return capabilities;
-};
-
-// Hook for pull-to-refresh
+};// Hook for pull-to-refresh
 const usePullToRefresh = (onRefresh: () => Promise<void>, enabled = true) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [pullDistance, setPullDistance] = React.useState(0);

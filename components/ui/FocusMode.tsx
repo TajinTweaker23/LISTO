@@ -70,34 +70,6 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
     </div>
   );
 };
-      document.documentElement.style.removeProperty('--animation-speed');
-      document.documentElement.style.removeProperty('--transition-speed');
-    }
-    
-    onToggle?.(newState);
-  };
-
-  const updatePreference = (key: keyof typeof preferences, value: boolean) => {
-    setPreferences(prev => ({ ...prev, [key]: value }));
-    
-    // Apply preference immediately
-    switch (key) {
-      case 'reducedMotion':
-        document.documentElement.style.setProperty(
-          '--motion-preference', 
-          value ? 'reduce' : 'no-preference'
-        );
-        break;
-      case 'highContrast':
-        document.documentElement.classList.toggle('high-contrast', value);
-        break;
-      case 'largerText':
-        document.documentElement.classList.toggle('large-text', value);
-        break;
-    }
-  };
-
-  return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
