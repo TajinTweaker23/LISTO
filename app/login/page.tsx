@@ -26,6 +26,8 @@ export default function LoginPage() {
     }
   }, [user]);
 
+  const [rememberMe, setRememberMe] = useState(true); // Default to remember for minimal re-auth
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -37,7 +39,7 @@ export default function LoginPage() {
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
-      // Redirect will happen automatically via useEffect
+      // Persistence is handled in AuthContext
     } catch (err: any) {
       setError(err.message);
     } finally {

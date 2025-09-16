@@ -19,6 +19,8 @@ const useDeviceCapabilities = () => {
     reducedMotion: false,
     highContrast: false,
     supportsHaptics: false,
+    isIPad: false,
+    isAndroid: false,
   });
 
   React.useEffect(() => {
@@ -32,12 +34,40 @@ const useDeviceCapabilities = () => {
       const safeAreaBottom = parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--safe-area-inset-bottom') || '0');
 
+      const userAgent = navigator.userAgent;
+      const isIPad = /iPad/.test(userAgent) || (/Macintosh/.test(userAgent) && 'ontouchend' in document);
+      const isAndroid = /Android/.test(userAgent);
+
       setCapabilities({
         isMobile: width < 768,
         isTablet: width >= 768 && width < 1024,
         isDesktop: width >= 1024,
         hasTouch: 'ontouchstart' in window,
         hasHover: window.matchMedia('(hover: hover)').matches,
+        orientation: height > width ? 'portrait' : 'landscape',
+        viewportHeight: height,
+        safeAreaTop,
+        safeAreaBottom,
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        highContrast: window.matchMedia('(prefers-contrast: high)').matches,
+        supportsHaptics: 'vibrate' in navigator,
+        isIPad,
+        isAndroid,
+      });
+    };
+
+    updateCapabilities();
+    window.addEventListener('resize', updateCapabilities);
+    window.addEventListener('orientationchange', updateCapabilities);
+    
+    return () => {
+      window.removeEventListener('resize', updateCapabilities);
+      window.removeEventListener('orientationchange', updateCapabilities);
+    };
+  }, []);
+
+  return capabilities;
+};
         orientation: width > height ? 'landscape' : 'portrait',
         viewportHeight: height,
         safeAreaTop,

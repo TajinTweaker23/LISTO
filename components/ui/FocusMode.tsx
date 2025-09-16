@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Eye, Volume2 } from 'lucide-react';
+import { Brain, Eye, Volume2, Heart } from 'lucide-react';
 
 interface FocusModeProps {
   onToggle?: (isEnabled: boolean) => void;
@@ -14,6 +14,7 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
     largerText: false,
     soundEnabled: true,
   });
+  const [wellnessPrompt, setWellnessPrompt] = useState('Take a deep breath and focus on your goals.');
 
   useEffect(() => {
     // Check for system preferences
@@ -36,8 +37,39 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
       document.documentElement.classList.add('focus-mode');
       document.documentElement.style.setProperty('--animation-speed', '0s');
       document.documentElement.style.setProperty('--transition-speed', '0.1s');
+      // Add wellness overlay
+      setWellnessPrompt('Great job entering focus mode! Remember to stay hydrated.');
     } else {
       document.documentElement.classList.remove('focus-mode');
+      setWellnessPrompt('Focus session complete. How do you feel?');
+    }
+    onToggle?.(newState);
+  };
+
+  return (
+    <div className="relative">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleFocusMode}
+        className={`px-4 py-2 rounded-lg font-semibold transition-all ${isEnabled ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+      >
+        <Brain className="inline mr-2" />
+        {isEnabled ? 'Exit Focus Mode' : 'Enter Focus Mode'}
+      </motion.button>
+      {isEnabled && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-full mt-2 bg-blue-50 p-4 rounded-lg shadow-lg"
+        >
+          <Heart className="inline mr-2 text-red-500" />
+          {wellnessPrompt}
+        </motion.div>
+      )}
+    </div>
+  );
+};
       document.documentElement.style.removeProperty('--animation-speed');
       document.documentElement.style.removeProperty('--transition-speed');
     }
