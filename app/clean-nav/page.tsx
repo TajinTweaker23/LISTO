@@ -175,22 +175,23 @@ export default function CleanDashboard() {
               </motion.div>
             );
           })}
+          </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40"
-        >
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            ✨ Navigation Hub Active!
-          </h2>
-          <p className="text-gray-600">
-            All pages are organized and ready to explore. Click any card to navigate to that feature.
-          </p>
-        </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="mt-12 text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 max-w-6xl mx-auto"
+      >
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          ✨ Navigation Hub Active!
+        </h2>
+        <p className="text-gray-600">
+          All pages are organized and ready to explore. Click any card to navigate to that feature.
+        </p>
+      </motion.div>
     </div>
   );
 }
