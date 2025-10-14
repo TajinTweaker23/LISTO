@@ -78,4 +78,14 @@ Thumbs.db
 lunch-ordering-system/scripts/deployment-log-*.txt
 lunch-ordering-system/scripts/cleanup-log-*.txt
 lunch-ordering-system/scripts/dashboard-modified.html.next/
-node_modules/
+
+# Merge conflict backup files
+*_BACKUP_*
+*_BASE_*
+*_LOCAL_*
+*_REMOTE_*
+
+# Temporary files
+/tmp/
+*.tmp
+*.bak
