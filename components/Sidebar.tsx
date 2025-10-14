@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, LayoutDashboard, Calendar, FileText, Settings, Users, Heart } from 'lucide-react';
+import Link from 'next/link';
 import Logo from './Logo';
 import DarkModeToggle from './ui/DarkModeToggle';
 
@@ -15,16 +16,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
     { id: 'talavera', label: 'Talavera', icon: Users, href: '/talavera' },
     { id: 'explore', label: 'Explore', icon: Users, href: '/explore' },
     { id: 'health', label: 'Health Hub', icon: Heart, href: '/health' },
-    { id: 'calendar', label: 'Calendar', icon: Calendar, href: '/calendar' },
+    { id: 'meal-planner', label: 'Meal Planner', icon: Calendar, href: '/meal-planner' },
     { id: 'vision-board', label: 'Vision Board', icon: FileText, href: '/vision-board' },
     { id: 'settings', label: 'Settings', icon: Settings, href: '#' },
   ];
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    console.log(`Navigating to ${href}`);
-    onClose();
-  };
 
   return (
     <>
@@ -59,14 +54,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
               const IconComponent = item.icon;
               return (
                 <li key={item.id} className="mb-2">
-                  <a
+                  <Link
                     href={item.href}
-                    onClick={(e) => handleLinkClick(e, item.href)}
                     className="nav-link group"
                   >
                     <IconComponent className="w-5 h-5 transition-colors group-hover:text-primary-600" />
                     <span className="font-medium">{item.label}</span>
-                  </a>
+                  </Link>
                 </li>
               );
             })}
@@ -116,14 +110,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
                   const IconComponent = item.icon;
                   return (
                     <li key={item.id} className="mb-2">
-                      <a
+                      <Link
                         href={item.href}
-                        onClick={(e) => handleLinkClick(e, item.href)}
                         className="nav-link group"
                       >
                         <IconComponent className="w-5 h-5 transition-colors group-hover:text-primary-600" />
                         <span className="font-medium">{item.label}</span>
-                      </a>
+                      </Link>
                     </li>
                   );
                 })}
