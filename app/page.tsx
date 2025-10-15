@@ -12,7 +12,8 @@ import {
   Target,
   Shield,
   Calendar,
-  Star
+  Star,
+  LayoutDashboard
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -128,6 +129,16 @@ export default function HomePage() {
                 </button>
               </Link>
             </motion.div>
+          </motion.div>
+
+          {/* Navigation Hub Link */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <Link href="/clean-nav">
+              <button className="text-blue-600 hover:text-blue-700 font-semibold text-lg flex items-center justify-center gap-2 mx-auto transition-colors">
+                <LayoutDashboard className="w-5 h-5" />
+                Browse All Features →
+              </button>
+            </Link>
           </motion.div>
         </motion.header>
 
