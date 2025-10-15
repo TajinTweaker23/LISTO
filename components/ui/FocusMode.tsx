@@ -46,6 +46,13 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
     onToggle?.(newState);
   };
 
+  const updatePreference = (key: keyof typeof preferences, value: boolean) => {
+    setPreferences(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
