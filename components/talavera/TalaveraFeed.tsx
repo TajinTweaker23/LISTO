@@ -331,8 +331,7 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-wide">Talavera</h1>
           <Button
             onClick={() => setShowUploadModal(true)}
-            variant="animated"
-            theme="purple"
+            variant="primary"
             className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-3 sm:px-4 py-2"
           >
             <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -367,8 +366,7 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
               >
                 <Button
                   onClick={() => setSelectedFilter(filter.key)}
-                  variant="animated"
-                  theme={isSelected ? "purple" : undefined}
+                  variant={isSelected ? "primary" : "secondary"}
                   className={`flex-shrink-0 flex items-center gap-1 sm:gap-2 text-xs px-2 sm:px-3 py-1 sm:py-2 ${
                     isSelected ? '' : 'bg-white/10 text-gray-300 hover:bg-white/20'
                   }`}
@@ -427,8 +425,7 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
               </p>
               <Button
                 onClick={() => setShowUploadModal(true)}
-                variant="animated"
-                theme="purple"
+                variant="primary"
                 className="mx-auto text-sm sm:text-base"
               >
                 <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
@@ -458,10 +455,10 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
             <VideoUploadStudio
               isOpen={true}
               onClose={() => setShowUploadModal(false)}
-              onPublish={(videoData) => {
+              onUpload={(videoData) => {
                 handleUpload({
                   content: {
-                    videoUrl: URL.createObjectURL(videoData.file),
+                    videoUrl: videoData.mediaUrl,
                     thumbnailUrl: '',
                     caption: videoData.caption,
                     duration: 30,

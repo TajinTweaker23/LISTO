@@ -47,29 +47,6 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
   };
 
   return (
-    <div className="relative">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={toggleFocusMode}
-        className={`px-4 py-2 rounded-lg font-semibold transition-all ${isEnabled ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}
-      >
-        <Brain className="inline mr-2" />
-        {isEnabled ? 'Exit Focus Mode' : 'Enter Focus Mode'}
-      </motion.button>
-      {isEnabled && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-full mt-2 bg-blue-50 p-4 rounded-lg shadow-lg"
-        >
-          <Heart className="inline mr-2 text-red-500" />
-          {wellnessPrompt}
-        </motion.div>
-      )}
-    </div>
-  );
-};
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
