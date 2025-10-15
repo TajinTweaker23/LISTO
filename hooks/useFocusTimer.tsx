@@ -72,15 +72,6 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     }
   }, []);
 
-  const reset = useCallback(() => {
-    setIsActive(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setTimeRemaining(type === 'focus' ? DEFAULT_FOCUS_DURATION : DEFAULT_BREAK_DURATION);
-  }, [type]);
-
   const handleFocusSessionComplete = useCallback(() => {
     const newCount = sessionsCompleted + 1;
     setSessionsCompleted(newCount);

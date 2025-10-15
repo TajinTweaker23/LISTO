@@ -24,6 +24,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "downlevelIteration": true,
     "types": [
       "node"
     ],

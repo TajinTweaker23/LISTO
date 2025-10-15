@@ -81,3 +81,73 @@ const MEDICAL_ADMIN_TIPS = [
     timeToRead: 12
   }
 ];
+
+export default function MedicalMicroLearning() {
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const currentFact = MEDICAL_FACTS[currentFactIndex];
+
+  const nextFact = () => {
+    setCurrentFactIndex((prev) => (prev + 1) % MEDICAL_FACTS.length);
+  };
+
+  const previousFact = () => {
+    setCurrentFactIndex((prev) => (prev - 1 + MEDICAL_FACTS.length) % MEDICAL_FACTS.length);
+  };
+
+  return (
+    <div className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Brain className="w-8 h-8 text-purple-600" />
+          <h2 className="text-2xl font-bold text-gray-800">Medical Micro-Learning</h2>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <Clock className="w-4 h-4" />
+          <span>5 min read</span>
+        </div>
+      </div>
+
+      <motion.div
+        key={currentFactIndex}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="space-y-4"
+      >
+        <div className="flex items-start gap-3 p-4 bg-white rounded-xl">
+          <Activity className="w-6 h-6 text-emerald-500 mt-1" />
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                {currentFact.category}
+              </span>
+              <span className="text-xs text-gray-500">{currentFact.brainRotLevel}</span>
+            </div>
+            <p className="text-lg text-gray-800 mb-2">{currentFact.fact}</p>
+            {currentFact.funFact && (
+              <p className="text-sm text-gray-600 italic">{currentFact.funFact}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <button
+            onClick={previousFact}
+            className="px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            ← Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            {currentFactIndex + 1} of {MEDICAL_FACTS.length}
+          </span>
+          <button
+            onClick={nextFact}
+            className="px-4 py-2 bg-purple-600 rounded-lg text-white hover:bg-purple-700 transition-colors"
+          >
+            Next →
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

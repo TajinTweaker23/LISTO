@@ -1,16 +1,9 @@
-import { Inter } from 'next/font/google';
 import './globals.css';
 import '../styles/design-system.css';
 import '../styles/neurodivergent-features.css';
 import '../styles/mobile-optimized.css';
 import '../styles/premium-design-tokens.css';
 import '../styles/premium-components.css';
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-inter'
-});
 
 export const metadata = {
   title: 'LISTO - Your Health & Wellness Companion',
@@ -40,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} font-sans`}>
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en" className="font-sans">
+      <body className="antialiased">
         <div className="min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-sage-100">
           {children}
         </div>
