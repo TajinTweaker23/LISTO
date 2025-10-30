@@ -62,7 +62,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   const { navigateWithFeedback, isNavigating } = useEnhancedNavigation();
   
   const isLoading = loading || (href && isNavigating);
-  const isDisabled = disabled || isLoading;
+  const isDisabled = Boolean(disabled || isLoading);
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (isDisabled) return;
@@ -110,7 +110,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   const motionProps = {
     whileHover: hoverScale && !isDisabled ? { scale: 1.02 } : undefined,
     whileTap: !isDisabled ? { scale: 0.98 } : undefined,
-    transition: { type: 'spring', stiffness: 400, damping: 25 }
+    transition: { type: 'spring' as const, stiffness: 400, damping: 25 }
   };
 
   const content = (
@@ -174,8 +174,10 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
         className={buttonClasses}
         onClick={handleClick}
         disabled={isDisabled}
-        {...motionProps}
-        {...props}
+        whileHover={motionProps.whileHover}
+        whileTap={motionProps.whileTap}
+        transition={motionProps.transition}
+        type={props.type}
       >
         {content}
       </motion.button>
@@ -188,8 +190,10 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
       className={buttonClasses}
       onClick={handleClick}
       disabled={isDisabled}
-      {...motionProps}
-      {...props}
+      whileHover={motionProps.whileHover}
+      whileTap={motionProps.whileTap}
+      transition={motionProps.transition}
+      type={props.type}
     >
       {content}
     </motion.button>

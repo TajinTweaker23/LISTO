@@ -90,22 +90,22 @@ const AnimatedMenu: React.FC = () => {
       }, "close")
       .to(logoRef.current, 0.8, {
         scale: 1, opacity: 1, ease: Power4.easeInOut
-      }, "close", "+=0.2")
+      }, "close+=0.2")
       .to(menuTopRef.current, 0.8, {
         y: "-113%",
         ease: Power4.easeInOut
-      }, "close", "+=0.2")
+      }, "close+=0.2")
       .to(menuMiddleRef.current, 0.8, {
         scaleY: 0,
         ease: Power4.easeInOut
-      }, "close", "+=0.2")
+      }, "close+=0.2")
       .to(menuBottomRef.current, 0.8, {
         y: "23%",
         ease: Power4.easeInOut,
         onComplete: () => {
             gsap.set([menuTopRef.current, menuMiddleRef.current, menuBottomRef.current], { backgroundColor: '#ffffff' });
         }
-      }, "close", "+=0.2")
+      }, "close+=0.2")
       .to(closeTriggerLeft!, 0.2, {
         x: "+=100px", y: "-=100px", ease: Power4.easeIn
       }, "close")
