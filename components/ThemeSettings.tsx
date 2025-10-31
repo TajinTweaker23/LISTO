@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import Button from './Button';
+import { Button } from './ui/button';
 
 type ColorTheme = 'purple' | 'green' | 'red' | 'blue' | 'orange' | 'pink' | 'cyan' | 'gold';
 
@@ -102,9 +102,7 @@ const ThemeSettings: React.FC = () => {
         <div className="flex gap-2">
           <Button
             onClick={handleCustomColorUpdate}
-            accentColor={customAccent}
-            secondaryColor={customSecondary}
-            useGlobalTheme={false}
+            className="px-4 py-2"
           >
             Apply Custom Colors
           </Button>
@@ -117,7 +115,7 @@ const ThemeSettings: React.FC = () => {
         <div className="flex flex-wrap gap-3">
           <Button>Primary Button</Button>
           <Button disabled>Disabled Button</Button>
-          <Button style={{ fontSize: '12px', padding: '0.7em 1.2em' }}>Small Button</Button>
+          <Button className="text-sm px-4 py-2">Small Button</Button>
         </div>
       </div>
 
@@ -125,9 +123,8 @@ const ThemeSettings: React.FC = () => {
       <div className="pt-4 border-t border-gray-600">
         <Button
           onClick={resetToDefault}
-          theme="red"
-          useGlobalTheme={false}
-          style={{ fontSize: '14px', padding: '0.8em 1.5em' }}
+          variant="danger"
+          className="px-6 py-2"
         >
           Reset to Default
         </Button>

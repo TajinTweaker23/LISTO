@@ -88,16 +88,9 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     setTimeRemaining(duration);
   }, [type]);
 
-  const handleSessionComplete = useCallback(() => {
-    if (type === 'focus') {
-      const newCount = sessionsCompleted + 1;
-      setSessionsCompleted(newCount);
-      localStorage.setItem('focus-sessions-completed', newCount.toString());
-      showNotification('Focus Session Complete! 🎉', 'Time for a well-deserved break!');
-    } else {
-      showNotification('Break Complete! ⚡', 'Ready to focus again?');
-    }
-  }, [type, sessionsCompleted, showNotification]);
+  const handleBreakComplete = useCallback(() => {
+    showNotification('Break Complete! ⚡', 'Ready to focus again?');
+  }, [showNotification]);
 
   useEffect(() => {
     if (timeRemaining > 0 || !isActive) return;
@@ -114,7 +107,7 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
       detail: { sessionsCompleted: type === 'focus' ? sessionsCompleted + 1 : sessionsCompleted }
     });
     window.dispatchEvent(event);
-  }, [timeRemaining, isActive, type, handleSessionComplete, sessionsCompleted]);
+  }, [timeRemaining, isActive, type, handleFocusSessionComplete, handleBreakComplete, sessionsCompleted]);
 
   return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset: resetTimer };
 };

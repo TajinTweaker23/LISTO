@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "../../context/AuthContext";
 import { auth } from "../../lib/firebase";
 import { 
   signInWithEmailAndPassword, 
@@ -12,19 +11,11 @@ import {
 } from "firebase/auth";
 
 export default function LoginPage() {
-  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isNewUser, setIsNewUser] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Redirect if already logged in
-  useEffect(() => {
-    if (user) {
-      window.location.href = '/dashboard';
-    }
-  }, [user]);
 
   const [rememberMe, setRememberMe] = useState(true); // Default to remember for minimal re-auth
 
@@ -61,21 +52,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
-  if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <div className="text-6xl mb-4">✨</div>
-          <p className="text-xl text-gray-600">Redirecting to your dashboard...</p>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
