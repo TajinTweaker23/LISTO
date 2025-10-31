@@ -301,16 +301,12 @@ export default function ExampleEnhancedPage() {
 }
 
 // Example API route with security protection
+// Note: This is an example pattern for API routes, not for getServerSideProps
+// In a real API route, use: export default protectAPI(async (req, res) => { ... })
 export async function getServerSideProps(context: any) {
-  // Apply rate limiting and security checks
-  const isProtected = await protectAPI(context.req);
+  // For demonstration purposes only
+  // In production, apply protectAPI wrapper in actual API routes at /pages/api/*
   
-  if (!isProtected) {
-    return {
-      notFound: true,
-    };
-  }
-
   return {
     props: {
       secure: true,
