@@ -59,6 +59,7 @@ interface TalaveraCardProps {
   onSave?: (postId: string) => void;
   onFollow?: (userId: string) => void;
   isActive?: boolean;
+  isVisible?: boolean;
 }
 
 const TalaveraCard: React.FC<TalaveraCardProps> = ({

@@ -8,6 +8,8 @@ import DarkModeToggle from './ui/DarkModeToggle';
 interface SidebarProps {
   readonly isOpen?: boolean;
   readonly onClose?: () => void;
+  readonly currentView?: string;
+  readonly onViewChange?: (view: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) => {

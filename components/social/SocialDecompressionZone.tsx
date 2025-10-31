@@ -85,7 +85,7 @@ const SocialDecompressionZone: React.FC<SocialDecompressionProps> = ({
         recognitionRef.current.interimResults = true;
         recognitionRef.current.lang = 'en-US';
 
-        recognitionRef.current.onresult = (event) => {
+        recognitionRef.current.onresult = (event: any) => {
           let finalTranscript = '';
           let interimTranscript = '';
 
@@ -116,7 +116,7 @@ const SocialDecompressionZone: React.FC<SocialDecompressionProps> = ({
           }, 3000);
         };
 
-        recognitionRef.current.onerror = (event) => {
+        recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
           addToast('Speech recognition error. Please try again.', 'error');
           resetSpeechState();
