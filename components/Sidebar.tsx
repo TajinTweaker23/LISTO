@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, LayoutDashboard, Calendar, FileText, Settings, Users, Heart } from 'lucide-react';
+import { X, LayoutDashboard, Calendar, FileText, Settings, Users, Heart, Search } from 'lucide-react';
 import Link from 'next/link';
 import Logo from './Logo';
 import DarkModeToggle from './ui/DarkModeToggle';
@@ -14,11 +14,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
     { id: 'talavera', label: 'Talavera', icon: Users, href: '/talavera' },
-    { id: 'explore', label: 'Explore', icon: Users, href: '/explore' },
+    { id: 'explore', label: 'Explore', icon: Search, href: '/explore' },
     { id: 'health', label: 'Health Hub', icon: Heart, href: '/health' },
     { id: 'meal-planner', label: 'Meal Planner', icon: Calendar, href: '/meal-planner' },
     { id: 'vision-board', label: 'Vision Board', icon: FileText, href: '/vision-board' },
-    { id: 'settings', label: 'Settings', icon: Settings, href: '#' },
+    { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
   ];
 
   return (
