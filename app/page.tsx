@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -17,9 +16,6 @@ import {
 
 export default function HomePage() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, -100]);
-  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -60,45 +56,40 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-warm-gray-50 to-emerald-50 relative overflow-hidden">
       {/* Animated Background Elements */}
-      <motion.div
-        style={{ y: y1 }}
+      <div
         className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-emerald-200/30 to-sage-200/30 rounded-full blur-3xl opacity-50"
       />
-      <motion.div
-        style={{ y: y2 }}
+      <div
         className="absolute top-96 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl opacity-50"
       />
 
       <div className="relative z-10 p-6 md:p-8 mobile-padding">
         {/* Header with Dynamic Greeting */}
-        <motion.header 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+        <header 
           className="text-center mb-16 app-header"
         >
-          <motion.div variants={itemVariants} className="glass-card inline-block px-6 py-3 rounded-full mb-8">
+          <div className="glass-card inline-block px-6 py-3 rounded-full mb-8">
             <span className="text-slate-700 font-medium text-lg">
               {getGreeting()}, Welcome back! 
               <span className="ml-2">✨</span>
             </span>
-          </motion.div>
+          </div>
           
-          <motion.h1 variants={itemVariants} className="hero-text text-6xl md:text-8xl font-black mb-8">
+          <h1 className="hero-text text-6xl md:text-8xl font-black mb-8">
             <span className="text-gradient-premium bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
               LISTO
             </span>
-          </motion.h1>
+          </h1>
           
-          <motion.p variants={itemVariants} className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
+          <p className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto mb-12 font-medium leading-relaxed">
             Your neurodivergent-friendly companion for{' '}
             <span className="text-emerald-600 font-bold"> growth</span>,{' '}
             <span className="text-purple-600 font-bold"> wellness</span>, and{' '}
             <span className="text-blue-600 font-bold"> meaningful connections</span>
-          </motion.p>
+          </p>
 
           {/* Centered CTA Section */}
-          <motion.div variants={itemVariants} className="max-w-md mx-auto mb-12">
+          <div className="max-w-md mx-auto mb-12">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
               <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center">Get Started Today</h3>
               
@@ -134,18 +125,15 @@ export default function HomePage() {
                 Start Your Journey
               </button>
             </div>
-          </motion.div>
-        </motion.header>
+          </div>
+        </header>
 
         {/* Quick Navigation Cards */}
-        <motion.div 
+        <div 
           className="card-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
         >
           {/* Wellness Card */}
-          <motion.div variants={itemVariants} className="card-feature interactive-hover float-animation">
+          <div className="card-feature interactive-hover float-animation">
             <div className="flex items-center mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl flex items-center justify-center mr-6 pulse-glow">
                 <Heart className="w-10 h-10 text-white" />
@@ -174,10 +162,10 @@ export default function HomePage() {
                 Explore Wellness <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
-          </motion.div>
+          </div>
 
           {/* Medical Hub Card */}
-          <motion.div variants={itemVariants} className="card-feature interactive-hover" style={{animationDelay: '0.1s'}}>
+          <div className="card-feature interactive-hover" style={{animationDelay: '0.1s'}}>
             <div className="flex items-center mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-3xl flex items-center justify-center mr-6">
                 <Brain className="w-10 h-10 text-white" />
@@ -206,10 +194,10 @@ export default function HomePage() {
                 Access Medical Hub <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
-          </motion.div>
+          </div>
 
           {/* Vision Board Card */}
-          <motion.div variants={itemVariants} className="card-feature interactive-hover float-animation" style={{animationDelay: '0.2s'}}>
+          <div className="card-feature interactive-hover float-animation" style={{animationDelay: '0.2s'}}>
             <div className="flex items-center mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-3xl flex items-center justify-center mr-6">
                 <Sparkles className="w-10 h-10 text-white" />
@@ -238,78 +226,66 @@ export default function HomePage() {
                 Create Vision <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Premium Community Impact Section */}
-        <motion.div 
+        <div 
           className="card-luxe p-12 mb-20 overflow-hidden relative"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
         >
           {/* Background Effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5"></div>
           <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
           
           <div className="relative z-10">
-            <motion.div variants={itemVariants} className="text-center mb-12">
+            <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-slate-800 mb-4">
                 Community <span className="text-gradient-premium">Impact</span>
               </h2>
               <p className="text-xl text-slate-600 max-w-2xl mx-auto">
                 Real metrics from our thriving neurodivergent community
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <motion.div 
-                variants={itemVariants} 
+              <div 
                 className="text-center group hover:scale-105 transition-transform duration-300"
               >
                 <div className="text-5xl font-black text-gradient-emerald mb-3">12.4k</div>
                 <div className="text-slate-700 font-semibold text-lg mb-1">Focus Sessions</div>
                 <div className="text-sm text-slate-500 font-medium">This month</div>
-              </motion.div>
+              </div>
               
-              <motion.div 
-                variants={itemVariants} 
+              <div 
                 className="text-center group hover:scale-105 transition-transform duration-300"
               >
                 <div className="text-5xl font-black text-gradient-ocean mb-3">8.9k</div>
                 <div className="text-slate-700 font-semibold text-lg mb-1">Goals Achieved</div>
                 <div className="text-sm text-slate-500 font-medium">All time</div>
-              </motion.div>
+              </div>
               
-              <motion.div 
-                variants={itemVariants} 
+              <div 
                 className="text-center group hover:scale-105 transition-transform duration-300"
               >
                 <div className="text-5xl font-black text-gradient-sunset mb-3">24.7k</div>
                 <div className="text-slate-700 font-semibold text-lg mb-1">Community Support</div>
                 <div className="text-sm text-slate-500 font-medium">Interactions</div>
-              </motion.div>
+              </div>
               
-              <motion.div 
-                variants={itemVariants} 
+              <div 
                 className="text-center group hover:scale-105 transition-transform duration-300"
               >
                 <div className="text-5xl font-black text-gradient-cosmic mb-3">156k</div>
                 <div className="text-slate-700 font-semibold text-lg mb-1">Growth Moments</div>
                 <div className="text-sm text-slate-500 font-medium">Tracked</div>
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Premium Floating Action Button - Break Reminder */}
-        <motion.div
+        <div
           className="fixed bottom-8 right-8 z-50"
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ delay: 1.5, type: "spring", stiffness: 200, damping: 15 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
         >
           <button
             className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-premium hover:shadow-premium-lg transition-all duration-300 backdrop-blur-sm border border-white/20 group relative overflow-hidden"
@@ -330,7 +306,7 @@ export default function HomePage() {
             {/* Ripple Effect */}
             <div className="absolute inset-0 rounded-full animate-ping-slow bg-gradient-to-br from-indigo-400/30 to-purple-400/30 scale-110"></div>
           </button>
-        </motion.div>
+        </div>
 
         {/* Footer */}
         <footer className="mt-20 bg-slate-900 text-white py-12">

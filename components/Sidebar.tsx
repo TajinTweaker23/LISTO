@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { X, LayoutDashboard, Calendar, FileText, Settings, Users, Heart, Search } from 'lucide-react';
 import Link from 'next/link';
 import Logo from './Logo';
@@ -25,22 +24,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
 
   return (
     <>
-      <AnimatePresence>
+      <div>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+          <div
             className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm z-40 lg:hidden"
             onClick={onClose}
             aria-hidden="true"
           />
         )}
-      </AnimatePresence>
+      </div>
 
       {/* Desktop Sidebar */}
-      <motion.div
+      <div
         className="fixed inset-y-0 left-0 w-64 bg-white bg-opacity-95 backdrop-blur-xl border-r border-gray-200 border-opacity-60 z-50 p-6 flex-col hidden lg:flex shadow-lg"
         aria-label="Main navigation"
       >
@@ -80,16 +75,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
             <p className="text-xs text-gray-500">Unlock advanced wellness insights</p>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Mobile Sidebar */}
-      <AnimatePresence>
+      <div>
         {isOpen && (
-          <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          <div
             className="fixed inset-y-0 left-0 w-64 bg-white bg-opacity-95 backdrop-blur-xl border-r border-gray-200 border-opacity-60 z-50 p-6 flex flex-col lg:hidden shadow-2xl"
             aria-label="Mobile navigation"
           >
@@ -136,9 +127,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose = () => {} }) 
                 <p className="text-xs text-gray-500">Advanced features</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
     </>
   );
 };
