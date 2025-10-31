@@ -303,7 +303,7 @@ export default function ExampleEnhancedPage() {
 // Example API route with security protection
 export async function getServerSideProps(context: any) {
   // Apply rate limiting and security checks
-  const isProtected = await protectAPI(context.req, context.res);
+  const isProtected = await protectAPI(context.req);
   
   if (!isProtected) {
     return {
