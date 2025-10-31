@@ -62,7 +62,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   const { navigateWithFeedback, isNavigating } = useEnhancedNavigation();
   
   const isLoading = loading || (href && isNavigating);
-  const isDisabled = disabled || isLoading;
+  const isDisabled = Boolean(disabled || isLoading);
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (isDisabled) return;
@@ -110,7 +110,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   const motionProps = {
     whileHover: hoverScale && !isDisabled ? { scale: 1.02 } : undefined,
     whileTap: !isDisabled ? { scale: 0.98 } : undefined,
-    transition: { type: 'spring', stiffness: 400, damping: 25 }
+    transition: { type: 'spring' as const, stiffness: 400, damping: 25 }
   };
 
   const content = (
@@ -168,6 +168,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   );
 
   if (href && !external) {
+    const { onAnimationStart, onAnimationEnd, onDragStart, onDragEnd, onDrag, ...safeProps } = props;
     return (
       <motion.button
         ref={buttonRef}
@@ -175,13 +176,14 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
         onClick={handleClick}
         disabled={isDisabled}
         {...motionProps}
-        {...props}
+        {...safeProps}
       >
         {content}
       </motion.button>
     );
   }
 
+  const { onAnimationStart, onAnimationEnd, onDragStart, onDragEnd, onDrag, ...safeProps } = props;
   return (
     <motion.button
       ref={buttonRef}
@@ -189,7 +191,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
       onClick={handleClick}
       disabled={isDisabled}
       {...motionProps}
-      {...props}
+      {...safeProps}
     >
       {content}
     </motion.button>

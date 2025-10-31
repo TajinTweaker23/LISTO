@@ -12,8 +12,14 @@ import {
   Target
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { toast } from 'sonner';
 import { ADHDActionPanelProps } from './types';
+
+// Simple toast replacement
+const toast = {
+  success: (message: string) => console.log('✅', message),
+  error: (message: string) => console.error('❌', message),
+  info: (message: string) => console.info('ℹ️', message),
+};
 
 export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
   onQuickAdd,
@@ -28,9 +34,7 @@ export const ADHDActionPanel: React.FC<ADHDActionPanelProps> = ({
 
   const markActionComplete = useCallback((actionId: string) => {
     setCompletedActions(prev => new Set([...prev, actionId]));
-    toast.success("Action completed! 🎉", {
-      description: "Great job staying on track!"
-    });
+    toast.success("Action completed! 🎉 - Great job staying on track!");
   }, []);
 
   const actionItems = useMemo(() => [

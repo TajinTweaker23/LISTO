@@ -209,11 +209,6 @@ export const AchievementsProvider: React.FC<{children: React.ReactNode}> = ({ ch
 export const useAchievementsContext = () => {
   const context = React.useContext(AchievementsContext);
   if (context === undefined) {
-    throw new Error('useAchievementsContext must be used within a AchievementsProvider');
-  }
-  return context;
-};
-  if (context === undefined) {
     throw new Error('useAchievementsContext must be used within an AchievementsProvider');
   }
   return context;

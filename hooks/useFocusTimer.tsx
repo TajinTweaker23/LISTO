@@ -72,15 +72,6 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     }
   }, []);
 
-  const reset = useCallback(() => {
-    setIsActive(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setTimeRemaining(type === 'focus' ? DEFAULT_FOCUS_DURATION : DEFAULT_BREAK_DURATION);
-  }, [type]);
-
   const handleFocusSessionComplete = useCallback(() => {
     const newCount = sessionsCompleted + 1;
     setSessionsCompleted(newCount);
@@ -88,7 +79,7 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     showNotification('Focus Session Complete! 🎉', 'Time for a well-deserved break!');
   }, [sessionsCompleted, showNotification]);
 
-  const reset = useCallback(() => {
+  const resetTimer = useCallback(() => {
     setIsActive(false);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -125,7 +116,7 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     window.dispatchEvent(event);
   }, [timeRemaining, isActive, type, handleSessionComplete, sessionsCompleted]);
 
-  return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset };
+  return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset: resetTimer };
 };
 
 export function FocusTimerProvider({ children }: { readonly children: ReactNode }) {

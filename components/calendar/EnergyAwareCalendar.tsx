@@ -403,7 +403,7 @@ const EnergyAwareCalendar: React.FC<CalendarProps> = ({
     let sourceDate: string | null = null;
     let eventToReschedule: CalendarEvent | null = null;
 
-    for (const [dateKey, dayData] of calendarData.entries()) {
+    for (const [dateKey, dayData] of Array.from(calendarData.entries())) {
       const event = dayData.events.find(e => e.id === eventId);
       if (event) {
         sourceDate = dateKey;

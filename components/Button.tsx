@@ -87,11 +87,15 @@ const Button: React.FC<ButtonProps> = ({
   const finalTheme = theme || globalTheme;
 
   // If custom colors are provided, use them
+  const cssVars: any = {};
   if (finalAccentColor) {
-    customStyles['--accent-color' as any] = finalAccentColor;
+    cssVars['--accent-color'] = finalAccentColor;
   }
   if (finalSecondaryColor) {
-    customStyles['--secondary-color' as any] = finalSecondaryColor;
+    cssVars['--secondary-color'] = finalSecondaryColor;
+  }
+  if (style) {
+    Object.assign(cssVars, style);
   }
 
   // Build className with theme
@@ -104,7 +108,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button 
       className={buttonClassName}
-      style={customStyles}
+      style={cssVars}
       {...props}
     >
       <span></span>

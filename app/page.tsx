@@ -97,37 +97,43 @@ export default function HomePage() {
             <span className="text-blue-600 font-bold"> meaningful connections</span>
           </motion.p>
 
-          {/* Premium Quick Action Buttons */}
-          <motion.div 
-            className="flex flex-wrap justify-center gap-6 mb-12"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div variants={itemVariants}>
-              <Link href="/wellness">
-                <button className="btn-premium btn-emerald px-10 py-4 text-lg">
-                  <Heart className="w-6 h-6 mr-3" />
-                  Start Wellness Journey
-                </button>
-              </Link>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <Link href="/medical-hub">
-                <button className="btn-premium btn-aurora px-10 py-4 text-lg">
-                  <Brain className="w-6 h-6 mr-3" />
-                  Medical Hub
-                </button>
-              </Link>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <Link href="/vision-board">
-                <button className="btn-premium btn-cosmic px-10 py-4 text-lg">
-                  <Target className="w-6 h-6 mr-3" />
-                  Vision Board
-                </button>
-              </Link>
-            </motion.div>
+          {/* Centered CTA Section */}
+          <motion.div variants={itemVariants} className="max-w-md mx-auto mb-12">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
+              <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center">Get Started Today</h3>
+              
+              {/* Email Input */}
+              <div className="mb-4">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              
+              {/* Plan Selection Dropdown */}
+              <div className="mb-4">
+                <select className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <option>Select a plan</option>
+                  <option>Free Plan</option>
+                  <option>LISTO Plus ($9.99/month)</option>
+                  <option>LISTO Pro ($19.99/month)</option>
+                </select>
+              </div>
+              
+              {/* Terms Checkbox */}
+              <div className="mb-6">
+                <label className="flex items-center">
+                  <input type="checkbox" className="mr-2" />
+                  <span className="text-sm text-slate-600">I agree to the Terms and Conditions</span>
+                </label>
+              </div>
+              
+              {/* CTA Button */}
+              <button className="w-full bg-gradient-to-r from-emerald-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-emerald-600 hover:to-blue-600 transition-all">
+                Start Your Journey
+              </button>
+            </div>
           </motion.div>
         </motion.header>
 
@@ -325,6 +331,58 @@ export default function HomePage() {
             <div className="absolute inset-0 rounded-full animate-ping-slow bg-gradient-to-br from-indigo-400/30 to-purple-400/30 scale-110"></div>
           </button>
         </motion.div>
+
+        {/* Footer */}
+        <footer className="mt-20 bg-slate-900 text-white py-12">
+          <div className="max-w-7xl mx-auto px-6 md:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Company Info */}
+              <div>
+                <h4 className="text-xl font-bold mb-4">LISTO</h4>
+                <p className="text-slate-300 mb-4">
+                  Your neurodivergent-friendly companion for growth, wellness, and meaningful connections.
+                </p>
+                <p className="text-slate-400 text-sm">
+                  Empowering lives through intelligent optimization.
+                </p>
+              </div>
+              
+              {/* Navigation Links */}
+              <div>
+                <h4 className="text-xl font-bold mb-4">Navigation</h4>
+                <ul className="space-y-2">
+                  <li><Link href="/wellness" className="text-slate-300 hover:text-white transition">Wellness Hub</Link></li>
+                  <li><Link href="/medical-hub" className="text-slate-300 hover:text-white transition">Medical Hub</Link></li>
+                  <li><Link href="/meal-planner" className="text-slate-300 hover:text-white transition">Meal Planner</Link></li>
+                  <li><Link href="/vision-board" className="text-slate-300 hover:text-white transition">Vision Board</Link></li>
+                  <li><Link href="/explore" className="text-slate-300 hover:text-white transition">Explore</Link></li>
+                </ul>
+              </div>
+              
+              {/* Newsletter Sign-up */}
+              <div>
+                <h4 className="text-xl font-bold mb-4">Stay Updated</h4>
+                <p className="text-slate-300 mb-4">
+                  Subscribe to our newsletter for tips and updates.
+                </p>
+                <div className="flex">
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    className="flex-1 px-4 py-2 rounded-l-lg text-slate-900"
+                  />
+                  <button className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-r-lg transition">
+                    Subscribe
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
+              <p>&copy; 2025 LISTO. All rights reserved.</p>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
