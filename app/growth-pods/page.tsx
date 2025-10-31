@@ -122,7 +122,7 @@ export default function GrowthPodsPage() {
   const [activeTab, setActiveTab] = useState('discover');
   const [selectedPod, setSelectedPod] = useState(null);
 
-  const renderPodCard = (pod, isMember = false) => (
+  const renderPodCard = (pod: any, isMember = false) => (
     <motion.div
       key={pod.id}
       className="card-elegant p-6 hover:scale-[1.02] transition-all duration-300"
@@ -150,7 +150,7 @@ export default function GrowthPodsPage() {
       <p className="text-sage-600 mb-4">{pod.description}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        {pod.tags.map(tag => (
+        {pod.tags.map((tag: string) => (
           <span key={tag} className="px-2 py-1 bg-sage-100 text-sage-700 rounded-full text-xs">
             {tag}
           </span>
@@ -284,6 +284,7 @@ export default function GrowthPodsPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {MY_PODS.map(pod => {
                     const fullPod = AVAILABLE_PODS.find(p => p.id === pod.id);
+                    if (!fullPod) return null;
                     return (
                       <div key={pod.id} className="card-elegant p-6">
                         <div className="flex items-center justify-between mb-4">

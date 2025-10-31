@@ -15,7 +15,7 @@ const DefaultCalendar = () => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const daysInPrevMonth = new Date(year, month, 0).getDate();
-    const days: JSX.Element[] = [];
+    const days: React.ReactElement[] = [];
     for (let i = firstDayOfMonth; i > 0; i--) {
       days.push(<div key={`prev-${i}`} className="day previous-month">{daysInPrevMonth - i + 1}</div>);
     }

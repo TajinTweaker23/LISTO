@@ -21,8 +21,14 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { RecipeCard } from './RecipeCard';
 import { ADHDActionPanel } from './ADHDActionPanel';
-import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+
+// Simple toast replacement
+const toast = {
+  success: (message: string, options?: any) => console.log('✅', message),
+  error: (message: string, options?: any) => console.error('❌', message),
+  info: (message: string, options?: any) => console.info('ℹ️', message),
+};
 
 // Import shared types and utilities
 import { Recipe, MealSlot, EnhancedMealPlannerProps, MealType } from './types';

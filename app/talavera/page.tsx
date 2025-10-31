@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { TalaveraFeed } from '../../components/talavera/TalaveraFeed';
+import TalaveraFeed from '../../components/talavera/TalaveraFeed';
 
 export default function TalaveraPage() {
   return (

@@ -3,8 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TalaveraCard from "./TalaveraCard";
-import VideoUploadStudio from "./VideoUploadStudio";
-import Button from "./Button";
 import { Plus, Search, TrendingUp, Trophy, Zap, Target, Heart } from "lucide-react";
 
 interface TalaveraPost {
@@ -329,16 +327,14 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
       <div className="absolute top-0 left-0 right-0 z-40 bg-gradient-to-b from-black/90 via-black/60 to-transparent p-3 sm:p-4 md:p-6">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-wide">Talavera</h1>
-          <Button
+          <button
             onClick={() => setShowUploadModal(true)}
-            variant="animated"
-            theme="purple"
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-3 sm:px-4 py-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Create</span>
             <span className="sm:hidden">+</span>
-          </Button>
+          </button>
         </div>
 
         {/* Search Bar */}
@@ -365,23 +361,21 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button
+                <button
                   onClick={() => setSelectedFilter(filter.key)}
-                  variant="animated"
-                  theme={isSelected ? "purple" : undefined}
-                  className={`flex-shrink-0 flex items-center gap-1 sm:gap-2 text-xs px-2 sm:px-3 py-1 sm:py-2 ${
-                    isSelected ? '' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                  className={`flex-shrink-0 flex items-center gap-1 sm:gap-2 text-xs px-2 sm:px-3 py-1 sm:py-2 rounded-full transition-all ${
+                    isSelected 
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' 
+                      : 'bg-white/10 text-gray-300 hover:bg-white/20'
                   }`}
                   style={!isSelected ? {
-                    background: 'rgba(255, 255, 255, 0.1)',
                     backdropFilter: 'blur(10px)',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: '#d1d5db'
                   } : undefined}
                 >
                   <IconComponent className="h-3 w-3" />
                   <span className="hidden sm:inline">{filter.label}</span>
-                </Button>
+                </button>
               </motion.div>
             );
           })}
@@ -425,15 +419,13 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
                   : `No ${filterConfig.find(f => f.key === selectedFilter)?.label.toLowerCase()} content yet`
                 }
               </p>
-              <Button
+              <button
                 onClick={() => setShowUploadModal(true)}
-                variant="animated"
-                theme="purple"
-                className="mx-auto text-sm sm:text-base"
+                className="mx-auto text-sm sm:text-base px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
               >
-                <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                 Create First Video
-              </Button>
+              </button>
             </div>
           </div>
         )}
@@ -453,24 +445,19 @@ const TalaveraFeed: React.FC<TalaveraFeedProps> = ({ className = '' }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowUploadModal(false)}
           >
-            <VideoUploadStudio
-              isOpen={true}
-              onClose={() => setShowUploadModal(false)}
-              onPublish={(videoData) => {
-                handleUpload({
-                  content: {
-                    videoUrl: URL.createObjectURL(videoData.file),
-                    thumbnailUrl: '',
-                    caption: videoData.caption,
-                    duration: 30,
-                    aspectRatio: '9:16'
-                  },
-                  tags: videoData.tags
-                });
-              }}
-            />
+            <div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+              <h2 className="text-2xl font-bold text-white mb-4">Create New Video</h2>
+              <p className="text-gray-400 mb-4">Video upload feature coming soon!</p>
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full transition-all"
+              >
+                Close
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

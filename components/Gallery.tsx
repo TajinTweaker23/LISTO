@@ -91,6 +91,7 @@ const FilterButton = ({
 export default function Gallery() {
   const [filter, setFilter] = useState("All");
   const [images, setImages] = useState(initialImages);
+  const [modalImg, setModalImg] = useState<typeof initialImages[0] | null>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
 
   // Handle file upload with validation
