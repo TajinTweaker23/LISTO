@@ -128,7 +128,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Quick Navigation Cards */}
+          {/* Quick Navigation Cards */}
         <div 
           className="card-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
         >
@@ -164,34 +164,34 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Medical Hub Card */}
+          {/* Travel Hub Card */}
           <div className="card-feature interactive-hover" style={{animationDelay: '0.1s'}}>
             <div className="flex items-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-3xl flex items-center justify-center mr-6">
-                <Brain className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-3xl flex items-center justify-center mr-6">
+                <Plane className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800">Medical Hub</h3>
+              <h3 className="text-2xl font-bold text-slate-800">Travel Hub</h3>
             </div>
             <p className="text-slate-600 mb-8 text-lg leading-relaxed">
-              Manage appointments, medications, and health insights with executive function support and ADHD-friendly reminders.
+              Plan your adventures with itinerary builders, packing lists, and expense trackers designed for neurodivergent travelers.
             </p>
             <div className="space-y-4 mb-8">
               <div className="flex items-center text-slate-600">
-                <Timer className="w-5 h-5 mr-3 text-blue-500" />
-                <span className="font-medium">Smart medication reminders</span>
-              </div>
-              <div className="flex items-center text-slate-600">
                 <Calendar className="w-5 h-5 mr-3 text-blue-500" />
-                <span className="font-medium">Appointment management</span>
+                <span className="font-medium">Smart itinerary planning</span>
               </div>
               <div className="flex items-center text-slate-600">
-                <Brain className="w-5 h-5 mr-3 text-blue-500" />
-                <span className="font-medium">Health insights & trends</span>
+                <CheckSquare className="w-5 h-5 mr-3 text-blue-500" />
+                <span className="font-medium">Organized packing lists</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <DollarSign className="w-5 h-5 mr-3 text-blue-500" />
+                <span className="font-medium">Expense tracking</span>
               </div>
             </div>
-            <Link href="/medical-hub">
+            <Link href="/travel">
               <button className="btn-premium btn-aurora w-full text-base">
-                Access Medical Hub <ArrowRight className="w-5 h-5 ml-2" />
+                Start Planning <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
           </div>
@@ -224,6 +224,102 @@ export default function HomePage() {
             <Link href="/vision-board">
               <button className="btn-premium btn-cosmic w-full text-base">
                 Create Vision <ArrowRight className="w-5 h-5 ml-2" />
+              </button>
+            </Link>
+          </div>
+
+          {/* Bucket List Card */}
+          <div className="card-feature interactive-hover" style={{animationDelay: '0.3s'}}>
+            <div className="flex items-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center mr-6">
+                <Star className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800">Bucket List</h3>
+            </div>
+            <p className="text-slate-600 mb-8 text-lg leading-relaxed">
+              Your personal collection of dreams and goals with progress tracking, categorization, and multimedia attachments.
+            </p>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center text-slate-600">
+                <CheckSquare className="w-5 h-5 mr-3 text-orange-500" />
+                <span className="font-medium">Goal organization</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Camera className="w-5 h-5 mr-3 text-orange-500" />
+                <span className="font-medium">Photo attachments</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Link className="w-5 h-5 mr-3 text-orange-500" />
+                <span className="font-medium">Link integration</span>
+              </div>
+            </div>
+            <Link href="/bucket-list">
+              <button className="btn-premium btn-sunset w-full text-base">
+                View Goals <ArrowRight className="w-5 h-5 ml-2" />
+              </button>
+            </Link>
+          </div>
+
+          {/* Travel Map Card */}
+          <div className="card-feature interactive-hover float-animation" style={{animationDelay: '0.4s'}}>
+            <div className="flex items-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-3xl flex items-center justify-center mr-6">
+                <MapPin className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800">Travel Map</h3>
+            </div>
+            <p className="text-slate-600 mb-8 text-lg leading-relaxed">
+              Interactive map for exploring destinations, planning routes, and discovering attractions with personalized recommendations.
+            </p>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center text-slate-600">
+                <Navigation className="w-5 h-5 mr-3 text-teal-500" />
+                <span className="font-medium">Route planning</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Heart className="w-5 h-5 mr-3 text-teal-500" />
+                <span className="font-medium">Favorite locations</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Clock className="w-5 h-5 mr-3 text-teal-500" />
+                <span className="font-medium">Visit tracking</span>
+              </div>
+            </div>
+            <Link href="/map">
+              <button className="btn-premium btn-ocean w-full text-base">
+                Explore Map <ArrowRight className="w-5 h-5 ml-2" />
+              </button>
+            </Link>
+          </div>
+
+          {/* Medical Hub Card */}
+          <div className="card-feature interactive-hover" style={{animationDelay: '0.5s'}}>
+            <div className="flex items-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl flex items-center justify-center mr-6">
+                <Brain className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800">Medical Hub</h3>
+            </div>
+            <p className="text-slate-600 mb-8 text-lg leading-relaxed">
+              Manage appointments, medications, and health insights with executive function support and ADHD-friendly reminders.
+            </p>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center text-slate-600">
+                <Timer className="w-5 h-5 mr-3 text-indigo-500" />
+                <span className="font-medium">Smart medication reminders</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Calendar className="w-5 h-5 mr-3 text-indigo-500" />
+                <span className="font-medium">Appointment management</span>
+              </div>
+              <div className="flex items-center text-slate-600">
+                <Brain className="w-5 h-5 mr-3 text-indigo-500" />
+                <span className="font-medium">Health insights & trends</span>
+              </div>
+            </div>
+            <Link href="/medical-hub">
+              <button className="btn-premium btn-indigo w-full text-base">
+                Access Medical Hub <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
           </div>
@@ -329,8 +425,10 @@ export default function HomePage() {
                 <ul className="space-y-2">
                   <li><Link href="/wellness" className="text-slate-300 hover:text-white transition">Wellness Hub</Link></li>
                   <li><Link href="/medical-hub" className="text-slate-300 hover:text-white transition">Medical Hub</Link></li>
-                  <li><Link href="/meal-planner" className="text-slate-300 hover:text-white transition">Meal Planner</Link></li>
+                  <li><Link href="/travel" className="text-slate-300 hover:text-white transition">Travel Hub</Link></li>
                   <li><Link href="/vision-board" className="text-slate-300 hover:text-white transition">Vision Board</Link></li>
+                  <li><Link href="/bucket-list" className="text-slate-300 hover:text-white transition">Bucket List</Link></li>
+                  <li><Link href="/map" className="text-slate-300 hover:text-white transition">Travel Map</Link></li>
                   <li><Link href="/explore" className="text-slate-300 hover:text-white transition">Explore</Link></li>
                 </ul>
               </div>
