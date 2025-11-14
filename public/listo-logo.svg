@@ -1,0 +1,82 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main circular background with gradient -->
+  <defs>
+    <!-- Gradient definitions -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4338CA;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EF4444;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Talavera-inspired pattern -->
+    <pattern id="talavera" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none"/>
+      <circle cx="10" cy="10" r="3" fill="#F59E0B" opacity="0.3"/>
+      <circle cx="30" cy="10" r="3" fill="#10B981" opacity="0.3"/>
+      <circle cx="10" cy="30" r="3" fill="#3B82F6" opacity="0.3"/>
+      <circle cx="30" cy="30" r="3" fill="#EF4444" opacity="0.3"/>
+      <path d="M 10 20 L 30 20" stroke="#4338CA" stroke-width="0.5" opacity="0.2"/>
+      <path d="M 20 10 L 20 30" stroke="#4338CA" stroke-width="0.5" opacity="0.2"/>
+    </pattern>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle with pattern -->
+  <circle cx="100" cy="100" r="95" fill="url(#mainGradient)" filter="url(#shadow)"/>
+  <circle cx="100" cy="100" r="90" fill="url(#talavera)" opacity="0.2"/>
+  
+  <!-- Stylized "L" letterform with Mexican-inspired geometric shapes -->
+  <g filter="url(#shadow)">
+    <!-- Main "L" shape -->
+    <path d="M 60 50 L 75 50 L 75 130 L 120 130 L 120 145 L 60 145 Z" fill="white"/>
+    
+    <!-- Decorative accent - top right corner flourish -->
+    <circle cx="130" cy="60" r="8" fill="url(#accentGradient)"/>
+    <path d="M 130 52 L 138 60 L 130 68 L 122 60 Z" fill="white" opacity="0.6"/>
+    
+    <!-- Decorative accent - bottom right corner -->
+    <rect x="125" y="135" width="15" height="15" rx="3" fill="url(#accentGradient)"/>
+    <circle cx="132.5" cy="142.5" r="3" fill="white" opacity="0.7"/>
+  </g>
+  
+  <!-- Subtle decorative elements inspired by Mexican tile work -->
+  <g opacity="0.6">
+    <!-- Top left corner decoration -->
+    <circle cx="45" cy="45" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+    <circle cx="45" cy="45" r="3" fill="white"/>
+    
+    <!-- Bottom left corner decoration -->
+    <path d="M 40 155 L 50 155 L 45 165 Z" fill="white"/>
+    
+    <!-- Right side decorations -->
+    <circle cx="145" cy="95" r="4" fill="white"/>
+    <circle cx="150" cy="110" r="3" fill="white" opacity="0.7"/>
+    
+    <!-- Top right small accents -->
+    <rect x="140" y="48" width="4" height="4" rx="1" fill="white" opacity="0.8"/>
+    <rect x="148" y="52" width="3" height="3" rx="0.5" fill="white" opacity="0.6"/>
+  </g>
+  
+  <!-- LISTO text at bottom -->
+  <text x="100" y="175" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">LISTO</text>
+  
+  <!-- Tagline -->
+  <text x="100" y="190" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="white" opacity="0.9">Life Intelligence & Support</text>
+</svg>

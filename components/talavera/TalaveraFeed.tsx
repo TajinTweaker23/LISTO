@@ -2,9 +2,9 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import TalaveraCard from "./TalaveraCard";
+import TalaveraCard from "../TalaveraCard";
 import VideoUploadStudio from "./VideoUploadStudio";
-import Button from "./Button";
+import Button from "../Button";
 import { Plus, Search, TrendingUp, Trophy, Zap, Target, Heart } from "lucide-react";
 
 interface TalaveraPost {
