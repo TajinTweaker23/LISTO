@@ -24,52 +24,79 @@ export const ToastProvider: React.FC<{children: ReactNode}> = ({ children }) => 
  * Custom hook for managing toast notifications with enhanced features
  */
 export const useToast = (): UseToastReturn => {
-  const [toast, setToast] = useState<ToastState>({
-    message: '',
-    show: false,
-    type: 'info',
-    duration: 3000
-  });
+  const [toasts, setToasts] = useState<ToastState[]>([]);
+  const timeoutsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const showToast = useCallback((
+  const addToast = useCallback((
     message: string, 
-    type: ToastState['type'] = 'info', 
+    type: 'success' | 'error' | 'info' | 'warning' = 'info', 
     duration: number = 3000
-  ) => {
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+  ): number => {
+    const id = Date.now();
+    const newToast: ToastState = {
+      id,
+      message,
+      type,
+      duration,
+      timestamp: Date.now(),
+      show: true
+    };
 
-    setToast({ message, show: true, type, duration });
+    setToasts(prev => [...prev, newToast]);
 
-    // Auto-hide toast
-    timeoutRef.current = setTimeout(() => {
-      setToast(prev => ({ ...prev, show: false }));
+    // Auto-remove toast after duration
+    const timeout = setTimeout(() => {
+      removeToast(id);
     }, duration);
+    
+    timeoutsRef.current.set(id, timeout);
+    
+    return id;
   }, []);
 
-  const hideToast = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const removeToast = useCallback((id: number) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+    const timeout = timeoutsRef.current.get(id);
+    if (timeout) {
+      clearTimeout(timeout);
+      timeoutsRef.current.delete(id);
     }
-    setToast(prev => ({ ...prev, show: false }));
   }, []);
 
-  // Cleanup timeout on unmount
+  const clearAll = useCallback(() => {
+    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    timeoutsRef.current.clear();
+    setToasts([]);
+  }, []);
+
+  const success = useCallback((message: string, duration?: number) => 
+    addToast(message, 'success', duration), [addToast]);
+  
+  const error = useCallback((message: string, duration?: number) => 
+    addToast(message, 'error', duration), [addToast]);
+  
+  const info = useCallback((message: string, duration?: number) => 
+    addToast(message, 'info', duration), [addToast]);
+  
+  const warning = useCallback((message: string, duration?: number) => 
+    addToast(message, 'warning', duration), [addToast]);
+
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      timeoutsRef.current.clear();
     };
   }, []);
 
   return {
-    toast,
-    showToast,
-    hideToast
+    toasts,
+    addToast,
+    removeToast,
+    clearAll,
+    success,
+    error,
+    info,
+    warning
   };
 };
