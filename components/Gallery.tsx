@@ -91,6 +91,7 @@ const FilterButton = ({
 export default function Gallery() {
   const [filter, setFilter] = useState("All");
   const [images, setImages] = useState(initialImages);
+  const [modalImg, setModalImg] = useState<{url: string; caption: string; category: string} | null>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
 
   // Handle file upload with validation
@@ -182,6 +183,7 @@ export default function Gallery() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: filteredImages.indexOf(img) * 0.05 }}
+            onClick={() => setModalImg(img)}
           >
             <Image
               src={img.url}

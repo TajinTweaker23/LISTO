@@ -88,15 +88,6 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     showNotification('Focus Session Complete! 🎉', 'Time for a well-deserved break!');
   }, [sessionsCompleted, showNotification]);
 
-  const reset = useCallback(() => {
-    setIsActive(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    const duration = type === 'focus' ? DEFAULT_FOCUS_DURATION : DEFAULT_BREAK_DURATION;
-    setTimeRemaining(duration);
-  }, [type]);
-
   const handleSessionComplete = useCallback(() => {
     if (type === 'focus') {
       const newCount = sessionsCompleted + 1;
@@ -116,14 +107,15 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     if (type === 'focus') {
       handleFocusSessionComplete();
     } else {
-      handleBreakComplete();
+      // Break completed
+      showNotification('Break Complete! 🌟', 'Ready to focus again?');
     }
 
     const event = new CustomEvent('focusSessionCompleted', {
       detail: { sessionsCompleted: type === 'focus' ? sessionsCompleted + 1 : sessionsCompleted }
     });
     window.dispatchEvent(event);
-  }, [timeRemaining, isActive, type, handleSessionComplete, sessionsCompleted]);
+  }, [timeRemaining, isActive, type, handleFocusSessionComplete, sessionsCompleted, showNotification]);
 
   return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset };
 };

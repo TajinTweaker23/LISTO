@@ -6,6 +6,7 @@ export interface ToastState {
   type: 'success' | 'error' | 'info' | 'warning';
   duration: number;
   timestamp: number;
+  show?: boolean;
 }
 
 export interface Achievement {

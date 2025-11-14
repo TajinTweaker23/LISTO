@@ -230,8 +230,6 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         <Sidebar 
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          currentView={currentView}
-          onViewChange={setCurrentView}
         />
 
         {/* Effects & Global Elements - removed confetti */}
@@ -251,7 +249,15 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
         )}
         
         <ReadingRuler enabled={readingRuler} />
-        <OnboardingModal show={showOnboarding} onClose={handleCloseOnboarding} />
+        {showOnboarding && (
+          <OnboardingModal 
+            onClose={handleCloseOnboarding} 
+            onComplete={(avatar, theme, music) => {
+              // Handle onboarding completion
+              handleCloseOnboarding();
+            }}
+          />
+        )}
 
         {/* Achievement Display */}
         {Object.entries(achievements).map(([name, achievement]) => (

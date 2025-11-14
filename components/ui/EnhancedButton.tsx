@@ -62,7 +62,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
   const { navigateWithFeedback, isNavigating } = useEnhancedNavigation();
   
   const isLoading = loading || (href && isNavigating);
-  const isDisabled = disabled || isLoading;
+  const isDisabled = Boolean(disabled) || Boolean(isLoading);
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (isDisabled) return;
@@ -175,7 +175,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
         onClick={handleClick}
         disabled={isDisabled}
         {...motionProps}
-        {...props}
+        {...(props as any)}
       >
         {content}
       </motion.button>
@@ -189,7 +189,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
       onClick={handleClick}
       disabled={isDisabled}
       {...motionProps}
-      {...props}
+      {...(props as any)}
     >
       {content}
     </motion.button>

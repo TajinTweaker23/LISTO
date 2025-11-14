@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styles from '../styles/AudioVisualizer.css';
+import '../styles/AudioVisualizer.css';
 
-const AudioVisualizer = ({ src }) => {
+const AudioVisualizer = ({ src }: { src: string }) => {
   const [showVisualizer, setShowVisualizer] = useState(true);
   const [isWindowVisible, setWindowVisible] = useState(false);
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const toggleVisualizer = () => {
     setShowVisualizer(!showVisualizer);
@@ -31,15 +31,15 @@ const AudioVisualizer = ({ src }) => {
   }, [showVisualizer]);
 
   return (
-    <div className={styles.audioPlayerContainer}>
+    <div className={"audio-player-container"}>
       <audio ref={audioRef} src={src} controls />
-      <button onClick={toggleVisualizer} className={styles.audioPlayerToggle}>
+      <button onClick={toggleVisualizer} className={"audio-player-toggle"}>
         {showVisualizer ? 'Hide Visualizer' : 'Show Visualizer'}
       </button>
       {showVisualizer && (
-        <div className={`${styles.audioVisualizerWindow} ${isWindowVisible ? styles.visible : ''}`}>
-          <div className={styles.swipeHandle} onMouseDown={handleSwipe}></div>
-          <div className={styles.audioVisualizerContent}>
+        <div className={`${"audioVisualizerWindow"} ${isWindowVisible ? "visible" : ''}`}>
+          <div className={"swipeHandle"} onMouseDown={handleSwipe}></div>
+          <div className={"audioVisualizerContent"}>
             {/* Your audio visualizer component goes here */}
             <p>Audio Visualizer</p>
           </div>

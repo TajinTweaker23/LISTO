@@ -46,6 +46,19 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
     onToggle?.(newState);
   };
 
+  const updatePreference = (key: keyof typeof preferences, value: boolean) => {
+    setPreferences(prev => ({ ...prev, [key]: value }));
+    
+    // Apply corresponding DOM updates
+    if (key === 'reducedMotion' && value) {
+      document.documentElement.style.setProperty('--animation-speed', '0s');
+    } else if (key === 'highContrast' && value) {
+      document.documentElement.classList.add('high-contrast');
+    } else if (key === 'largerText' && value) {
+      document.documentElement.classList.add('larger-text');
+    }
+  };
+
   return (
     <div className="relative">
       <motion.button
@@ -67,9 +80,7 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
           {wellnessPrompt}
         </motion.div>
       )}
-    </div>
-  );
-};
+      
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -201,6 +212,7 @@ export const FocusMode: React.FC<FocusModeProps> = ({ onToggle }) => {
         </div>
       </motion.div>
     </motion.div>
+    </div>
   );
 };
 

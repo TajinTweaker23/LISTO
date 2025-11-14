@@ -18,6 +18,22 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Type definitions
+interface Pod {
+  id: number;
+  name: string;
+  description: string;
+  members: number;
+  maxMembers: number;
+  meetingTime: string;
+  tags: string[];
+  color: string;
+  icon: string;
+  currentChallenge: string;
+  completionRate: number;
+  recentWin: string;
+}
+
 // Innovative Social Concept: "Growth Pods" 
 // Small, curated communities (max 12 people) focused on specific growth areas
 const AVAILABLE_PODS = [
@@ -120,9 +136,9 @@ const RECENT_ACTIVITY = [
 
 export default function GrowthPodsPage() {
   const [activeTab, setActiveTab] = useState('discover');
-  const [selectedPod, setSelectedPod] = useState(null);
+  const [selectedPod, setSelectedPod] = useState<Pod | null>(null);
 
-  const renderPodCard = (pod, isMember = false) => (
+  const renderPodCard = (pod: Pod, isMember = false) => (
     <motion.div
       key={pod.id}
       className="card-elegant p-6 hover:scale-[1.02] transition-all duration-300"
@@ -284,6 +300,7 @@ export default function GrowthPodsPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {MY_PODS.map(pod => {
                     const fullPod = AVAILABLE_PODS.find(p => p.id === pod.id);
+                    if (!fullPod) return null;
                     return (
                       <div key={pod.id} className="card-elegant p-6">
                         <div className="flex items-center justify-between mb-4">

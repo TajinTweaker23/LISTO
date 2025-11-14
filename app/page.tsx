@@ -11,7 +11,15 @@ import {
   Target,
   Shield,
   Calendar,
-  Star
+  Star,
+  Plane,
+  CheckSquare,
+  DollarSign,
+  Camera,
+  Clock,
+  MapPin,
+  Link as LinkIcon,
+  Navigation
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -249,7 +257,7 @@ export default function HomePage() {
                 <span className="font-medium">Photo attachments</span>
               </div>
               <div className="flex items-center text-slate-600">
-                <Link className="w-5 h-5 mr-3 text-orange-500" />
+                <LinkIcon className="w-5 h-5 mr-3 text-orange-500" />
                 <span className="font-medium">Link integration</span>
               </div>
             </div>
