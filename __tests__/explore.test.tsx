@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Explore from '../pages/explore';
+import Explore from '../app/explore/page';
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
