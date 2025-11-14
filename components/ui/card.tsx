@@ -125,19 +125,18 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
 CardFooter.displayName = "CardFooter";
 
 // New: Convenient wrapper for common card patterns
-interface QuickCardProps extends CardProps {
-  title?: React.ReactNode;
+interface QuickCardProps extends Omit<CardProps, 'title'> {
+  cardTitle?: React.ReactNode;
   description?: React.ReactNode;
   footer?: React.ReactNode;
-  children?: React.ReactNode;
 }
 
 const QuickCard = React.forwardRef<HTMLDivElement, QuickCardProps>(
-  ({ title, description, footer, children, ...props }, ref) => (
+  ({ cardTitle, description, footer, children, ...props }, ref) => (
     <Card ref={ref} {...props}>
-      {(title || description) && (
+      {(cardTitle || description) && (
         <CardHeader>
-          {title && <CardTitle>{title}</CardTitle>}
+          {cardTitle && <CardTitle>{cardTitle}</CardTitle>}
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
       )}

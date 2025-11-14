@@ -107,14 +107,15 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     if (type === 'focus') {
       handleFocusSessionComplete();
     } else {
-      handleBreakComplete();
+      // Break completed
+      showNotification('Break Complete! 🌟', 'Ready to focus again?');
     }
 
     const event = new CustomEvent('focusSessionCompleted', {
       detail: { sessionsCompleted: type === 'focus' ? sessionsCompleted + 1 : sessionsCompleted }
     });
     window.dispatchEvent(event);
-  }, [timeRemaining, isActive, type, handleSessionComplete, sessionsCompleted]);
+  }, [timeRemaining, isActive, type, handleFocusSessionComplete, sessionsCompleted, showNotification]);
 
   return { isActive, timeRemaining, type, progress, sessionsCompleted, start, stop, reset };
 };

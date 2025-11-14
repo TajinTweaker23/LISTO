@@ -72,6 +72,7 @@
     "@types/leaflet": "^1.9.21",
     "@types/node": "^22.16.4",
     "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^30.0.4",
     "identity-obj-proxy": "^3.0.0",

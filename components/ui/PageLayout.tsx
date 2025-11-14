@@ -431,7 +431,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     setMounted(true);
     if (initialTheme === 'auto') {
       const stored = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      setTheme(stored);
+      setTheme(stored as 'light' | 'dark' | 'auto');
     }
   }, [initialTheme]);
 
@@ -476,7 +476,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   };
 
   const pageTransition = {
-    type: 'spring',
+    type: 'spring' as const,
     damping: 25,
     stiffness: 500,
     duration: 0.4
