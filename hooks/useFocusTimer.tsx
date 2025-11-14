@@ -88,15 +88,6 @@ export const useFocusTimer = (): UseFocusTimerReturn => {
     showNotification('Focus Session Complete! 🎉', 'Time for a well-deserved break!');
   }, [sessionsCompleted, showNotification]);
 
-  const reset = useCallback(() => {
-    setIsActive(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    const duration = type === 'focus' ? DEFAULT_FOCUS_DURATION : DEFAULT_BREAK_DURATION;
-    setTimeRemaining(duration);
-  }, [type]);
-
   const handleSessionComplete = useCallback(() => {
     if (type === 'focus') {
       const newCount = sessionsCompleted + 1;

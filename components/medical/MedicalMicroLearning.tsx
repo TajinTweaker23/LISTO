@@ -81,3 +81,62 @@ const MEDICAL_ADMIN_TIPS = [
     timeToRead: 12
   }
 ];
+
+export default function MedicalMicroLearning() {
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Medical Facts</h2>
+          <Brain className="w-8 h-8 text-blue-600" />
+        </div>
+        
+        <motion.div
+          key={currentFactIndex}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-4"
+        >
+          <div className="flex items-start gap-4">
+            <div className="text-4xl">{MEDICAL_FACTS[currentFactIndex].brainRotLevel}</div>
+            <div className="flex-1">
+              <div className="text-sm font-medium text-blue-600 mb-2">
+                {MEDICAL_FACTS[currentFactIndex].category} • {MEDICAL_FACTS[currentFactIndex].accuracy}
+              </div>
+              <p className="text-lg font-medium text-gray-800 mb-3">
+                {MEDICAL_FACTS[currentFactIndex].fact}
+              </p>
+              <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+                <p className="text-sm text-gray-700">
+                  💡 {MEDICAL_FACTS[currentFactIndex].funFact}
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+        
+        <div className="flex justify-between items-center mt-8">
+          <button
+            onClick={() => setCurrentFactIndex(Math.max(0, currentFactIndex - 1))}
+            disabled={currentFactIndex === 0}
+            className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <div className="text-sm text-gray-600">
+            {currentFactIndex + 1} / {MEDICAL_FACTS.length}
+          </div>
+          <button
+            onClick={() => setCurrentFactIndex(Math.min(MEDICAL_FACTS.length - 1, currentFactIndex + 1))}
+            disabled={currentFactIndex === MEDICAL_FACTS.length - 1}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

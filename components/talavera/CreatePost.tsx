@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 
-const CreatePost = ({ onAddPost }) => {
+const CreatePost = ({ onAddPost }: { onAddPost: (post: any) => void }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
     
@@ -43,7 +43,7 @@ const CreatePost = ({ onAddPost }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            rows="3"
+            rows={3}
           ></textarea>
         </div>
         <button

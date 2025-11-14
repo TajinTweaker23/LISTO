@@ -130,7 +130,7 @@ export default function PDFEditor() {
       if (action.type === 'draw') {
         ctx!.strokeStyle = action.color;
         ctx!.beginPath();
-        action.points.forEach((pt, i) => {
+        action.points.forEach((pt: any, i: number) => {
           if (i === 0) ctx!.moveTo(pt.x, pt.y);
           else ctx!.lineTo(pt.x, pt.y);
         });
