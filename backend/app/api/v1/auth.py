@@ -4,6 +4,7 @@ User registration, login, and token management
 """
 from datetime import datetime, timedelta
 from typing import Any
+import hashlib
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -21,14 +22,21 @@ router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+def _preprocess_password(password: str) -> str:
+    """Preprocess password with SHA256 to avoid bcrypt 72-byte limit"""
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify password against hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    preprocessed = _preprocess_password(plain_password)
+    return pwd_context.verify(preprocessed, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    """Hash password"""
-    return pwd_context.hash(password)
+    """Hash password with SHA256 preprocessing"""
+    preprocessed = _preprocess_password(password)
+    return pwd_context.hash(preprocessed)
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
