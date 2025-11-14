@@ -1,4 +1,3 @@
-import { Roboto_Mono } from "next/font/google";
 import React, {
   ReactNode,
   useState,
@@ -33,9 +32,6 @@ import CommandPalette from './CommandPalette';
 import ActionButtons from './ActionButtons';
 import QuickAddButton from './QuickAddButton';
 import { useWhiteboard } from "../../context/WhiteboardContext";
-
-// --- Font ---
-const robotoMono = Roboto_Mono({ subsets: ["latin"], weight: "400" });
 
 export type LayoutProps = {
   children: ReactNode;
@@ -226,7 +222,7 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, setTheme }) => {
   return (
     <ThemeProvider>
       <div
-        className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} ${robotoMono.className} relative overflow-x-hidden design-system-theme ${focusMode ? 'focus-blur-effect' : ''}`}
+        className={`flex flex-col min-h-screen transition-all duration-300 ${bgGradient} font-mono relative overflow-x-hidden design-system-theme ${focusMode ? 'focus-blur-effect' : ''}`}
         aria-live="polite"
       >
         <link rel="stylesheet" href="/styles/design-system.css" />
