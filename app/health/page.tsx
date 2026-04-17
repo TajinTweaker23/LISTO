@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 const Layout = dynamic(() => import('../../components/ui/Layout'), { ssr: false });

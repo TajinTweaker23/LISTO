@@ -23,7 +23,7 @@ import ShapeInsert from "./ShapeInsert";
 import TableInsert from "./TableInsert";
 import Mascot from "./Mascot";
 import AchievementBadge from "./AchievementBadge";
-import OnboardingModal from './OnboardingModal';
+import OnboardingModal from '../OnboardingModal';
 import TabBar from "./TabBar";
 import NotificationContainer, { useNotifications } from "./NotificationSystem";
 import Sidebar from '../Sidebar';

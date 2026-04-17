@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '../../components/ui/button';
 import { Plus, BarChart3, Heart, Activity } from 'lucide-react';
