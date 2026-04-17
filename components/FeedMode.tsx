@@ -37,7 +37,7 @@ const seedPosts: FeedPost[] = [
   {
     id: '2',
     author: { name: 'Alex R.', avatar: '🧠' },
-    content: 'Reminder: it\'s okay to take breaks. Your brain needs rest to function well. 💙',
+    content: `Reminder: it's okay to take breaks. Your brain needs rest to function well. 💙`,
     type: 'support',
     likes: 61,
     comments: 12,
