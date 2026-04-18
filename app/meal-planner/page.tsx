@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { EnhancedMealPlanner } from '../../components/meal-planner/EnhancedMealPlanner';
 import { motion } from 'framer-motion';

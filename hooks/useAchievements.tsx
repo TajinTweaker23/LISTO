@@ -213,8 +213,3 @@ export const useAchievementsContext = () => {
   }
   return context;
 };
-  if (context === undefined) {
-    throw new Error('useAchievementsContext must be used within an AchievementsProvider');
-  }
-  return context;
-};
