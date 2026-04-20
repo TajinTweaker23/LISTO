@@ -16,7 +16,7 @@ const CreatePost = ({ onAddPost }) => {
       content,
       author: "Anonymous", // Placeholder
       timestamp: new Date().toISOString(),
-      imageUrl: `https://source.unsplash.com/random/800x600?sig=${Date.now()}`, // Add a random image
+      imageUrl: '', // Image URL can be set by parent component if needed
     };
 
     onAddPost(newPost);
