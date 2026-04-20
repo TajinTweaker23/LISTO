@@ -77,5 +77,59 @@ Thumbs.db
 # Lunch Ordering System - deployment artifacts
 lunch-ordering-system/scripts/deployment-log-*.txt
 lunch-ordering-system/scripts/cleanup-log-*.txt
-lunch-ordering-system/scripts/dashboard-modified.html.next/
-node_modules/
+lunch-ordering-system/scripts/dashboard-modified.html
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+backend/lib/
+backend/lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Python testing
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.hypothesis/
+
+# Python IDEs
+.pytype/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+test.db
+
+# Backend specific
+backend/.env
+backend/alembic/versions/*.py
+!backend/alembic/versions/__init__.py
